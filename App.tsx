@@ -592,7 +592,7 @@ const App: React.FC = () => {
 
     return (
       <div className="p-4 pb-24 space-y-6 animate-in fade-in duration-500">
-        <header className="flex justify-between items-center">
+        <header className="flex justify-between items-center sticky top-0 z-30 bg-slate-50/95 dark:bg-[#070b14]/95 backdrop-blur-xl -mt-4 -mx-4 p-4 border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm">
           <div>
             <h1 className="text-3xl font-black text-blue-900 dark:text-blue-400 tracking-tight">संगठन शिल्पी</h1>
             <p className="text-sm text-gray-500 font-bold uppercase mt-1 tracking-widest">नमस्ते, {userName}</p>
@@ -602,7 +602,7 @@ const App: React.FC = () => {
           </button>
         </header>
 
-        <section className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-5 rounded-md shadow-sm border dark:border-gray-700 space-y-4">
+        <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-5 rounded-md shadow-sm border dark:border-gray-700 space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <select value={dashKhand} onChange={(e) => { setDashKhand(e.target.value); setDashMandal('all'); }} className="w-full bg-gray-50 dark:bg-gray-900 dark:text-gray-100 p-3 rounded-sm border dark:border-gray-700 font-bold text-xs outline-none">
               <option value="all">सभी खंड</option>
@@ -640,11 +640,11 @@ const App: React.FC = () => {
                 <div className="text-sm font-bold uppercase tracking-wider">संपर्क</div>
              </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Pravas Dashboard Integration */}
         {Object.keys(stats.statsByKhand).length > 0 && (
-          <section className="space-y-4">
+          <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-4">
             <div className="flex justify-between items-center px-1">
               <h3 className="text-lg font-black dark:text-white uppercase tracking-widest text-gray-400">प्रवास डैशबोर्ड (इस माह)</h3>
               <button onClick={() => setActiveTab('trips')} className="text-xs font-black text-blue-600 uppercase">विस्तार में देखें</button>
@@ -680,7 +680,7 @@ const App: React.FC = () => {
                 })}
               </div>
             </div>
-          </section>
+          </motion.section>
         )}
 
         <div className="grid grid-cols-3 gap-3">
@@ -689,41 +689,41 @@ const App: React.FC = () => {
           <StatCard label="शिक्षित" value={stats.shikshitCount} color="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800" onClick={() => { setPeopleCategoryFilter('all'); setPeopleStatusFilter('all'); setPeopleAgeCategoryFilter('all'); setPeopleShikshitFilter('yes'); setPeopleShikshanLevelFilter([]); setActiveTab('people'); }} />
         </div>
 
-        <section className="space-y-4">
+        <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-4">
           <h3 className="text-lg font-black dark:text-white uppercase tracking-widest text-gray-400">श्रेणी अनुसार</h3>
           <div className="grid grid-cols-2 gap-2">
             {Object.entries(stats.byCategory).map(([cat, count]) => (
               <div 
                  key={cat} 
                  onClick={() => { setPeopleCategoryFilter(cat); setPeopleStatusFilter('all'); setActiveTab('people'); }}
-                 className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-3 rounded-md border dark:border-gray-700 flex justify-between items-center shadow-sm active:scale-95 transition-all text-[15px] cursor-pointer"
+                 className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-2.5 rounded-md border dark:border-gray-700 flex justify-between items-center shadow-sm active:scale-95 transition-all text-xs sm:text-sm cursor-pointer"
               >
                  <span className="font-bold dark:text-gray-200 line-clamp-1">{cat}</span>
-                 <span className="font-black text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full">{count}</span>
+                 <span className="font-black text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 text-xs rounded-full">{count}</span>
               </div>
             ))}
             {Object.keys(stats.byCategory).length === 0 && <div className="col-span-2 text-center text-xs p-3 text-gray-400 font-bold border rounded-md dark:border-gray-700">डेटा नहीं</div>}
           </div>
-        </section>
+        </motion.section>
 
-        <section className="space-y-4">
+        <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-4">
           <h3 className="text-lg font-black dark:text-white uppercase tracking-widest text-gray-400">शक्ति अनुसार</h3>
           <div className="grid grid-cols-2 gap-2">
             {Object.entries(stats.byStatus).map(([status, count]) => (
               <div 
                  key={status} 
                  onClick={() => { setPeopleStatusFilter(status); setPeopleCategoryFilter('all'); setPeopleAgeCategoryFilter('all'); setActiveTab('people'); }}
-                 className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-3 rounded-md border dark:border-gray-700 flex justify-between items-center shadow-sm active:scale-95 transition-all text-[15px] cursor-pointer"
+                 className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-2.5 rounded-md border dark:border-gray-700 flex justify-between items-center shadow-sm active:scale-95 transition-all text-xs sm:text-sm cursor-pointer"
               >
                  <span className="font-bold dark:text-gray-200 line-clamp-1">{status}</span>
-                 <span className="font-black text-orange-600 bg-orange-50 dark:bg-orange-900/30 px-3 py-1 rounded-full">{count}</span>
+                 <span className="font-black text-orange-600 bg-orange-50 dark:bg-orange-900/30 px-2 py-0.5 text-xs rounded-full">{count}</span>
               </div>
             ))}
             {Object.keys(stats.byStatus).length === 0 && <div className="col-span-2 text-center text-xs p-3 text-gray-400 font-bold border rounded-md dark:border-gray-700">डेटा नहीं</div>}
           </div>
-        </section>
+        </motion.section>
 
-        <section className="space-y-4">
+        <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-4">
           <h3 className="text-lg font-black dark:text-white uppercase tracking-widest text-gray-400">आयु अनुसार</h3>
           {Object.keys(stats.byAgeCategory).length > 0 ? (
             <div className="grid grid-cols-2 gap-2">
@@ -731,21 +731,21 @@ const App: React.FC = () => {
                 <div 
                    key={cat} 
                    onClick={() => { setPeopleAgeCategoryFilter(cat); setPeopleCategoryFilter('all'); setPeopleStatusFilter('all'); setActiveTab('people'); }}
-                   className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-3 rounded-md border dark:border-gray-700 flex justify-between items-center shadow-sm active:scale-95 transition-all text-[15px] cursor-pointer"
+                   className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-2.5 rounded-md border dark:border-gray-700 flex justify-between items-center shadow-sm active:scale-95 transition-all text-xs sm:text-sm cursor-pointer"
                 >
                    <span className="font-bold dark:text-gray-200 line-clamp-1">{cat}</span>
-                   <span className="font-black text-pink-600 bg-pink-50 dark:bg-pink-900/30 px-3 py-1 rounded-full">{count}</span>
+                   <span className="font-black text-pink-600 bg-pink-50 dark:bg-pink-900/30 px-2 py-0.5 text-xs rounded-full">{count}</span>
                 </div>
               ))}
             </div>
           ) : (
             <div className="text-center text-xs p-3 text-gray-400 font-bold border rounded-md dark:border-gray-700">डेटा नहीं</div>
           )}
-        </section>
+        </motion.section>
 
 
 
-        <section className="space-y-4">
+        <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-4">
           <div className="flex justify-between items-center px-1">
             <h3 className="text-base font-black dark:text-white uppercase tracking-widest text-gray-400">आगामी कार्यक्रम</h3>
             <button onClick={() => setActiveTab('calendar')} className="text-xs font-black text-blue-600 uppercase">सभी देखें</button>
@@ -778,7 +778,7 @@ const App: React.FC = () => {
                 <div className="py-10 text-center text-gray-400 font-bold bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-lg border dark:border-gray-700 text-xs">कोई आगामी कार्यक्रम नहीं है</div>
              )}
           </div>
-        </section>
+        </motion.section>
       </div>
     );
   };
@@ -803,7 +803,7 @@ const App: React.FC = () => {
 
     return (
       <div className="p-3 pb-24 space-y-3 animate-in slide-in-from-right duration-300">
-        <header className="flex justify-between items-center bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2 rounded-2xl shadow-sm">
+        <header className="flex justify-between items-center bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2 rounded-2xl shadow-sm sticky top-2 z-30">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-indigo-600 text-white rounded-xl shadow-lg">
               <UsersRound size={18}/>
@@ -869,7 +869,7 @@ const App: React.FC = () => {
                           const recentlyCalled = isRecentlyCalled(c.id);
                           const responsibility = c.volunteerProfile?.currentResponsibility;
                           return (
-                            <div key={c.id} onClick={() => setSelectedContactId(c.id)} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/30 dark:border-gray-800/50 p-3 rounded-xl flex items-center gap-3 active:scale-[0.98] transition-all shadow-sm group">
+                            <div key={c.id} onClick={() => setSelectedContactId(c.id)} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/30 dark:border-gray-800/50 p-3 rounded-xl flex items-center gap-3 active:scale-[0.98] active:bg-blue-50/50 dark:active:bg-blue-900/40 transition-all shadow-sm group">
                               <div className={`w-10 h-10 rounded-lg flex-none flex items-center justify-center text-white font-black text-base ${recentlyCalled ? 'bg-orange-500 shadow-lg shadow-orange-500/20' : 'bg-indigo-500 shadow-lg shadow-indigo-500/20'}`}>
                                 {c.name[0]}
                               </div>
@@ -940,7 +940,7 @@ const App: React.FC = () => {
     });
     return (
       <div className="p-3 pb-24 space-y-3 animate-in slide-in-from-right duration-300">
-        <header className="flex justify-between items-center bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2 rounded-2xl shadow-sm">
+        <header className="flex justify-between items-center bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2 rounded-2xl shadow-sm sticky top-2 z-30">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-blue-600 text-white rounded-xl shadow-lg">
               <Users size={18}/>
@@ -1110,7 +1110,7 @@ const App: React.FC = () => {
     
     return (
       <div className="p-3 pb-24 space-y-3 animate-in slide-in-from-right duration-300">
-        <header className="flex justify-between items-center bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2 rounded-2xl shadow-sm">
+        <header className="flex justify-between items-center bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2 rounded-2xl shadow-sm sticky top-2 z-30">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-orange-600 text-white rounded-xl shadow-lg">
               <CalendarDays size={18}/>
@@ -1378,7 +1378,7 @@ const App: React.FC = () => {
           </button>
           
           <div className="space-y-6">
-            <section className="space-y-3">
+            <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-3">
               <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest px-1">उपस्थिति और प्रतिपुष्टि</h3>
               {listContacts.map(c => {
                 const status = meeting.attendance[c.id] || AttendanceStatus.PENDING;
@@ -1424,7 +1424,7 @@ const App: React.FC = () => {
               {listContacts.length === 0 && (
                 <div className="py-20 text-center text-gray-400 font-bold bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700 text-xs">सूची में कोई सदस्य नहीं है</div>
               )}
-            </section>
+            </motion.section>
           </div>
         </div>
       );
@@ -1465,7 +1465,7 @@ const App: React.FC = () => {
            </header>
 
            <div className="space-y-8">
-              <section className="space-y-4">
+              <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-4">
                 <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest px-1">बैठकें और कार्यक्रम</h3>
                 <div className="space-y-3">
                   {listMeetings.length === 0 ? (
@@ -1502,9 +1502,9 @@ const App: React.FC = () => {
                     ))
                   )}
                 </div>
-              </section>
+              </motion.section>
 
-              <section className="space-y-4">
+              <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-4">
                 <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest px-1">सूची के सदस्य ({list.peopleIds.length})</h3>
                 <div className="space-y-3">
                   {contacts.filter(c => list.peopleIds.includes(c.id)).map(c => {
@@ -1531,7 +1531,7 @@ const App: React.FC = () => {
                     <div className="py-20 text-center text-gray-400 font-bold bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700">इस सूची में कोई सदस्य नहीं है</div>
                   )}
                 </div>
-              </section>
+              </motion.section>
            </div>
         </div>
       );
@@ -1639,7 +1639,7 @@ const App: React.FC = () => {
 
     return (
       <div className="p-4 pb-24 space-y-6 animate-in slide-in-from-right duration-300">
-        <header className="flex justify-between items-center">
+        <header className="flex justify-between items-center sticky top-0 z-30 pt-4 pb-2 -mt-4 bg-slate-50/95 dark:bg-[#070b14]/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm -mx-4 px-4">
           <h1 className="text-2xl font-black dark:text-white">कार्यस्थिति</h1>
           <Building2 className="text-blue-600" />
         </header>
@@ -1858,30 +1858,32 @@ const App: React.FC = () => {
         {activeTab === 'cat-mgmt' && <CatMgmt categories={categories} setCategories={setCategories} onBack={()=>setActiveTab('settings')} setConfirmation={setConfirmation} />}
         {activeTab === 'event-cat-mgmt' && <CatMgmt title="कार्यक्रम श्रेणी प्रबंधन" categories={eventCategories} setCategories={setEventCategories} onBack={()=>setActiveTab('settings')} setConfirmation={setConfirmation} />}
         {selectedContactId && contacts.find(c => c.id === selectedContactId) && (
-          <div className="absolute inset-0 z-50 bg-gray-50 dark:bg-gray-950">
-            <ContactProfile 
-              contact={contacts.find(c => c.id === selectedContactId)!} 
-              khands={khands} mandals={mandals} villages={villages} categories={categories}
-              isRecentlyCalled={isRecentlyCalled(selectedContactId)}
-              onDial={() => handleDial(selectedContactId)}
-              onBack={() => setSelectedContactId(null)} 
-              onVillageClick={(id: string) => { setSelectedVillageId(id); setSelectedContactId(null); setActiveTab('work-status'); }}
-              onDelete={() => {
-                setConfirmation({
-                  title: 'संपर्क हटाएं?',
-                  message: `क्या आप वाकई इस संपर्क को हटाना चाहते हैं?`,
-                  onConfirm: () => {
-                    setContacts(c => c.filter(x => x.id !== selectedContactId));
-                    setSelectedContactId(null);
-                    setConfirmation(null);
-                  }
-                });
-              }}
-              onEdit={() => setEditingContact(contacts.find(c => c.id === selectedContactId)!)}
-              onLogVisit={() => setIsLoggingVisit(selectedContactId)}
-              onEditVisitHistory={(h: any) => setIsEditingVisit({ contactId: selectedContactId, history: h })}
-              onDeleteVisitHistory={(hId: string) => handleDeleteVisitHistory(selectedContactId, hId)}
-            />
+          <div className="fixed inset-0 z-[100] bg-slate-50 dark:bg-[#070b14] overflow-y-auto w-full h-[100dvh]">
+            <div className="w-full max-w-md mx-auto min-h-[100dvh] relative">
+              <ContactProfile 
+                contact={contacts.find(c => c.id === selectedContactId)!} 
+                khands={khands} mandals={mandals} villages={villages} categories={categories}
+                isRecentlyCalled={isRecentlyCalled(selectedContactId)}
+                onDial={() => handleDial(selectedContactId)}
+                onBack={() => setSelectedContactId(null)} 
+                onVillageClick={(id: string) => { setSelectedVillageId(id); setSelectedContactId(null); setActiveTab('work-status'); }}
+                onDelete={() => {
+                  setConfirmation({
+                    title: 'संपर्क हटाएं?',
+                    message: `क्या आप वाकई इस संपर्क को हटाना चाहते हैं?`,
+                    onConfirm: () => {
+                      setContacts(c => c.filter(x => x.id !== selectedContactId));
+                      setSelectedContactId(null);
+                      setConfirmation(null);
+                    }
+                  });
+                }}
+                onEdit={() => setEditingContact(contacts.find(c => c.id === selectedContactId)!)}
+                onLogVisit={() => setIsLoggingVisit(selectedContactId)}
+                onEditVisitHistory={(h: any) => setIsEditingVisit({ contactId: selectedContactId, history: h })}
+                onDeleteVisitHistory={(hId: string) => handleDeleteVisitHistory(selectedContactId, hId)}
+              />
+            </div>
           </div>
         )}
       </main>
@@ -2317,10 +2319,10 @@ const NavBtn = ({ active, onClick, icon }: any) => (
 );
 
 const StatCard = ({ label, value, color, onClick }: any) => (
-  <div onClick={onClick} className={`${color} p-4 rounded-lg shadow-sm border border-transparent dark:border-gray-800 active:scale-95 transition-all flex flex-col justify-between h-24 overflow-hidden relative group abstract-btn cursor-pointer`}>
+  <div onClick={onClick} className={`${color} p-2 rounded-lg shadow-sm border border-transparent dark:border-gray-800 active:scale-95 transition-all flex flex-col justify-center items-center cursor-pointer relative overflow-hidden group`}>
      <div className="absolute -right-2 -top-2 w-8 h-8 bg-white/20 dark:bg-white/5 rounded-full blur-lg group-hover:scale-150 transition-transform duration-500"></div>
-     <div className="text-xs font-black uppercase opacity-60 relative z-10">{label}</div>
-     <div className="text-3xl font-black relative z-10">{value}</div>
+     <div className="text-2xl font-black relative z-10">{value}</div>
+     <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider relative z-10 opacity-70">{label}</div>
   </div>
 );
 
@@ -2754,9 +2756,8 @@ const ContactFormModal = ({ khands, mandals, villages, categories, initialData, 
   const DAYS = ['सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि', 'रवि'];
 
   return (
-    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50 dark:bg-[#070b14] animate-in slide-in-from-bottom duration-300">
-      <AbstractBackground />
-      <header className="bg-white/40 dark:bg-[#070b14]/50 backdrop-blur-[40px] border-b border-white/60 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
+    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full max-w-md mx-auto">
+      <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-3">
            <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-gray-700/50 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
            <h2 className="text-xl font-black dark:text-white tracking-tight">{initialData?.id ? 'संपर्क सुधारें' : 'नया संपर्क जोड़ें'}</h2>
@@ -2962,9 +2963,8 @@ const TripFormModal = ({ khands, mandals, villages, contacts, initialData, ideas
   }, [mandalId, selVillages, selPeople, ideas]);
 
   return (
-    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50 dark:bg-[#070b14] animate-in slide-in-from-bottom duration-300">
-      <AbstractBackground />
-      <header className="bg-white/40 dark:bg-[#070b14]/50 backdrop-blur-[40px] border-b border-white/60 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
+    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full max-w-md mx-auto">
+      <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-3">
            <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-gray-700/50 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
            <h2 className="text-xl font-black dark:text-white tracking-tight">{initialData ? 'योजना सुधारें' : 'नई प्रवास योजना'}</h2>
@@ -3241,10 +3241,9 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
       animate={{ x: 0 }}
       exit={{ x: '100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="absolute inset-0 z-50 flex flex-col bg-slate-50 dark:bg-[#070b14]"
+      className="fixed inset-0 z-[100] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl overflow-hidden w-full max-w-md mx-auto"
     >
-      <AbstractBackground />
-      <header className="bg-white/40 dark:bg-[#070b14]/50 backdrop-blur-xl border-b border-white/40 dark:border-gray-800 p-2 shrink-0 z-20 flex items-center justify-between shadow-sm">
+      <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 dark:border-gray-800 p-2 shrink-0 z-20 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
            <button onClick={onBack} className="p-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg active:scale-90 transition-transform"><ArrowLeft size={16} className="dark:text-white"/></button>
            <div className="min-w-0">
@@ -3814,9 +3813,8 @@ const MenuTab = ({ userName, setUserName, setActiveTab }: any) => (
 const PromptModal = ({ title, placeholder, onSubmit, onCancel }: any) => {
    const [val, setVal] = useState('');
    return (
-      <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50 dark:bg-[#070b14] animate-in slide-in-from-bottom duration-300">
-         <AbstractBackground />
-         <header className="bg-white/40 dark:bg-[#070b14]/50 backdrop-blur-[40px] border-b border-white/60 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
+      <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full max-w-md mx-auto">
+         <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
             <div className="flex items-center gap-3">
                <button onClick={onCancel} className="p-2 bg-gray-100 dark:bg-gray-700/50 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
                <h2 className="text-xl font-black dark:text-white tracking-tight">{title}</h2>
@@ -3848,9 +3846,8 @@ const MeetingFormModal = ({ onClose, onSubmit, eventCategories, ideas, customLis
   }, [selectedListId, customLists, ideas]);
   
   return (
-    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50 dark:bg-[#070b14] animate-in slide-in-from-bottom duration-300">
-      <AbstractBackground />
-      <header className="bg-white/40 dark:bg-[#070b14]/50 backdrop-blur-[40px] border-b border-white/60 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
+    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full max-w-md mx-auto">
+      <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-3">
            <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-gray-700/50 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
            <h2 className="text-xl font-black dark:text-white tracking-tight">नई बैठक/कार्यक्रम</h2>
@@ -3927,9 +3924,8 @@ const VisitLogModal = ({ contactName, initialNotes, initialDate, onClose, onSubm
   const [notes, setNotes] = useState(initialNotes || '');
   const [date, setDate] = useState(initialDate ? initialDate.split('T')[0] : new Date().toISOString().split('T')[0]);
   return (
-    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50 dark:bg-[#070b14] animate-in slide-in-from-bottom duration-300">
-      <AbstractBackground />
-      <header className="bg-white/40 dark:bg-[#070b14]/50 backdrop-blur-[40px] border-b border-white/60 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
+    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full max-w-md mx-auto">
+      <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-3">
            <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-gray-700/50 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
            <h2 className="text-xl font-black dark:text-white tracking-tight">{contactName} - अनुवर्तन</h2>
@@ -3970,9 +3966,8 @@ const ManageListMembersModal = ({ list, contacts, khands, mandals, villages, onC
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50 dark:bg-[#070b14] animate-in slide-in-from-bottom duration-300">
-      <AbstractBackground />
-      <header className="bg-white/40 dark:bg-[#070b14]/50 backdrop-blur-[40px] border-b border-white/60 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
+    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full max-w-md mx-auto">
+      <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-3">
            <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-gray-700/50 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
            <h2 className="text-xl font-black dark:text-white tracking-tight">सदस्य प्रबंधन: {list.name}</h2>
@@ -4409,7 +4404,7 @@ const CalendarTab = ({
 
   return (
     <div className="p-3 pb-24 space-y-3 animate-in fade-in duration-500">
-      <header className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2.5 rounded-2xl shadow-sm space-y-3">
+      <header className="bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2.5 rounded-2xl shadow-sm space-y-3 sticky top-2 z-30">
         <div className="flex justify-between items-center">
           <div className="flex flex-col">
             <h1 className="text-lg font-black dark:text-white tracking-tight leading-none">कैलेंडर</h1>
@@ -4782,7 +4777,7 @@ const IdeasTab = ({ ideas, onUpdate, onDelete, onAdd, contacts, villages, mandal
 
   return (
     <div className="p-4 pb-24 space-y-6 animate-in fade-in duration-500">
-      <header className="flex justify-between items-center">
+      <header className="flex justify-between items-center sticky top-0 z-30 pt-4 pb-3 -mt-4 bg-slate-50/95 dark:bg-[#070b14]/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm -mx-4 px-4">
         <div>
           <h1 className="text-2xl font-black dark:text-white">भविष्य योजना</h1>
         </div>
@@ -4869,9 +4864,8 @@ const IdeaFormModal = ({ contacts, villages, mandals, khands, customLists, onClo
   const [mandalId, setMandalId] = useState('');
 
   return (
-    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50 dark:bg-[#070b14] animate-in slide-in-from-bottom duration-300">
-      <AbstractBackground />
-      <header className="bg-white/40 dark:bg-[#070b14]/50 backdrop-blur-[40px] border-b border-white/60 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
+    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full max-w-md mx-auto">
+      <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-3">
            <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-gray-700/50 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
            <h2 className="text-xl font-black dark:text-white tracking-tight">नया विचार / योजना</h2>
