@@ -19,7 +19,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({ onSelect, onClose, curre
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
       <div className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-[2.5rem] p-6 space-y-6 shadow-2xl animate-in zoom-in duration-300 flex flex-col max-h-[80vh]">
         <header className="flex justify-between items-center px-2">
-          <h2 className="text-xl font-black dark:text-white">आइकॉन चुनें</h2>
+          <h2 className="text-xl font-bold dark:text-white">आइकॉन चुनें</h2>
           <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
             <X size={24} />
           </button>
@@ -33,7 +33,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({ onSelect, onClose, curre
             placeholder="खोजें..." 
             value={searchTerm} 
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full bg-gray-100 dark:bg-gray-800 dark:text-white p-4 pl-12 rounded-2xl border dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold"
+            className="w-full bg-gray-100 dark:bg-gray-800 dark:text-white p-4 pl-12 rounded-2xl border dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
           />
         </div>
 
@@ -56,7 +56,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({ onSelect, onClose, curre
             ))}
           </div>
           {filteredIcons.length === 0 && (
-            <div className="text-center py-10 text-gray-400 font-bold">कोई आइकॉन नहीं मिला</div>
+            <div className="text-center py-10 text-gray-400 font-medium">कोई आइकॉन नहीं मिला</div>
           )}
         </div>
       </div>

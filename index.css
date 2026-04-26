@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Tiro+Devanagari+Hindi:ital@0;1&family=Mukta:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&family=Noto+Serif+Devanagari:wght@400;700&family=Yatra+One&family=Kalam:wght@400;700&family=Amita:wght@400;700&family=Rajdhani:wght@400;700&family=Hind:wght@400;700&family=Rozha+One&family=Eczar:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Tiro+Devanagari+Hindi:ital@0;1&family=Mukta:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;500;700&family=Noto+Serif+Devanagari:wght@400;500;700&family=Yatra+One&family=Kalam:wght@400;700&family=Amita:wght@400;700&family=Rajdhani:wght@400;500;700&family=Hind:wght@400;500;700&family=Rozha+One&family=Eczar:wght@400;500;700&family=Poppins:wght@400;500;600&family=Laila:wght@400;500;600&family=Karma:wght@400;500;600&family=Sura:wght@400;700&family=Vesper+Libre:wght@400;500&family=Tillana:wght@400;500;600&family=Glegoo:wght@400;700&family=Khula:wght@400;600&family=Yantramanav:wght@400;500;700&family=Martel:wght@400;600&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -175,6 +175,16 @@ html {
 :root.font-hind { --app-font-family: 'Hind', ui-sans-serif, sans-serif; }
 :root.font-rozha { --app-font-family: 'Rozha One', ui-serif, serif; }
 :root.font-eczar { --app-font-family: 'Eczar', ui-serif, serif; }
+:root.font-poppins { --app-font-family: 'Poppins', ui-sans-serif, sans-serif; }
+:root.font-laila { --app-font-family: 'Laila', ui-sans-serif, sans-serif; }
+:root.font-karma { --app-font-family: 'Karma', ui-serif, serif; }
+:root.font-sura { --app-font-family: 'Sura', ui-serif, serif; }
+:root.font-vesper { --app-font-family: 'Vesper Libre', ui-serif, serif; }
+:root.font-tillana { --app-font-family: 'Tillana', cursive, sans-serif; }
+:root.font-glegoo { --app-font-family: 'Glegoo', ui-serif, serif; }
+:root.font-khula { --app-font-family: 'Khula', ui-sans-serif, sans-serif; }
+:root.font-yantramanav { --app-font-family: 'Yantramanav', ui-sans-serif, sans-serif; }
+:root.font-martel { --app-font-family: 'Martel', ui-serif, serif; }
 
 @utility glass {
   background: rgba(255, 255, 255, 0.7);

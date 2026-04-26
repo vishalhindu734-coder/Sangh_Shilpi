@@ -218,8 +218,8 @@ export const ExportModal = ({ isOpen, onClose, data, villages, mandals, title = 
           <div className="flex items-center gap-3">
              <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
              <div>
-               <h2 className="text-xl font-black dark:text-white tracking-tight">डेटा एक्सपोर्ट</h2>
-               <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">{data.length} संपर्क चयनित</div>
+               <h2 className="text-xl font-bold dark:text-white tracking-normal">डेटा एक्सपोर्ट</h2>
+               <div className="text-xs font-medium text-gray-500 uppercase tracking-widest">{data.length} संपर्क चयनित</div>
              </div>
           </div>
         </div>
@@ -227,7 +227,7 @@ export const ExportModal = ({ isOpen, onClose, data, villages, mandals, title = 
         <div className="overflow-y-auto p-4 space-y-6">
           {!isGeneric && (
             <div className="space-y-3">
-              <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest">कॉलम चुनें (Select Columns)</h3>
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">कॉलम चुनें (Select Columns)</h3>
               <div className="grid grid-cols-2 gap-2">
                 {columnsList.map(col => {
                   const isSelected = selectedColumns[col.id as keyof typeof selectedColumns];
@@ -238,7 +238,7 @@ export const ExportModal = ({ isOpen, onClose, data, villages, mandals, title = 
                       className={`flex items-center gap-2 p-2.5 rounded-xl border ${isSelected ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-800'}`}
                     >
                       {isSelected ? <CheckCircle2 size={18} className="text-blue-600"/> : <Circle size={18} className="text-gray-400"/>}
-                      <span className={`text-sm font-bold ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400'}`}>{col.label}</span>
+                      <span className={`text-sm font-medium ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400'}`}>{col.label}</span>
                     </button>
                   )
                 })}
@@ -247,32 +247,32 @@ export const ExportModal = ({ isOpen, onClose, data, villages, mandals, title = 
           )}
 
           <div className="space-y-3">
-            <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest">प्रारूप (Format)</h3>
+            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">प्रारूप (Format)</h3>
             <div className="flex gap-2 p-1 bg-gray-100/50 dark:bg-gray-800/50 rounded-2xl overflow-x-auto no-scrollbar">
               <button 
                 onClick={() => setSelectedFormat('csv')} 
-                className={`flex flex-col items-center gap-2 py-3 px-4 min-w-[72px] rounded-xl font-bold text-xs transition-all ${selectedFormat === 'csv' ? 'bg-white dark:bg-[#151b2b] text-blue-600 shadow-sm' : 'text-gray-500 hover:bg-white/50'}`}
+                className={`flex flex-col items-center gap-2 py-3 px-4 min-w-[72px] rounded-xl font-medium text-xs transition-all ${selectedFormat === 'csv' ? 'bg-white dark:bg-[#151b2b] text-blue-600 shadow-sm' : 'text-gray-500 hover:bg-white/50'}`}
               >
                 <TableProperties size={24} />
                 <span>CSV</span>
               </button>
               <button 
                 onClick={() => setSelectedFormat('pdf')} 
-                className={`flex flex-col items-center gap-2 py-3 px-4 min-w-[72px] rounded-xl font-bold text-xs transition-all ${selectedFormat === 'pdf' ? 'bg-white dark:bg-[#151b2b] text-blue-600 shadow-sm' : 'text-gray-500 hover:bg-white/50'}`}
+                className={`flex flex-col items-center gap-2 py-3 px-4 min-w-[72px] rounded-xl font-medium text-xs transition-all ${selectedFormat === 'pdf' ? 'bg-white dark:bg-[#151b2b] text-blue-600 shadow-sm' : 'text-gray-500 hover:bg-white/50'}`}
               >
                 <FileDown size={24} />
                 <span>PDF</span>
               </button>
               <button 
                 onClick={() => setSelectedFormat('txt')} 
-                className={`flex flex-col items-center gap-2 py-3 px-4 min-w-[72px] rounded-xl font-bold text-xs transition-all ${selectedFormat === 'txt' ? 'bg-white dark:bg-[#151b2b] text-blue-600 shadow-sm' : 'text-gray-500 hover:bg-white/50'}`}
+                className={`flex flex-col items-center gap-2 py-3 px-4 min-w-[72px] rounded-xl font-medium text-xs transition-all ${selectedFormat === 'txt' ? 'bg-white dark:bg-[#151b2b] text-blue-600 shadow-sm' : 'text-gray-500 hover:bg-white/50'}`}
               >
                 <FileText size={24} />
                 <span>Text</span>
               </button>
               <button 
                 onClick={() => setSelectedFormat('json')} 
-                className={`flex flex-col items-center gap-2 py-3 px-4 min-w-[72px] rounded-xl font-bold text-xs transition-all ${selectedFormat === 'json' ? 'bg-white dark:bg-[#151b2b] text-blue-600 shadow-sm' : 'text-gray-500 hover:bg-white/50'}`}
+                className={`flex flex-col items-center gap-2 py-3 px-4 min-w-[72px] rounded-xl font-medium text-xs transition-all ${selectedFormat === 'json' ? 'bg-white dark:bg-[#151b2b] text-blue-600 shadow-sm' : 'text-gray-500 hover:bg-white/50'}`}
               >
                 <FileJson size={24} />
                 <span>JSON</span>
@@ -284,7 +284,7 @@ export const ExportModal = ({ isOpen, onClose, data, villages, mandals, title = 
         <div className="p-4 bg-gray-50 dark:bg-[#070b14] border-t border-gray-100 dark:border-gray-800/50 pb-8 shrink-0">
            <button 
              onClick={handleExport}
-             className="w-full bg-blue-600 text-white font-black p-4 rounded-xl shadow-[0_8px_16px_-4px_rgba(37,99,235,0.4)] active:scale-95 transition-all flex justify-center items-center gap-2"
+             className="w-full bg-blue-600 text-white font-medium p-4 rounded-xl shadow-[0_8px_16px_-4px_rgba(37,99,235,0.4)] active:scale-95 transition-all flex justify-center items-center gap-2"
            >
              <Download size={20} />
              अभी एक्सपोर्ट करें ({selectedFormat.toUpperCase()})

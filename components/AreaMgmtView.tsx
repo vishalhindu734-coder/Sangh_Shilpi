@@ -92,7 +92,7 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
     const activeMandal = mandals.find(m => m.id === selectedMandalId);
 
     return (
-      <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-gray-500 dark:text-gray-400 mb-6 bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] dark:border-gray-700/50 p-3 rounded-lg w-full">
+      <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400 mb-6 bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] dark:border-gray-700/50 p-3 rounded-lg w-full">
         <button className="flex items-center gap-1 hover:text-blue-600 transition-colors" onClick={() => { setSelectedKhandId(null); setSelectedMandalId(null); }}>
            <Map size={14} /> सभी खंड
         </button>
@@ -135,10 +135,10 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
 
            <div className="space-y-4">
              <div>
-               <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">नाम *</label>
+               <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">नाम *</label>
                <input 
                  autoFocus
-                 className="w-full bg-white dark:bg-gray-900/50 p-4 pl-5 rounded-xl dark:text-white outline-none font-bold border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm" 
+                 className="w-full bg-white dark:bg-gray-900/50 p-4 pl-5 rounded-xl dark:text-white outline-none font-medium border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm" 
                  placeholder={`${formLabel} का नाम`}
                  value={data.name || ''}
                  onChange={e => setEditingNode({ ...editingNode, data: { ...data, name: e.target.value } })}
@@ -148,9 +148,9 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
 
              {type === 'mandal' && !editingNode.id && !selectedKhandId && (
                <div>
-                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">मूल खंड</label>
+                 <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">मूल खंड</label>
                  <select 
-                   className="w-full bg-white dark:bg-gray-900/50 p-4 pl-5 rounded-xl dark:text-white outline-none font-bold border border-gray-200 dark:border-gray-700 focus:border-blue-500 shadow-sm appearance-none"
+                   className="w-full bg-white dark:bg-gray-900/50 p-4 pl-5 rounded-xl dark:text-white outline-none font-medium border border-gray-200 dark:border-gray-700 focus:border-blue-500 shadow-sm appearance-none"
                    value={data.khandId || ''}
                    onChange={e => setEditingNode({ ...editingNode, data: {...data, khandId: e.target.value} })}
                  >
@@ -164,9 +164,9 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
                 <>
                    {!editingNode.id && !selectedMandalId && (
                      <div>
-                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">मूल मंडल</label>
+                       <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">मूल मंडल</label>
                        <select 
-                         className="w-full bg-white dark:bg-gray-900/50 p-4 pl-5 rounded-xl dark:text-white outline-none font-bold border border-gray-200 dark:border-gray-700 focus:border-blue-500 shadow-sm appearance-none"
+                         className="w-full bg-white dark:bg-gray-900/50 p-4 pl-5 rounded-xl dark:text-white outline-none font-medium border border-gray-200 dark:border-gray-700 focus:border-blue-500 shadow-sm appearance-none"
                          value={data.mandalId || ''}
                          onChange={e => setEditingNode({ ...editingNode, data: {...data, mandalId: e.target.value} })}
                        >
@@ -176,9 +176,9 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
                      </div>
                    )}
                    <div>
-                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">उपस्थिति (Stage)</label>
+                     <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">उपस्थिति (Stage)</label>
                      <select 
-                       className="w-full bg-white dark:bg-gray-900/50 p-4 pl-5 rounded-xl dark:text-white outline-none font-bold border border-gray-200 dark:border-gray-700 focus:border-blue-500 shadow-sm appearance-none"
+                       className="w-full bg-white dark:bg-gray-900/50 p-4 pl-5 rounded-xl dark:text-white outline-none font-medium border border-gray-200 dark:border-gray-700 focus:border-blue-500 shadow-sm appearance-none"
                        value={data.stage || VillageStage.NONE}
                        onChange={e => setEditingNode({ ...editingNode, data: {...data, stage: e.target.value as VillageStage} })}
                      >
@@ -189,7 +189,7 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
              )}
            </div>
 
-           <button onClick={handleSave} className="w-full bg-gradient-to-r from-blue-600 to-blue-500 active:from-blue-700 active:to-blue-600 text-white p-4 rounded-xl font-bold mt-4 shadow-lg shadow-blue-500/30 transform active:scale-[0.98] transition-all">
+           <button onClick={handleSave} className="w-full bg-gradient-to-r from-blue-600 to-blue-500 active:from-blue-700 active:to-blue-600 text-white p-4 rounded-xl font-medium mt-4 shadow-lg shadow-blue-500/30 transform active:scale-[0.98] transition-all">
              सेव करें
            </button>
         </div>
@@ -228,10 +228,10 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
              <div className="w-16 h-16 bg-white/60 dark:bg-gray-800/80 rounded-full flex items-center justify-center mb-4 shadow-sm">
                {icon}
              </div>
-             <p className="text-gray-500 dark:text-gray-400 font-bold mb-6">{emptyMsg}</p>
+             <p className="text-gray-500 dark:text-gray-400 font-medium mb-6">{emptyMsg}</p>
              <button 
                onClick={() => setEditingNode({ type: currentLevel === 'khands' ? 'khand' : currentLevel === 'mandals' ? 'mandal' : 'village', data: {} })}
-               className="px-6 py-3 bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 rounded-full font-bold flex items-center gap-2 hover:bg-blue-100 transition-colors shadow-sm"
+               className="px-6 py-3 bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 rounded-full font-medium flex items-center gap-2 hover:bg-blue-100 transition-colors shadow-sm"
              >
                <Plus size={18} /> जोड़ना शुरू करें
              </button>
@@ -262,7 +262,7 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
                     <h4 className="font-extrabold text-gray-900 dark:text-white text-lg flex items-center gap-2">
                        {item.name}
                        {item.stage && (
-                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm
+                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium uppercase tracking-wider shadow-sm
                            ${['SAMITI', 'MANDAL'].includes(item.stage) ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400' : 
                            item.stage === 'MILAN' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400' : 
                            'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'}
@@ -273,12 +273,12 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
                     </h4>
                     {/* Show counts */}
                     {currentLevel === 'khands' && (
-                      <p className="text-xs font-bold text-gray-500 flex items-center gap-1 mt-1">
+                      <p className="text-xs font-medium text-gray-500 flex items-center gap-1 mt-1">
                         <MapPin size={10} /> {mandals.filter(m => m.khandId === item.id).length} मंडल • {villages.filter(v => mandals.some(m => m.id === v.mandalId && m.khandId === item.id)).length} स्थान
                       </p>
                     )}
                     {currentLevel === 'mandals' && (
-                      <p className="text-xs font-bold text-gray-500 flex items-center gap-1 mt-1">
+                      <p className="text-xs font-medium text-gray-500 flex items-center gap-1 mt-1">
                         <Tent size={10} /> {villages.filter(v => v.mandalId === item.id).length} स्थान
                       </p>
                     )}
@@ -323,14 +323,14 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
           <button onClick={onBack} className="p-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border border-white/40 dark:border-gray-700/50 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] active:scale-95 transition-all text-gray-700 dark:text-gray-200">
             <ArrowLeft size={20} />
           </button>
-          <h1 className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 tracking-tight drop-shadow-sm">
+          <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 tracking-normal drop-shadow-sm">
             कार्यक्षेत्र प्रबंधन
           </h1>
         </div>
         
         <button 
           onClick={() => setEditingNode({ type: getAddType(), data: {} })}
-          className="p-3 sm:px-5 sm:py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-[0_4px_12px_rgba(59,130,246,0.3),inset_0_1px_1px_rgba(255,255,255,0.4)] flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all outline-none"
+          className="p-3 sm:px-5 sm:py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-medium rounded-xl shadow-[0_4px_12px_rgba(59,130,246,0.3),inset_0_1px_1px_rgba(255,255,255,0.4)] flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all outline-none"
         >
           <Plus size={20} /> <span className="hidden sm:inline">{getAddLabel()}</span>
         </button>

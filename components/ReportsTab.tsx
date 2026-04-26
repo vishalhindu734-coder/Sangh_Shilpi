@@ -138,15 +138,15 @@ export const ReportsTab: React.FC<ReportsTabProps> = ({
         <button onClick={onBack} className="p-2 bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-sm active:scale-90 transition-all">
            <ArrowLeft size={20} className="dark:text-white"/>
         </button>
-        <h1 className="text-xl font-black text-blue-900 dark:text-blue-400 tracking-tight">रिपोर्ट्स</h1>
+        <h1 className="text-xl font-bold text-blue-900 dark:text-blue-400 tracking-normal">रिपोर्ट्स</h1>
       </header>
 
       <div className="space-y-4">
         <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-4 rounded-xl shadow-sm space-y-4">
           <div>
-            <label className="text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5 block">रिपोर्ट का प्रकार</label>
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-1.5 block">रिपोर्ट का प्रकार</label>
             <select 
-              className="w-full bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 p-3 rounded-lg text-sm font-bold dark:text-white outline-none"
+              className="w-full bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 p-3 rounded-lg text-sm font-medium dark:text-white outline-none"
               value={reportType}
               onChange={(e: any) => setReportType(e.target.value)}
             >
@@ -160,24 +160,24 @@ export const ReportsTab: React.FC<ReportsTabProps> = ({
           {(reportType === 'trips' || reportType === 'events') && (
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5 block">दिनांक से</label>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-1.5 block">दिनांक से</label>
                 <div className="relative">
                   <CalendarIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"/>
                   <input 
                     type="date" 
-                    className="w-full bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 pl-9 p-3 rounded-lg text-sm font-bold dark:text-white outline-none"
+                    className="w-full bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 pl-9 p-3 rounded-lg text-sm font-medium dark:text-white outline-none"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                   />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5 block">दिनांक तक</label>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-1.5 block">दिनांक तक</label>
                 <div className="relative">
                   <CalendarIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"/>
                   <input 
                     type="date" 
-                    className="w-full bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 pl-9 p-3 rounded-lg text-sm font-bold dark:text-white outline-none"
+                    className="w-full bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 pl-9 p-3 rounded-lg text-sm font-medium dark:text-white outline-none"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
                   />
@@ -190,14 +190,14 @@ export const ReportsTab: React.FC<ReportsTabProps> = ({
         {generatedReport && (
           <div className="space-y-4 animate-in fade-in duration-500">
             <div className="bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 p-4 rounded-xl">
-              <h3 className="text-sm font-black text-blue-800 dark:text-blue-300 mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-blue-800 dark:text-blue-300 mb-3 flex items-center gap-2">
                 <BarChart3 size={16} /> सारांश ({generatedReport.title})
               </h3>
               <div className="grid grid-cols-2 gap-3">
                 {Object.entries(generatedReport.summary).map(([key, value]) => (
                   <div key={key} className="bg-white/60 dark:bg-gray-800/60 p-3 rounded-lg border border-blue-100/50 dark:border-blue-800/20 shadow-sm">
-                    <div className="text-[10px] font-black text-gray-500 uppercase">{key}</div>
-                    <div className="text-xl font-black dark:text-white text-blue-950 mt-0.5">{String(value)}</div>
+                    <div className="text-[10px] font-medium text-gray-500 uppercase">{key}</div>
+                    <div className="text-xl font-bold dark:text-white text-blue-950 mt-0.5">{String(value)}</div>
                   </div>
                 ))}
               </div>
@@ -206,7 +206,7 @@ export const ReportsTab: React.FC<ReportsTabProps> = ({
             <button 
               onClick={handleExport}
               disabled={generatedReport.data.length === 0}
-              className="w-full p-4 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 text-white font-black rounded-xl shadow-lg shadow-blue-500/30 flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100"
+              className="w-full p-4 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 text-white font-medium rounded-xl shadow-lg shadow-blue-500/30 flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100"
             >
               <Download size={20} />
               <span>एक्सपोर्ट करें ({generatedReport.data.length} रिकॉर्ड)</span>
@@ -214,7 +214,7 @@ export const ReportsTab: React.FC<ReportsTabProps> = ({
             
             {generatedReport.data.length > 0 && (
               <div className="bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 p-4 rounded-xl shadow-sm text-center">
-                 <div className="text-xs font-bold text-gray-500">
+                 <div className="text-xs font-medium text-gray-500">
                    एक्सपोर्ट करने के बाद आपको PDF, CSV, JSON या Text फॉर्मेट चुनने का विकल्प मिलेगा।
                  </div>
               </div>
