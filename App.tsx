@@ -80,7 +80,8 @@ import {
   INITIAL_TRIPS, 
   INITIAL_LISTS,
   INITIAL_CATEGORIES,
-  INITIAL_EVENT_CATEGORIES
+  INITIAL_EVENT_CATEGORIES,
+  FLAG_IMAGE_URI
 } from './constants';
 import { ICON_LIST, LucideIcon } from './icons';
 import { IconPicker } from './components/IconPicker';
@@ -598,11 +599,11 @@ const App: React.FC = () => {
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-red-500/10 dark:bg-red-500/5 rounded-full blur-2xl -ml-10 -mb-10"></div>
           <div className="relative flex items-center gap-3 flex-1 min-w-0 pr-4">
              <div className="w-11 h-11 rounded-xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 shadow-sm flex items-center justify-center p-1.5 shrink-0 overflow-hidden">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/RSS_Flag.svg/512px-RSS_Flag.svg.png" alt="Dhwaj" className="w-full h-full object-contain drop-shadow-sm" />
+                <img src={FLAG_IMAGE_URI} alt="Dhwaj" className="w-full h-full object-contain drop-shadow-sm" />
              </div>
-             <div className="flex-1 min-w-0 py-0.5">
-               <h1 className="text-[22px] font-extrabold text-orange-600 dark:text-orange-500 tracking-tight leading-tight truncate">संगठन शिल्पी</h1>
-               <p className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest truncate">नमस्ते, {userName}</p>
+             <div className="flex-1 min-w-0 py-1">
+               <h1 className="text-[22px] font-extrabold text-orange-600 dark:text-orange-500 tracking-tight leading-normal break-words pt-1">संगठन शिल्पी</h1>
+               <p className="text-[10.5px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest truncate pb-1">नमस्ते, {userName}</p>
              </div>
           </div>
           <button onClick={() => setDarkMode(!darkMode)} className="relative p-2.5 bg-white dark:bg-[#0a101f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm active:scale-95 transition-all shrink-0">
@@ -781,7 +782,7 @@ const App: React.FC = () => {
                       {getEventIcon(m.category)}
                    </div>
                    <div className="flex-1">
-                      <div className="font-medium dark:text-white text-sm leading-tight">{m.title}</div>
+                      <div className="font-medium dark:text-white text-sm leading-snug">{m.title}</div>
                       <div className="text-xs font-medium text-gray-400 mt-1">{new Date(m.date).toLocaleDateString('hi-IN', { dateStyle: 'medium' })} • {m.category}</div>
                    </div>
                    <button 
@@ -834,9 +835,9 @@ const App: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 p-2">
                 <UsersRound size={20} strokeWidth={2.5} />
               </div>
-              <div className="flex flex-col">
-                <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-tight">स्वयंसेवक एवं संपर्क</h1>
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mt-0.5 leading-tight">कुल डेटा: {contacts.length}</span>
+              <div className="flex flex-col py-1">
+                <h1 className="text-[20px] font-extrabold text-gray-900 dark:text-white tracking-tight leading-normal pt-1">स्वयंसेवक एवं संपर्क</h1>
+                <span className="text-[10.5px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest leading-snug pb-1">कुल डेटा: {contacts.length}</span>
               </div>
             </div>
             <button onClick={() => {
@@ -920,7 +921,7 @@ const App: React.FC = () => {
                               </div>
                               <div className="flex-1 min-w-0 pr-2">
                                 <div className="flex items-center gap-2">
-                                  <h4 className="font-medium dark:text-white truncate text-base leading-tight">{c.name}</h4>
+                                  <h4 className="font-medium dark:text-white truncate text-base leading-snug">{c.name}</h4>
                                   {responsibility && (
                                     <span className="text-xs font-medium bg-blue-500/10 text-blue-600 px-2 py-0.5 rounded-lg border border-blue-500/10 truncate max-w-[50%]">{responsibility}</span>
                                   )}
@@ -991,7 +992,7 @@ const App: React.FC = () => {
               <Users size={18}/>
             </div>
             <div className="flex flex-col">
-              <h1 className="text-lg font-bold dark:text-white tracking-tight leading-none">संपर्क</h1>
+              <h1 className="text-lg font-bold dark:text-white tracking-tight leading-normal">संपर्क</h1>
               <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest mt-1">कुल डेटा: {filtered.length}</span>
             </div>
           </div>
@@ -1079,7 +1080,7 @@ const App: React.FC = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h4 className="font-medium dark:text-white truncate text-base leading-tight">{c.name}</h4>
+                      <h4 className="font-medium dark:text-white truncate text-base leading-snug">{c.name}</h4>
                       {responsibility && (
                         <span className="text-xs font-medium bg-blue-500/10 text-blue-600 px-2 py-0.5 rounded-lg border border-blue-500/10 truncate max-w-[50%]">{responsibility}</span>
                       )}
@@ -1161,7 +1162,7 @@ const App: React.FC = () => {
               <CalendarDays size={18}/>
             </div>
             <div className="flex flex-col">
-              <h1 className="text-lg font-bold dark:text-white tracking-tight leading-none">प्रवास योजना</h1>
+              <h1 className="text-lg font-bold dark:text-white tracking-tight leading-normal">प्रवास योजना</h1>
               <span className="text-[9px] font-medium text-orange-600 dark:text-orange-400 uppercase tracking-widest mt-0.5">नियोजन</span>
             </div>
           </div>
@@ -1246,7 +1247,7 @@ const App: React.FC = () => {
                           <div className="text-[8px] font-medium text-blue-600 dark:text-blue-400 uppercase tracking-tighter mb-0.5">
                             {format(parseISO(trip.date), 'd MMMM, yyyy')}
                           </div>
-                          <h4 className="font-medium dark:text-white text-xs truncate flex items-center gap-1.5 leading-tight">
+                          <h4 className="font-medium dark:text-white text-xs truncate flex items-center gap-1.5 leading-snug">
                             {getMandalName(trip.mandalId)} 
                             <span className="text-[9px] font-medium text-gray-400">({getKhandName(trip.khandId)})</span>
                             {hasIdea && !trip.isCompleted && <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>}
@@ -2259,7 +2260,7 @@ const TripCalendar = ({ trips, viewType, setViewType, currentDate, setCurrentDat
                       className={`p-3 rounded-xl border space-y-2 cursor-pointer transition-all active:scale-95 ${t.isCompleted ? 'bg-green-50/50 border-green-100/50 dark:bg-green-900/20 dark:border-green-800/30' : 'bg-orange-50/50 border-orange-100/50 dark:bg-orange-900/20 dark:border-orange-800/30'}`}
                     >
                       <div className="text-[10px] font-medium text-blue-600 dark:text-blue-400 uppercase">{getKhandName(t.khandId)}</div>
-                      <div className="text-xs font-medium dark:text-white leading-tight">{getMandalName(t.mandalId)}</div>
+                      <div className="text-xs font-medium dark:text-white leading-snug">{getMandalName(t.mandalId)}</div>
                       <div className="flex flex-wrap gap-1">
                         {t.villageIds.map((vid: string) => (
                           <span key={vid} className="px-1.5 py-0.5 bg-white/50 dark:bg-gray-800 rounded text-[8px] font-medium dark:text-gray-300">{getVillageName(vid)}</span>
@@ -3292,8 +3293,8 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
         <div className="flex items-center gap-2">
            <button onClick={onBack} className="p-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg active:scale-90 transition-transform"><ArrowLeft size={16} className="dark:text-white"/></button>
            <div className="min-w-0">
-              <h2 className="text-sm font-bold dark:text-white tracking-tight leading-none">प्रवास विवरण</h2>
-              <div className="text-[8px] font-medium text-gray-500 uppercase tracking-widest leading-none mt-1">{mandalName} मण्डल</div>
+              <h2 className="text-sm font-bold dark:text-white tracking-tight leading-normal">प्रवास विवरण</h2>
+              <div className="text-[8px] font-medium text-gray-500 uppercase tracking-widest leading-normal mt-1">{mandalName} मण्डल</div>
            </div>
         </div>
         <div className="flex gap-1">
@@ -3587,7 +3588,7 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
                    <div className="text-[10px] font-medium opacity-70 mb-1 tracking-widest uppercase flex items-center gap-2">
                        <Clock size={10}/> निर्धारित समय
                    </div>
-                   <div className="font-bold text-lg leading-tight tracking-tighter truncate pr-4 uppercase">{dragState.item.title}</div>
+                   <div className="font-bold text-lg leading-snug tracking-tighter truncate pr-4 uppercase">{dragState.item.title}</div>
                    {dragState.item.subtitle && <div className="text-indigo-100 text-[11px] font-medium opacity-80 mt-1 truncate uppercase tracking-widest">{dragState.item.subtitle}</div>}
                </div>
                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
@@ -4257,9 +4258,9 @@ const ActivitiesTab = ({
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 p-2">
                 <Rocket size={20} strokeWidth={2.5} />
               </div>
-              <div className="flex flex-col">
-                <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-tight">मेरी गतिविधियां</h1>
-                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mt-0.5 leading-tight">गतिविधि डैशबोर्ड</span>
+              <div className="flex flex-col py-1">
+                <h1 className="text-[20px] font-extrabold text-gray-900 dark:text-white tracking-tight leading-normal pt-1">मेरी गतिविधियां</h1>
+                <span className="text-[10.5px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest leading-snug pb-1">गतिविधि डैशबोर्ड</span>
               </div>
             </div>
             
@@ -4285,15 +4286,15 @@ const ActivitiesTab = ({
         {/* Dashboard Cards Compact */}
         <div className="grid grid-cols-3 gap-1.5 pt-1">
            <div onClick={() => setTypeFilter(typeFilter === 'visit' ? 'all' : 'visit')} className={`py-1.5 px-2 rounded-xl border text-center transition-all cursor-pointer shadow-sm flex flex-col justify-center items-center ${typeFilter === 'visit' ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-blue-500 scale-[1.02]' : 'bg-white/80 dark:bg-[#0a101f]/80 backdrop-blur-md border-gray-200 dark:border-gray-800 active:scale-95'}`}>
-              <div className={`text-xl font-bold leading-none ${typeFilter === 'visit' ? 'text-white' : 'text-blue-600 dark:text-blue-400'}`}>{summary.visits}</div>
+              <div className={`text-xl font-bold leading-normal ${typeFilter === 'visit' ? 'text-white' : 'text-blue-600 dark:text-blue-400'}`}>{summary.visits}</div>
               <div className={`text-[9px] font-medium uppercase mt-0.5 tracking-widest ${typeFilter === 'visit' ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'}`}>संपर्क</div>
            </div>
            <div onClick={() => setTypeFilter(typeFilter === 'meeting' ? 'all' : 'meeting')} className={`py-1.5 px-2 rounded-xl border text-center transition-all cursor-pointer shadow-sm flex flex-col justify-center items-center ${typeFilter === 'meeting' ? 'bg-gradient-to-br from-purple-500 to-purple-600 text-white border-purple-500 scale-[1.02]' : 'bg-white/80 dark:bg-[#0a101f]/80 backdrop-blur-md border-gray-200 dark:border-gray-800 active:scale-95'}`}>
-              <div className={`text-xl font-bold leading-none ${typeFilter === 'meeting' ? 'text-white' : 'text-purple-600 dark:text-purple-400'}`}>{summary.meetings}</div>
+              <div className={`text-xl font-bold leading-normal ${typeFilter === 'meeting' ? 'text-white' : 'text-purple-600 dark:text-purple-400'}`}>{summary.meetings}</div>
               <div className={`text-[9px] font-medium uppercase mt-0.5 tracking-widest ${typeFilter === 'meeting' ? 'text-purple-100' : 'text-gray-500 dark:text-gray-400'}`}>बैठकें</div>
            </div>
            <div onClick={() => setTypeFilter(typeFilter === 'trip' ? 'all' : 'trip')} className={`py-1.5 px-2 rounded-xl border text-center transition-all cursor-pointer shadow-sm flex flex-col justify-center items-center ${typeFilter === 'trip' ? 'bg-gradient-to-br from-orange-500 to-orange-600 text-white border-orange-500 scale-[1.02]' : 'bg-white/80 dark:bg-[#0a101f]/80 backdrop-blur-md border-gray-200 dark:border-gray-800 active:scale-95'}`}>
-              <div className={`text-xl font-bold leading-none ${typeFilter === 'trip' ? 'text-white' : 'text-orange-600 dark:text-orange-400'}`}>{summary.trips}</div>
+              <div className={`text-xl font-bold leading-normal ${typeFilter === 'trip' ? 'text-white' : 'text-orange-600 dark:text-orange-400'}`}>{summary.trips}</div>
               <div className={`text-[9px] font-medium uppercase mt-0.5 tracking-widest ${typeFilter === 'trip' ? 'text-orange-100' : 'text-gray-500 dark:text-gray-400'}`}>प्रवास</div>
            </div>
         </div>
@@ -4306,7 +4307,7 @@ const ActivitiesTab = ({
             <div className="w-12 h-12 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
                <MessageSquare className="text-gray-400" size={24} />
             </div>
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-widest leading-none">कोई गतिविधि नहीं मिली</p>
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-widest leading-normal">कोई गतिविधि नहीं मिली</p>
           </div>
         ) : (
           allActivities.map((activity, idx) => (
@@ -4318,10 +4319,10 @@ const ActivitiesTab = ({
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start">
                     <div className="min-w-0 pr-2">
-                       <div className="text-[8px] font-medium uppercase text-gray-400 tracking-tighter leading-none mb-0.5">
+                       <div className="text-[8px] font-medium uppercase text-gray-400 tracking-tighter leading-normal mb-0.5">
                         {format(parseISO(activity.date), 'd MMM')} • {activity.type === 'visit' ? 'अनुवर्तन' : activity.type === 'meeting' ? 'बैठक' : 'प्रवास'}
                       </div>
-                      <h4 className="font-medium dark:text-white text-xs truncate leading-tight">{activity.contactName}</h4>
+                      <h4 className="font-medium dark:text-white text-xs truncate leading-snug">{activity.contactName}</h4>
                       {activity.location && (
                         <div className="text-[9px] font-medium text-blue-500 flex items-center gap-1 mt-0.5 truncate bg-blue-50/50 dark:bg-blue-900/10 w-fit px-1.5 py-0.5 rounded-lg">
                           <MapPin size={8} /> {activity.location}
@@ -4347,7 +4348,7 @@ const ActivitiesTab = ({
 
                   <div className="mt-2 bg-gray-50/80 dark:bg-black/20 rounded-xl p-2 border border-dashed dark:border-gray-800/50">
                     <div className="flex justify-between items-center mb-1.5">
-                       <label className="text-[8px] font-medium text-gray-400 uppercase tracking-widest leading-none">टिप्पणी</label>
+                       <label className="text-[8px] font-medium text-gray-400 uppercase tracking-widest leading-normal">टिप्पणी</label>
                        {editingId !== `${activity.type}-${activity.id}` && (
                           <button 
                             onClick={() => { setEditingId(`${activity.type}-${activity.id}`); setEditVal(activity.notes); }} 
@@ -4521,9 +4522,9 @@ const CalendarTab = ({
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 p-2">
               <CalendarDays size={20} strokeWidth={2.5} />
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-tight">कैलेंडर</h1>
-              <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mt-0.5 leading-tight">
+            <div className="flex flex-col py-1">
+              <h1 className="text-[20px] font-extrabold text-gray-900 dark:text-white tracking-tight leading-normal pt-1">कैलेंडर</h1>
+              <span className="text-[10.5px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest leading-snug pb-1">
                 {viewType === 'month' ? 'मासिक अवलोकन' : (viewType === 'schedule' ? 'अनुसूची' : 'विस्तृत दृश्य')}
               </span>
             </div>
@@ -4649,7 +4650,7 @@ const CalendarTab = ({
                           <Rocket size={16} />
                         </div>
                         <div>
-                          <div className="font-medium dark:text-white text-sm leading-tight">शाखा / मिलन / मंडली</div>
+                          <div className="font-medium dark:text-white text-sm leading-snug">शाखा / मिलन / मंडली</div>
                           <div className="text-[10px] font-medium text-emerald-600 uppercase mt-0.5">{selectedData.karyas.length} कार्यस्थान</div>
                         </div>
                     </div>
@@ -4790,8 +4791,8 @@ const CalendarTab = ({
              return (
                <div key={day.toISOString()} className="flex-none w-[200px] bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-xl p-2.5 space-y-2.5 shadow-sm">
                  <div className="text-center pb-2 border-b dark:border-gray-800/60">
-                    <div className="text-[8px] font-medium text-gray-400 uppercase tracking-widest leading-none">{dayNamesHindi[day.getDay()]}</div>
-                    <div className={`text-sm font-medium mt-1 leading-none ${isToday(day) ? 'text-blue-600' : 'dark:text-white'}`}>
+                    <div className="text-[8px] font-medium text-gray-400 uppercase tracking-widest leading-normal">{dayNamesHindi[day.getDay()]}</div>
+                    <div className={`text-sm font-medium mt-1 leading-normal ${isToday(day) ? 'text-blue-600' : 'dark:text-white'}`}>
                       {day.getDate()} {monthNamesHindi[day.getMonth()]}
                     </div>
                  </div>
@@ -4801,10 +4802,10 @@ const CalendarTab = ({
                     {data.meetings.map((m: any) => (
                       <div key={m.id} onClick={() => { setSelectedListId(m.listId); setSelectedMeetingId(m.id); setActiveTab('lists'); }} className="p-2 bg-purple-500/5 dark:bg-purple-900/10 border border-purple-200/50 dark:border-purple-800/30 rounded-lg space-y-1 cursor-pointer active:scale-[0.98] transition-all">
                         <div className="flex justify-between items-center">
-                          <div className="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase tracking-tighter leading-none">{m.category}</div>
+                          <div className="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase tracking-tighter leading-normal">{m.category}</div>
                           <div className="text-purple-500 opacity-70 scale-75">{getEventIcon(m.category)}</div>
                         </div>
-                        <div className="text-sm font-medium dark:text-white leading-tight line-clamp-2">{m.title}</div>
+                        <div className="text-sm font-medium dark:text-white leading-snug line-clamp-2">{m.title}</div>
                         {m.time && <div className="text-xs font-medium text-gray-400 flex items-center gap-1"><Clock size={10}/> {formatTime(m.time)}</div>}
                       </div>
                     ))}
@@ -4815,12 +4816,12 @@ const CalendarTab = ({
                       return (
                       <div key={t.id} onClick={() => onTripClick(t)} className="p-2 bg-orange-500/5 dark:bg-orange-900/10 border border-orange-200/50 dark:border-orange-800/30 rounded-lg space-y-1.5 cursor-pointer active:scale-[0.98] transition-all">
                         <div className="flex justify-between items-center">
-                          <div className="text-xs font-medium text-orange-600 dark:text-orange-400 uppercase tracking-tighter leading-none">प्रवास</div>
+                          <div className="text-xs font-medium text-orange-600 dark:text-orange-400 uppercase tracking-tighter leading-normal">प्रवास</div>
                           {t.schedule && t.schedule.length > 0 && (
                             <div className="text-xs font-medium text-gray-400 flex items-center gap-0.5"><Clock size={10}/> {formatTime(t.schedule[0].time)}</div>
                           )}
                         </div>
-                        <div className="text-sm font-medium dark:text-white leading-tight">{getMandalName(t.mandalId)} मंडल</div>
+                        <div className="text-sm font-medium dark:text-white leading-snug">{getMandalName(t.mandalId)} मंडल</div>
                         
                         {t.schedule && t.schedule.length > 0 ? (
                           <div className="space-y-0.5">
@@ -4835,7 +4836,7 @@ const CalendarTab = ({
                         ) : (
                           <div className="flex flex-wrap gap-0.5 mt-0.5">
                             {t.villageIds.slice(0, 3).map((vid: string) => (
-                              <span key={vid} className="px-1 py-0.5 bg-white/50 dark:bg-gray-800 rounded text-[7px] font-medium dark:text-gray-300 border border-black/5 dark:border-white/5 leading-none">{getVillageName(vid)}</span>
+                              <span key={vid} className="px-1 py-0.5 bg-white/50 dark:bg-gray-800 rounded text-[7px] font-medium dark:text-gray-300 border border-black/5 dark:border-white/5 leading-normal">{getVillageName(vid)}</span>
                             ))}
                             {t.villageIds.length > 3 && <span className="text-[7px] text-gray-400 font-medium ml-0.5">+{t.villageIds.length - 3}</span>}
                           </div>
@@ -4853,8 +4854,8 @@ const CalendarTab = ({
                     {/* Karyas */}
                     {data.karyas.map((k: any) => (
                       <div key={k.id} className="p-2 bg-emerald-500/5 dark:bg-emerald-900/10 border border-emerald-200/50 dark:border-emerald-800/30 rounded-lg space-y-0.5">
-                        <div className="text-[8px] font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-tighter leading-none">{k.stage}</div>
-                        <div className="text-[10px] font-medium dark:text-white leading-tight">{k.name}</div>
+                        <div className="text-[8px] font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-tighter leading-normal">{k.stage}</div>
+                        <div className="text-[10px] font-medium dark:text-white leading-snug">{k.name}</div>
                         {k.karyaDetails?.time && <div className="text-[8px] font-medium text-gray-400 flex items-center gap-1"><Clock size={8}/> {formatTime(k.karyaDetails.time)}</div>}
                       </div>
                     ))}
