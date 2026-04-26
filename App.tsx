@@ -802,46 +802,48 @@ const App: React.FC = () => {
     });
 
     return (
-      <div className="p-3 pb-24 space-y-3 animate-in slide-in-from-right duration-300">
-        <header className="flex justify-between items-center bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2 rounded-2xl shadow-sm sticky top-2 z-30">
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-indigo-600 text-white rounded-xl shadow-lg">
-              <UsersRound size={18}/>
+      <div className="p-3 pb-24 space-y-3">
+        <div className="sticky top-0 z-30 pt-3 pb-3 -mt-3 bg-slate-50/95 dark:bg-[#070b14]/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm -mx-3 px-3 space-y-3">
+          <header className="flex justify-between items-center bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2 rounded-2xl shadow-sm">
+            <div className="flex items-center gap-2">
+              <div className="p-2 bg-indigo-600 text-white rounded-xl shadow-lg">
+                <UsersRound size={18}/>
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-lg font-black dark:text-white tracking-tight leading-none">स्वयंसेवक एवं संपर्क</h1>
+                <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mt-1">कुल डेटा: {contacts.length}</span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-lg font-black dark:text-white tracking-tight leading-none">स्वयंसेवक एवं संपर्क</h1>
-              <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mt-1">कुल डेटा: {contacts.length}</span>
-            </div>
-          </div>
-          <button onClick={() => {
-            setEditingContact({ category: 'स्वयंसेवक' } as any);
-            setIsAddingContact(true);
-          }} className="p-2.5 bg-indigo-600 text-white rounded-xl shadow-lg active:scale-90 transition-all"><Plus size={20}/></button>
-        </header>
+            <button onClick={() => {
+              setEditingContact({ category: 'स्वयंसेवक' } as any);
+              setIsAddingContact(true);
+            }} className="p-2.5 bg-indigo-600 text-white rounded-xl shadow-lg active:scale-90 transition-all"><Plus size={20}/></button>
+          </header>
 
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
-            <input type="text" placeholder="खोजें..." value={peopleSearch} onChange={e=>setPeopleSearch(e.target.value)} className="w-full bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 placeholder:text-gray-500 text-sm p-2 pl-8 rounded-xl outline-none shadow-sm font-bold" />
-          </div>
-          <div className="flex gap-1 shrink-0">
-            <select 
-              value={dashKhand} 
-              onChange={(e) => { setDashKhand(e.target.value); setDashMandal('all'); }} 
-              className="bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 p-1.5 rounded-xl font-bold text-xs outline-none shadow-sm"
-            >
-              <option value="all">खंड</option>
-              {khands.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
-            </select>
-            <select 
-              value={dashMandal} 
-              disabled={dashKhand === 'all'} 
-              onChange={(e) => setDashMandal(e.target.value)} 
-              className="bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 p-1.5 rounded-xl font-bold text-xs outline-none shadow-sm disabled:opacity-50"
-            >
-              <option value="all">मंडल</option>
-              {mandals.filter(m => m.khandId === dashKhand).map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-            </select>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+              <input type="text" placeholder="खोजें..." value={peopleSearch} onChange={e=>setPeopleSearch(e.target.value)} className="w-full bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 placeholder:text-gray-500 text-sm p-2 pl-8 rounded-xl outline-none shadow-sm font-bold" />
+            </div>
+            <div className="flex gap-1 shrink-0">
+              <select 
+                value={dashKhand} 
+                onChange={(e) => { setDashKhand(e.target.value); setDashMandal('all'); }} 
+                className="bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 p-1.5 rounded-xl font-bold text-xs outline-none shadow-sm"
+              >
+                <option value="all">खंड</option>
+                {khands.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
+              </select>
+              <select 
+                value={dashMandal} 
+                disabled={dashKhand === 'all'} 
+                onChange={(e) => setDashMandal(e.target.value)} 
+                className="bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 p-1.5 rounded-xl font-bold text-xs outline-none shadow-sm disabled:opacity-50"
+              >
+                <option value="all">मंडल</option>
+                {mandals.filter(m => m.khandId === dashKhand).map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+              </select>
+            </div>
           </div>
         </div>
 
@@ -865,11 +867,11 @@ const App: React.FC = () => {
                       </div>
                       
                       <div className="grid grid-cols-1 gap-1.5">
-                        {people.map(c => {
+                        {people.map((c, i) => {
                           const recentlyCalled = isRecentlyCalled(c.id);
                           const responsibility = c.volunteerProfile?.currentResponsibility;
                           return (
-                            <div key={c.id} onClick={() => setSelectedContactId(c.id)} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/30 dark:border-gray-800/50 p-3 rounded-xl flex items-center gap-3 active:scale-[0.98] active:bg-blue-50/50 dark:active:bg-blue-900/40 transition-all shadow-sm group">
+                            <motion.div key={c.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} onClick={() => setSelectedContactId(c.id)} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/30 dark:border-gray-800/50 p-3 rounded-xl flex items-center gap-3 active:scale-[0.95] active:bg-indigo-100/80 dark:active:bg-indigo-900/60 active:ring-2 active:ring-indigo-400/50 transition-all shadow-sm group">
                               <div className={`w-10 h-10 rounded-lg flex-none flex items-center justify-center text-white font-black text-base ${recentlyCalled ? 'bg-orange-500 shadow-lg shadow-orange-500/20' : 'bg-indigo-500 shadow-lg shadow-indigo-500/20'}`}>
                                 {c.name[0]}
                               </div>
@@ -893,7 +895,7 @@ const App: React.FC = () => {
                               >
                                 <Phone size={16} />
                               </a>
-                            </div>
+                            </motion.div>
                           );
                         })}
                       </div>
@@ -1727,7 +1729,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full relative font-sans transition-colors duration-300 overflow-x-hidden bg-transparent">
+    <div className="min-h-[100dvh] w-full relative font-sans transition-colors duration-300 bg-transparent">
       <AbstractBackground />
       <div className="max-w-md mx-auto min-h-[100dvh] relative z-0 flex flex-col">
         <main className="flex-1 relative z-10 pb-[100px] w-full">
@@ -3707,6 +3709,36 @@ const SettingsTab = ({
               </button>
               <button onClick={()=>setAppFont('tiro')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'tiro' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-black' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-bold'}`} style={{fontFamily: '"Tiro Devanagari Hindi", serif'}}>
                  Tiro Hindi
+              </button>
+              <button onClick={()=>setAppFont('mukta')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'mukta' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-black' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-bold'}`} style={{fontFamily: 'Mukta, sans-serif'}}>
+                 Mukta
+              </button>
+              <button onClick={()=>setAppFont('noto-sans')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'noto-sans' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-black' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-bold'}`} style={{fontFamily: '"Noto Sans Devanagari", sans-serif'}}>
+                 Noto Sans
+              </button>
+              <button onClick={()=>setAppFont('noto-serif')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'noto-serif' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-black' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-bold'}`} style={{fontFamily: '"Noto Serif Devanagari", serif'}}>
+                 Noto Serif
+              </button>
+              <button onClick={()=>setAppFont('yatra')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'yatra' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-black' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-bold'}`} style={{fontFamily: '"Yatra One", sans-serif'}}>
+                 Yatra One
+              </button>
+              <button onClick={()=>setAppFont('kalam')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'kalam' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-black' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-bold'}`} style={{fontFamily: 'Kalam, cursive'}}>
+                 Kalam
+              </button>
+              <button onClick={()=>setAppFont('amita')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'amita' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-black' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-bold'}`} style={{fontFamily: 'Amita, cursive'}}>
+                 Amita
+              </button>
+              <button onClick={()=>setAppFont('rajdhani')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'rajdhani' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-black' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-bold'}`} style={{fontFamily: 'Rajdhani, sans-serif'}}>
+                 Rajdhani
+              </button>
+              <button onClick={()=>setAppFont('hind')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'hind' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-black' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-bold'}`} style={{fontFamily: 'Hind, sans-serif'}}>
+                 Hind
+              </button>
+              <button onClick={()=>setAppFont('rozha')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'rozha' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-black' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-bold'}`} style={{fontFamily: '"Rozha One", serif'}}>
+                 Rozha One
+              </button>
+              <button onClick={()=>setAppFont('eczar')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'eczar' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-black' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-bold'}`} style={{fontFamily: 'Eczar, serif'}}>
+                 Eczar
               </button>
            </div>
         </div>

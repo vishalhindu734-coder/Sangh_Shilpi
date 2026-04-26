@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Tiro+Devanagari+Hindi:ital@0;1&family=Mukta:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&family=Noto+Serif+Devanagari:wght@400;700&family=Yatra+One&family=Kalam:wght@400;700&family=Amita:wght@400;700&family=Rajdhani:wght@400;700&family=Hind:wght@400;700&family=Rozha+One&family=Eczar:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -165,6 +165,16 @@ html {
 :root.font-tiro { 
   --app-font-family: 'Tiro Devanagari Hindi', ui-serif, Georgia, serif; 
 }
+:root.font-mukta { --app-font-family: 'Mukta', ui-sans-serif, sans-serif; }
+:root.font-noto-sans { --app-font-family: 'Noto Sans Devanagari', ui-sans-serif, sans-serif; }
+:root.font-noto-serif { --app-font-family: 'Noto Serif Devanagari', ui-serif, serif; }
+:root.font-yatra { --app-font-family: 'Yatra One', ui-sans-serif, sans-serif; }
+:root.font-kalam { --app-font-family: 'Kalam', cursive, sans-serif; }
+:root.font-amita { --app-font-family: 'Amita', cursive, serif; }
+:root.font-rajdhani { --app-font-family: 'Rajdhani', ui-sans-serif, sans-serif; }
+:root.font-hind { --app-font-family: 'Hind', ui-sans-serif, sans-serif; }
+:root.font-rozha { --app-font-family: 'Rozha One', ui-serif, serif; }
+:root.font-eczar { --app-font-family: 'Eczar', ui-serif, serif; }
 
 @utility glass {
   background: rgba(255, 255, 255, 0.7);
