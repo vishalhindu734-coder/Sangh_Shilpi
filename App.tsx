@@ -83,7 +83,7 @@ import {
   INITIAL_EVENT_CATEGORIES,
   FLAG_IMAGE_URI
 } from './constants';
-import { ICON_LIST, LucideIcon } from './icons';
+import { ICON_LIST, LucideIcon, WhatsappIcon } from './icons';
 import { IconPicker } from './components/IconPicker';
 import { EventsTab, EventDetailTab } from './components/EventTabs';
 
@@ -243,6 +243,7 @@ const App: React.FC = () => {
   const [appFontSize, setAppFontSize] = useState(() => loadData('appFontSize', 16));
   const [userName, setUserName] = useState(() => loadData('userName', 'क्षेत्र कार्यकर्ता'));
   const [callRecords, setCallRecords] = useState<Record<string, string>>(() => loadData('callRecords', {}));
+  const [whatsappMessage, setWhatsappMessage] = useState(() => loadData('whatsappMessage', 'नमस्ते'));
 
   // UI State
   const [dashKhand, setDashKhand] = useState<string>('all');
@@ -303,6 +304,7 @@ const App: React.FC = () => {
     localStorage.setItem('events', JSON.stringify(events));
     localStorage.setItem('userName', JSON.stringify(userName));
     localStorage.setItem('callRecords', JSON.stringify(callRecords));
+    localStorage.setItem('whatsappMessage', JSON.stringify(whatsappMessage));
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
     localStorage.setItem('appTheme', JSON.stringify(appTheme));
     localStorage.setItem('appFont', JSON.stringify(appFont));
@@ -323,7 +325,7 @@ const App: React.FC = () => {
 
     // Font size applying
     html.style.setProperty('--app-font-size', `${appFontSize}px`);
-  }, [khands, mandals, villages, contacts, trips, categories, eventCategories, customLists, meetings, userName, darkMode, appTheme, appFont, appFontSize, callRecords]);
+  }, [khands, mandals, villages, contacts, trips, categories, eventCategories, customLists, meetings, userName, darkMode, appTheme, appFont, appFontSize, callRecords, whatsappMessage]);
 
   // Helpers
   const getKhandName = (id: string) => khands.find(k => k.id === id)?.name || id;
@@ -932,13 +934,23 @@ const App: React.FC = () => {
                                   <span className="text-indigo-500 dark:text-indigo-400 font-medium">{c.status}</span>
                                 </div>
                               </div>
-                              <a 
-                                href={`tel:${c.phone}`} 
-                                onClick={(e) => { e.stopPropagation(); handleDial(c.id); }} 
-                                className={`p-2.5 rounded-xl flex-none transition-all ${recentlyCalled ? 'bg-orange-500 text-white' : 'bg-indigo-500/10 text-indigo-600'}`}
-                              >
-                                <Phone size={16} />
-                              </a>
+                              <div className="flex items-center gap-1.5 flex-none shrink-0">
+                                <a 
+                                  href={`tel:${c.phone}`} 
+                                  onClick={(e) => { e.stopPropagation(); handleDial(c.id); }} 
+                                  className={`p-2.5 rounded-xl transition-all flex items-center justify-center ${recentlyCalled ? 'bg-orange-500 text-white' : 'bg-indigo-500/10 text-indigo-600'}`}
+                                >
+                                  <Phone size={16} />
+                                </a>
+                                <a
+                                  href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`}
+                                  target="_blank" rel="noopener noreferrer" 
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="p-2.5 rounded-xl bg-green-500/10 text-green-600 transition-all flex items-center justify-center hover:bg-green-500/20 active:scale-95"
+                                >
+                                  <WhatsappIcon size={16} />
+                                </a>
+                              </div>
                             </motion.div>
                           );
                         })}
@@ -1091,13 +1103,23 @@ const App: React.FC = () => {
                       <span className="text-blue-500 dark:text-blue-400 font-medium">{c.status}</span>
                     </div>
                   </div>
-                  <a 
-                    href={`tel:${c.phone}`} 
-                    onClick={(e) => { e.stopPropagation(); handleDial(c.id); }} 
-                    className={`p-2.5 rounded-xl flex-none transition-all ${recentlyCalled ? 'bg-orange-500 text-white' : 'bg-blue-500/10 text-blue-600'}`}
-                  >
-                    <Phone size={16} />
-                  </a>
+                  <div className="flex items-center gap-1.5 flex-none shrink-0">
+                    <a 
+                      href={`tel:${c.phone}`} 
+                      onClick={(e) => { e.stopPropagation(); handleDial(c.id); }} 
+                      className={`p-2.5 rounded-xl transition-all flex items-center justify-center ${recentlyCalled ? 'bg-orange-500 text-white' : 'bg-blue-500/10 text-blue-600'}`}
+                    >
+                      <Phone size={16} />
+                    </a>
+                    <a
+                      href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`}
+                      target="_blank" rel="noopener noreferrer" 
+                      onClick={(e) => e.stopPropagation()}
+                      className="p-2.5 rounded-xl bg-green-500/10 text-green-600 transition-all flex items-center justify-center hover:bg-green-500/20 active:scale-95"
+                    >
+                      <WhatsappIcon size={16} />
+                    </a>
+                  </div>
                 </div>
               );
             })
@@ -1116,6 +1138,7 @@ const App: React.FC = () => {
            onClose={() => setViewingTrip(null)}
            onEdit={() => { setEditingTrip(trips.find(t => t.id === viewingTrip.id) || viewingTrip); setViewingTrip(null); }}
            onUpdate={(updates: Partial<TripPlan>) => handleUpdateTrip(viewingTrip.id, updates)}
+           whatsappMessage={whatsappMessage}
            onLogVisit={(contactId: string) => setIsLoggingVisit(contactId)}
         />
       );
@@ -1447,7 +1470,10 @@ const App: React.FC = () => {
                         >
                           <UserCheck size={14}/> {isPresent ? 'उपस्थित' : 'अनुपस्थित'}
                         </button>
-                        <a href={`tel:${c.phone}`} onClick={() => handleDial(c.id)} className="p-2 bg-green-50 dark:bg-green-900/20 text-green-600 rounded-sm flex items-center justify-center"><Phone size={14}/></a>
+                        <div className="flex items-center gap-1.5 flex-none shrink-0">
+                          <a href={`tel:${c.phone}`} onClick={() => handleDial(c.id)} className="p-2 bg-green-50 dark:bg-green-900/20 text-green-600 rounded-sm flex items-center justify-center"><Phone size={14}/></a>
+                          <a href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="p-2 bg-[#25D366]/10 text-[#25D366] rounded-sm flex items-center justify-center hover:bg-[#25D366]/20 transition-colors"><WhatsappIcon size={14}/></a>
+                        </div>
                       </div>
                     </div>
                     
@@ -1562,13 +1588,23 @@ const App: React.FC = () => {
                          <div className="flex-1 font-medium dark:text-gray-100 text-sm flex items-center gap-2">
                             {c.name}
                          </div>
-                         <a 
-                           href={`tel:${c.phone}`} 
-                           onClick={(e) => { e.stopPropagation(); handleDial(c.id); }} 
-                           className={`p-2 rounded-md active:scale-90 transition-all ${recentlyCalled ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/30' : 'bg-green-50 dark:bg-green-900/20 text-green-600'}`}
-                         >
-                           <Phone size={18} />
-                         </a>
+                         <div className="flex items-center gap-1.5 flex-none shrink-0">
+                           <a 
+                             href={`tel:${c.phone}`} 
+                             onClick={(e) => { e.stopPropagation(); handleDial(c.id); }} 
+                             className={`p-2 rounded-md active:scale-90 transition-all flex items-center justify-center ${recentlyCalled ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/30' : 'bg-green-50 dark:bg-green-900/20 text-green-600'}`}
+                           >
+                             <Phone size={18} />
+                           </a>
+                           <a
+                             href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`}
+                             target="_blank" rel="noopener noreferrer" 
+                             onClick={(e) => e.stopPropagation()}
+                             className="p-2 rounded-md active:scale-90 transition-all bg-[#25D366]/10 text-[#25D366] flex items-center justify-center hover:bg-[#25D366]/20"
+                           >
+                             <WhatsappIcon size={18} />
+                           </a>
+                         </div>
                          <ChevronRight size={16} className="text-gray-300"/>
                       </div>
                     );
@@ -1894,6 +1930,7 @@ const App: React.FC = () => {
             appTheme={appTheme} setAppTheme={setAppTheme}
             appFont={appFont} setAppFont={setAppFont}
             appFontSize={appFontSize} setAppFontSize={setAppFontSize}
+            whatsappMessage={whatsappMessage} setWhatsappMessage={setWhatsappMessage}
             setActiveTab={setActiveTab} 
             exportData={exportData} 
             importData={() => fileInputRef.current?.click()}
@@ -1911,6 +1948,7 @@ const App: React.FC = () => {
                 khands={khands} mandals={mandals} villages={villages} categories={categories}
                 isRecentlyCalled={isRecentlyCalled(selectedContactId)}
                 onDial={() => handleDial(selectedContactId)}
+                whatsappMessage={whatsappMessage}
                 onBack={() => setSelectedContactId(null)} 
                 onVillageClick={(id: string) => { setSelectedVillageId(id); setSelectedContactId(null); setActiveTab('work-status'); }}
                 onDelete={() => {
@@ -2372,7 +2410,7 @@ const StatCard = ({ label, value, color, onClick }: any) => (
   </div>
 );
 
-const ContactProfile = ({ contact, villages, mandals, categories, onDelete, onEdit, onLogVisit, onBack, isRecentlyCalled, onDial, onVillageClick, onEditVisitHistory, onDeleteVisitHistory }: any) => {
+const ContactProfile = ({ contact, villages, mandals, categories, onDelete, onEdit, onLogVisit, onBack, isRecentlyCalled, onDial, onVillageClick, onEditVisitHistory, onDeleteVisitHistory, whatsappMessage }: any) => {
   const vName = villages.find((v: any) => v.id === contact.villageId)?.name || '';
   const mName = mandals.find((m: any) => m.id === contact.mandalId)?.name || '';
   return (
@@ -2387,13 +2425,23 @@ const ContactProfile = ({ contact, villages, mandals, categories, onDelete, onEd
       <div className="text-center space-y-4">
          <div className={`w-24 h-24 rounded-full mx-auto flex items-center justify-center text-white text-3xl font-medium shadow-xl ring-4 ring-white dark:ring-gray-800 transition-colors ${isRecentlyCalled ? 'bg-orange-500' : 'bg-blue-600'}`}>{contact.name[0]}</div>
          <h2 className="text-2xl font-medium dark:text-white">{contact.name}</h2>
-         <a 
-          href={`tel:${contact.phone}`} 
-          onClick={onDial} 
-          className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium shadow-lg active:scale-95 transition-all ${isRecentlyCalled ? 'bg-orange-500 text-white' : 'bg-green-500 text-white'}`}
-        >
-          <Phone size={18}/> {contact.phone}
-        </a>
+         <div className="flex items-center justify-center gap-3">
+           <a 
+            href={`tel:${contact.phone}`} 
+            onClick={onDial} 
+            className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium shadow-lg active:scale-95 transition-all ${isRecentlyCalled ? 'bg-orange-500 text-white' : 'bg-blue-600 text-white'}`}
+           >
+            <Phone size={18}/> {contact.phone}
+           </a>
+           <a
+            href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`}
+            target="_blank" rel="noopener noreferrer" 
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium shadow-lg active:scale-95 transition-all bg-[#25D366] text-white"
+           >
+            <WhatsappIcon size={18}/>
+           </a>
+         </div>
       </div>
       <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-6 rounded-sm border dark:border-gray-700 space-y-6">
          <div className="grid grid-cols-2 gap-4">
@@ -3114,7 +3162,7 @@ const TripFormModal = ({ khands, mandals, villages, contacts, initialData, ideas
   );
 };
 
-const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onBack, onEdit, onUpdate, onLogVisit }: any) => {
+const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onBack, onEdit, onUpdate, onLogVisit, whatsappMessage }: any) => {
   const [activeSubTab, setActiveSubTab] = useState<'schedule' | 'ideas' | 'notes'>('schedule');
   const timelineRef = useRef<HTMLDivElement>(null);
   const [dragState, setDragState] = useState<{
@@ -3438,9 +3486,14 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
                                                 <div className="text-[13px] font-medium dark:text-white group-hover/name:text-blue-500 transition-colors uppercase truncate tracking-tight">{contact?.name}</div>
                                               </div>
                                               {contact?.phone && (
-                                                <a href={`tel:${contact.phone}`} onClick={e => e.stopPropagation()} className="p-1.5 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg active:scale-90 transition-all hover:bg-green-100 dark:hover:bg-green-900/50 shadow-sm shrink-0">
-                                                  <Phone size={12}/>
-                                                </a>
+                                                <div className="flex items-center gap-1.5 flex-none shrink-0">
+                                                  <a href={`tel:${contact.phone}`} onClick={e => e.stopPropagation()} className="p-1.5 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg active:scale-90 transition-all hover:bg-green-100 dark:hover:bg-green-900/50 shadow-sm shrink-0 flex items-center justify-center">
+                                                    <Phone size={12}/>
+                                                  </a>
+                                                  <a href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="p-1.5 bg-[#25D366]/10 text-[#25D366] rounded-lg active:scale-90 transition-all hover:bg-[#25D366]/20 shadow-sm shrink-0 flex items-center justify-center">
+                                                    <WhatsappIcon size={12}/>
+                                                  </a>
+                                                </div>
                                               )}
                                             </div>
                                         </div>
@@ -3728,6 +3781,7 @@ const SettingsTab = ({
   appTheme, setAppTheme, 
   appFont, setAppFont, 
   appFontSize, setAppFontSize,
+  whatsappMessage, setWhatsappMessage,
   setActiveTab, 
   exportData, importData, resetAllData, clearAllKaryas 
 }: any) => (
@@ -3739,125 +3793,108 @@ const SettingsTab = ({
         <h1 className="text-2xl font-bold text-blue-900 dark:text-blue-400 tracking-tight">सेटिंग्स</h1>
      </header>
 
-     <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700 overflow-hidden divide-y dark:divide-gray-700 shadow-sm">
-        <div className="p-5 flex justify-between items-center bg-gray-50/50 dark:bg-gray-900/20">
-           <div className="flex items-center gap-4 text-indigo-600"><Moon/><span className="font-medium dark:text-white">डार्क मोड</span></div>
-           <button onClick={()=>setDarkMode(!darkMode)} className={`w-12 h-6 rounded-full relative transition-all ${darkMode?'bg-indigo-600':'bg-gray-300'}`}><div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${darkMode?'left-7':'left-1'}`}/></button>
-        </div>
-
-        <div className="p-5 space-y-4 border-t dark:border-gray-700">
-           <div className="flex items-center gap-4 text-emerald-600 mb-2"><Type/><span className="font-medium dark:text-white">फ़ॉन्ट</span></div>
-           <div className="flex overflow-x-auto pb-4 -mx-5 px-5 gap-3 snap-x scrollbar-hide">
-              <button onClick={()=>setAppFont('baloo')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'baloo' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Baloo 2", sans-serif'}}>
-                 Baloo 2
-              </button>
-              <button onClick={()=>setAppFont('tiro')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'tiro' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Tiro Devanagari Hindi", serif'}}>
-                 Tiro Hindi
-              </button>
-              <button onClick={()=>setAppFont('mukta')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'mukta' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Mukta, sans-serif'}}>
-                 Mukta
-              </button>
-              <button onClick={()=>setAppFont('noto-sans')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'noto-sans' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Noto Sans Devanagari", sans-serif'}}>
-                 Noto Sans
-              </button>
-              <button onClick={()=>setAppFont('noto-serif')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'noto-serif' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Noto Serif Devanagari", serif'}}>
-                 Noto Serif
-              </button>
-              <button onClick={()=>setAppFont('yatra')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'yatra' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Yatra One", sans-serif'}}>
-                 Yatra One
-              </button>
-              <button onClick={()=>setAppFont('kalam')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'kalam' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Kalam, cursive'}}>
-                 Kalam
-              </button>
-              <button onClick={()=>setAppFont('amita')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'amita' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Amita, cursive'}}>
-                 Amita
-              </button>
-              <button onClick={()=>setAppFont('rajdhani')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'rajdhani' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Rajdhani, sans-serif'}}>
-                 Rajdhani
-              </button>
-              <button onClick={()=>setAppFont('hind')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'hind' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Hind, sans-serif'}}>
-                 Hind
-              </button>
-              <button onClick={()=>setAppFont('rozha')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'rozha' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Rozha One", serif'}}>
-                 Rozha One
-              </button>
-              <button onClick={()=>setAppFont('eczar')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'eczar' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Eczar, serif'}}>
-                 Eczar
-              </button>
-             <button onClick={()=>setAppFont('poppins')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'poppins' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Poppins, sans-serif'}}>
-                 Poppins
-              </button>
-             <button onClick={()=>setAppFont('laila')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'laila' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Laila, sans-serif'}}>
-                 Laila
-              </button>
-             <button onClick={()=>setAppFont('karma')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'karma' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Karma, serif'}}>
-                 Karma
-              </button>
-             <button onClick={()=>setAppFont('sura')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'sura' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Sura, serif'}}>
-                 Sura
-              </button>
-             <button onClick={()=>setAppFont('vesper')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'vesper' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Vesper Libre", serif'}}>
-                 Vesper
-              </button>
-             <button onClick={()=>setAppFont('tillana')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'tillana' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Tillana, cursive'}}>
-                 Tillana
-              </button>
-             <button onClick={()=>setAppFont('glegoo')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'glegoo' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Glegoo, serif'}}>
-                 Glegoo
-              </button>
-             <button onClick={()=>setAppFont('khula')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'khula' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Khula, sans-serif'}}>
-                 Khula
-              </button>
-             <button onClick={()=>setAppFont('yantramanav')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'yantramanav' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Yantramanav, sans-serif'}}>
-                 Yantramanav
-              </button>
-             <button onClick={()=>setAppFont('martel')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'martel' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Martel, serif'}}>
-                 Martel
-              </button>
+     <div className="space-y-6">
+       {/* Visual & Theme Category */}
+       <div>
+         <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2 mb-2">दिखावट और थीम</h2>
+         <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700 overflow-hidden divide-y dark:divide-gray-700 shadow-sm">
+           <div className="p-5 flex justify-between items-center bg-gray-50/50 dark:bg-gray-900/20">
+              <div className="flex items-center gap-4 text-indigo-600"><Moon/><span className="font-medium dark:text-white">डार्क मोड</span></div>
+              <button onClick={()=>setDarkMode(!darkMode)} className={`w-12 h-6 rounded-full relative transition-all ${darkMode?'bg-indigo-600':'bg-gray-300'}`}><div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${darkMode?'left-7':'left-1'}`}/></button>
            </div>
-        </div>
-
-        <div className="p-5 space-y-4 border-t dark:border-gray-700">
-           <div className="flex items-center gap-4 text-orange-600 mb-2"><MessageSquare size={20}/><span className="font-medium dark:text-white">टेक्स्ट का आकार (Font Size)</span></div>
-           <div className="flex items-center justify-between gap-2 bg-gray-100/50 dark:bg-gray-800/50 p-1.5 rounded-xl border dark:border-gray-700">
-              <button onClick={()=>setAppFontSize(14)} className={`flex-1 py-2 text-xs rounded-lg transition-all ${appFontSize === 14 ? 'bg-white dark:bg-gray-700 shadow-sm text-orange-600 font-medium' : 'text-gray-500 font-medium'}`}>छोटा</button>
-              <button onClick={()=>setAppFontSize(16)} className={`flex-1 py-2 text-xs rounded-lg transition-all ${appFontSize === 16 ? 'bg-white dark:bg-gray-700 shadow-sm text-orange-600 font-medium' : 'text-gray-500 font-medium'}`}>सामान्य</button>
-              <button onClick={()=>setAppFontSize(18)} className={`flex-1 py-2 text-sm rounded-lg transition-all ${appFontSize === 18 ? 'bg-white dark:bg-gray-700 shadow-sm text-orange-600 font-medium' : 'text-gray-500 font-medium'}`}>बड़ा</button>
-              <button onClick={()=>setAppFontSize(20)} className={`flex-1 py-2 text-base rounded-lg transition-all ${appFontSize === 20 ? 'bg-white dark:bg-gray-700 shadow-sm text-orange-600 font-medium' : 'text-gray-500 font-medium'}`}>विशाल</button>
+           
+           <div className="p-5 space-y-4 border-t dark:border-gray-700">
+              <div className="flex items-center gap-4 text-pink-600 mb-2"><Palette/><span className="font-medium dark:text-white">स्टाइल्स एवं थीम</span></div>
+              <div className="grid grid-cols-3 gap-3">
+                 <button onClick={()=>setAppTheme('default')} className={`p-3 rounded-sm border flex flex-col items-center gap-2 transition-all ${appTheme === 'default' ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
+                    <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-blue-600"/><div className="w-3 h-3 rounded-full bg-orange-500"/></div>
+                    <span className="text-[10px] font-medium dark:text-white">डिफ़ॉल्ट</span>
+                 </button>
+                 <button onClick={()=>setAppTheme('nature')} className={`p-3 rounded-sm border flex flex-col items-center gap-2 transition-all ${appTheme === 'nature' ? 'border-green-600 bg-green-50 dark:bg-green-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
+                    <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-emerald-500"/><div className="w-3 h-3 rounded-full bg-amber-500"/></div>
+                    <span className="text-[10px] font-medium dark:text-white">प्रकृति</span>
+                 </button>
+                 <button onClick={()=>setAppTheme('rose')} className={`p-3 rounded-sm border flex flex-col items-center gap-2 transition-all ${appTheme === 'rose' ? 'border-rose-600 bg-rose-50 dark:bg-rose-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
+                    <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-rose-600"/><div className="w-3 h-3 rounded-full bg-purple-500"/></div>
+                    <span className="text-[10px] font-medium dark:text-white">रोज़</span>
+                 </button>
+              </div>
            </div>
-        </div>
 
-        <div className="p-5 space-y-4 border-t dark:border-gray-700">
-           <div className="flex items-center gap-4 text-pink-600 mb-2"><Palette/><span className="font-medium dark:text-white">स्टाइल्स एवं थीम</span></div>
-           <div className="grid grid-cols-3 gap-3">
-              <button onClick={()=>setAppTheme('default')} className={`p-3 rounded-sm border flex flex-col items-center gap-2 transition-all ${appTheme === 'default' ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
-                 <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-blue-600"/><div className="w-3 h-3 rounded-full bg-orange-500"/></div>
-                 <span className="text-[10px] font-medium dark:text-white">डिफ़ॉल्ट</span>
-              </button>
-              <button onClick={()=>setAppTheme('nature')} className={`p-3 rounded-sm border flex flex-col items-center gap-2 transition-all ${appTheme === 'nature' ? 'border-green-600 bg-green-50 dark:bg-green-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
-                 <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-emerald-500"/><div className="w-3 h-3 rounded-full bg-amber-500"/></div>
-                 <span className="text-[10px] font-medium dark:text-white">प्रकृति</span>
-              </button>
-              <button onClick={()=>setAppTheme('rose')} className={`p-3 rounded-sm border flex flex-col items-center gap-2 transition-all ${appTheme === 'rose' ? 'border-rose-600 bg-rose-50 dark:bg-rose-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
-                 <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-rose-600"/><div className="w-3 h-3 rounded-full bg-purple-500"/></div>
-                 <span className="text-[10px] font-medium dark:text-white">रोज़</span>
-              </button>
+           <div className="p-5 space-y-4 border-t dark:border-gray-700">
+              <div className="flex items-center gap-4 text-emerald-600 mb-2"><Type/><span className="font-medium dark:text-white">फ़ॉन्ट</span></div>
+              <div className="flex overflow-x-auto pb-4 -mx-5 px-5 gap-3 snap-x scrollbar-hide">
+                 <button onClick={()=>setAppFont('baloo')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'baloo' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Baloo 2", sans-serif'}}>Baloo 2</button>
+                 <button onClick={()=>setAppFont('tiro')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'tiro' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Tiro Devanagari Hindi", serif'}}>Tiro Hindi</button>
+                 <button onClick={()=>setAppFont('mukta')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'mukta' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Mukta, sans-serif'}}>Mukta</button>
+                 <button onClick={()=>setAppFont('noto-sans')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'noto-sans' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Noto Sans Devanagari", sans-serif'}}>Noto Sans</button>
+                 <button onClick={()=>setAppFont('noto-serif')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'noto-serif' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Noto Serif Devanagari", serif'}}>Noto Serif</button>
+                 <button onClick={()=>setAppFont('yatra')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'yatra' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Yatra One", sans-serif'}}>Yatra One</button>
+                 <button onClick={()=>setAppFont('kalam')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'kalam' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Kalam, cursive'}}>Kalam</button>
+                 <button onClick={()=>setAppFont('amita')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'amita' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Amita, cursive'}}>Amita</button>
+                 <button onClick={()=>setAppFont('rajdhani')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'rajdhani' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Rajdhani, sans-serif'}}>Rajdhani</button>
+                 <button onClick={()=>setAppFont('hind')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'hind' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Hind, sans-serif'}}>Hind</button>
+                 <button onClick={()=>setAppFont('rozha')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'rozha' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Rozha One", serif'}}>Rozha One</button>
+                 <button onClick={()=>setAppFont('eczar')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'eczar' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Eczar, serif'}}>Eczar</button>
+                 <button onClick={()=>setAppFont('poppins')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'poppins' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Poppins, sans-serif'}}>Poppins</button>
+                 <button onClick={()=>setAppFont('laila')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'laila' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Laila, sans-serif'}}>Laila</button>
+                 <button onClick={()=>setAppFont('karma')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'karma' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Karma, serif'}}>Karma</button>
+                 <button onClick={()=>setAppFont('sura')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'sura' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Sura, serif'}}>Sura</button>
+                 <button onClick={()=>setAppFont('vesper')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'vesper' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: '"Vesper Libre", serif'}}>Vesper</button>
+                 <button onClick={()=>setAppFont('tillana')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'tillana' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Tillana, cursive'}}>Tillana</button>
+                 <button onClick={()=>setAppFont('glegoo')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'glegoo' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Glegoo, serif'}}>Glegoo</button>
+                 <button onClick={()=>setAppFont('khula')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'khula' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Khula, sans-serif'}}>Khula</button>
+                 <button onClick={()=>setAppFont('yantramanav')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'yantramanav' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Yantramanav, sans-serif'}}>Yantramanav</button>
+                 <button onClick={()=>setAppFont('martel')} className={`snap-start shrink-0 px-5 py-3 rounded-sm border transition-all ${appFont === 'martel' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium' : 'border-gray-200 dark:border-gray-700 dark:text-white text-gray-700 font-medium'}`} style={{fontFamily: 'Martel, serif'}}>Martel</button>
+              </div>
            </div>
-        </div>
 
-        <button onClick={()=>setActiveTab('cat-mgmt')} className="w-full p-5 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all">
-           <div className="flex items-center gap-4 text-orange-600"><Tag/><span className="font-medium dark:text-white">संपर्क श्रेणी प्रबंधन</span></div>
-           <ChevronRight size={18} className="text-gray-300"/>
-         </button>
-        <button onClick={()=>setActiveTab('event-cat-mgmt')} className="w-full p-5 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all border-t dark:border-gray-700">
-           <div className="flex items-center gap-4 text-purple-600"><Flag/><span className="font-medium dark:text-white">कार्यक्रम श्रेणी प्रबंधन</span></div>
-           <ChevronRight size={18} className="text-gray-300"/>
-         </button>
+           <div className="p-5 space-y-4 border-t dark:border-gray-700">
+              <div className="flex items-center gap-4 text-orange-600 mb-2"><MessageSquare size={20}/><span className="font-medium dark:text-white">टेक्स्ट का आकार (Font Size)</span></div>
+              <div className="flex items-center justify-between gap-2 bg-gray-100/50 dark:bg-gray-800/50 p-1.5 rounded-xl border dark:border-gray-700">
+                 <button onClick={()=>setAppFontSize(14)} className={`flex-1 py-2 text-xs rounded-lg transition-all ${appFontSize === 14 ? 'bg-white dark:bg-gray-700 shadow-sm text-orange-600 font-medium' : 'text-gray-500 font-medium'}`}>छोटा</button>
+                 <button onClick={()=>setAppFontSize(16)} className={`flex-1 py-2 text-xs rounded-lg transition-all ${appFontSize === 16 ? 'bg-white dark:bg-gray-700 shadow-sm text-orange-600 font-medium' : 'text-gray-500 font-medium'}`}>सामान्य</button>
+                 <button onClick={()=>setAppFontSize(18)} className={`flex-1 py-2 text-sm rounded-lg transition-all ${appFontSize === 18 ? 'bg-white dark:bg-gray-700 shadow-sm text-orange-600 font-medium' : 'text-gray-500 font-medium'}`}>बड़ा</button>
+                 <button onClick={()=>setAppFontSize(20)} className={`flex-1 py-2 text-base rounded-lg transition-all ${appFontSize === 20 ? 'bg-white dark:bg-gray-700 shadow-sm text-orange-600 font-medium' : 'text-gray-500 font-medium'}`}>विशाल</button>
+              </div>
+           </div>
+         </div>
+       </div>
 
-        <button onClick={exportData} className="w-full p-5 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 border-t dark:border-gray-700"><div className="flex items-center gap-4 text-green-600"><Download/><span className="font-medium dark:text-white">बैकअप (JSON)</span></div></button>
-        <button onClick={importData} className="w-full p-5 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 border-t dark:border-gray-700"><div className="flex items-center gap-4 text-blue-600"><Upload/><span className="font-medium dark:text-white">डेटा रिस्टोर</span></div></button>
-        <button onClick={clearAllKaryas} className="w-full p-5 flex justify-between items-center text-orange-600 active:bg-orange-50 dark:active:bg-orange-900/10 transition-all border-t dark:border-gray-700"><div className="flex items-center gap-4"><Trash2/><span className="font-medium">सभी शाखा/मिलन/मंडली हटाएं</span></div></button>
-        <button onClick={resetAllData} className="w-full p-5 flex justify-between items-center text-red-600 active:bg-red-50 dark:active:bg-red-900/10 transition-all"><div className="flex items-center gap-4"><RotateCcw/><span className="font-medium">ऐप रिसेट करें</span></div></button>
+       {/* App Preferences Category */}
+       <div>
+         <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2 mb-2">प्राथमिकताएं</h2>
+         <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700 overflow-hidden divide-y dark:divide-gray-700 shadow-sm">
+           <div className="p-5 space-y-4">
+             <div className="flex items-center gap-4 text-[#25D366] mb-2"><WhatsappIcon size={20}/><span className="font-medium dark:text-white">WhatsApp संदेश</span></div>
+             <textarea rows={4} value={whatsappMessage}
+               onChange={(e) => setWhatsappMessage(e.target.value)}
+               placeholder="डिफ़ॉल्ट संदेश..."
+               className="w-full p-2.5 bg-white/30 dark:bg-[#080d19]/50 backdrop-blur-2xl border border-white/40 border-t-white/70 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] text-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 dark:border-gray-700/50 rounded-md outline-none font-medium text-sm"
+             ></textarea>
+           </div>
+           
+           <button onClick={()=>setActiveTab('cat-mgmt')} className="w-full p-5 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all border-t dark:border-gray-700">
+             <div className="flex items-center gap-4 text-orange-600"><Tag/><span className="font-medium dark:text-white">संपर्क श्रेणी प्रबंधन</span></div>
+             <ChevronRight size={18} className="text-gray-300"/>
+           </button>
+           <button onClick={()=>setActiveTab('event-cat-mgmt')} className="w-full p-5 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all border-t dark:border-gray-700">
+             <div className="flex items-center gap-4 text-purple-600"><Flag/><span className="font-medium dark:text-white">कार्यक्रम श्रेणी प्रबंधन</span></div>
+             <ChevronRight size={18} className="text-gray-300"/>
+           </button>
+         </div>
+       </div>
+
+       {/* Data & Backup Category */}
+       <div>
+         <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-2 mb-2">डेटा और सिस्टम</h2>
+         <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700 overflow-hidden divide-y dark:divide-gray-700 shadow-sm">
+           <button onClick={exportData} className="w-full p-5 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40"><div className="flex items-center gap-4 text-green-600"><Download/><span className="font-medium dark:text-white">बैकअप (JSON)</span></div></button>
+           <button onClick={importData} className="w-full p-5 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 border-t dark:border-gray-700"><div className="flex items-center gap-4 text-blue-600"><Upload/><span className="font-medium dark:text-white">डेटा रिस्टोर</span></div></button>
+           <button onClick={clearAllKaryas} className="w-full p-5 flex justify-between items-center text-orange-600 active:bg-orange-50 dark:active:bg-orange-900/10 transition-all border-t dark:border-gray-700"><div className="flex items-center gap-4"><Trash2/><span className="font-medium">सभी शाखा/मिलन/मंडली हटाएं</span></div></button>
+           <button onClick={resetAllData} className="w-full p-5 flex justify-between items-center text-red-600 active:bg-red-50 dark:active:bg-red-900/10 transition-all border-t dark:border-gray-700"><div className="flex items-center gap-4"><RotateCcw/><span className="font-medium">ऐप रिसेट करें</span></div></button>
+         </div>
+       </div>
      </div>
   </div>
 );
