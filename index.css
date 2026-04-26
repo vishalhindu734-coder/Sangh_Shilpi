@@ -5,6 +5,7 @@
   --font-sans: var(--app-font-family);
   --font-serif: var(--app-font-family);
   --font-mono: var(--app-font-family);
+  --font-hindi: "Mukta", "Noto Sans Devanagari", sans-serif;
 
   --color-blue-50: var(--blue-50);
   --color-blue-100: var(--blue-100);

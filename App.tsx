@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Home, 
@@ -4094,59 +4094,167 @@ const SettingsTab = ({
  </div>
 );
 
-const MenuTab = ({ userName, setUserName, setActiveTab }: any) => (
- <div className="p-4 pb-24 space-y-4 animate-in fade-in duration-300 text-sm">
-    <h1 className="text-xl font-bold text-blue-900 dark:text-blue-400 tracking-tight">मेनू</h1>
-     
-    <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-4 rounded-md border dark:border-gray-700 space-y-4 shadow-sm">
-       <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-md flex items-center justify-center text-white"><User size={20}/></div>
-          <div className="flex-1">
-             <input className="bg-transparent font-bold dark:text-white text-base w-full outline-none" value={userName} onChange={e=>setUserName(e.target.value)}/>
-             <div className="text-[10px] font-medium text-gray-400 uppercase tracking-widest mt-0.5">नाम सुधारें</div>
-          </div>
-       </div>
-    </div>
-
-    <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700 overflow-hidden divide-y dark:divide-gray-700 shadow-sm">
-       <button onClick={()=>setActiveTab('events')} className="w-full p-4 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all">
-          <div className="flex items-center gap-3 text-rose-500"><CalendarIcon size={18}/><span className="font-medium dark:text-gray-200">विस्तृत कार्यक्रम नियोजन</span></div>
-          <ChevronRight size={16} className="text-gray-400"/>
-        </button>
-       <button onClick={()=>setActiveTab('ideas')} className="w-full p-4 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all">
-          <div className="flex items-center gap-3 text-purple-600"><Lightbulb size={18}/><span className="font-medium dark:text-gray-200">भविष्य योजना</span></div>
-          <ChevronRight size={16} className="text-gray-400"/>
-        </button>
-       <button onClick={()=>setActiveTab('lists')} className="w-full p-4 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all">
-          <div className="flex items-center gap-3 text-indigo-600"><ListIcon size={18}/><span className="font-medium dark:text-gray-200">सूचियां (गट)</span></div>
-          <ChevronRight size={16} className="text-gray-400"/>
-        </button>
-       <button onClick={()=>setActiveTab('work-status')} className="w-full p-4 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all">
-          <div className="flex items-center gap-3 text-blue-600"><Building2 size={18}/><span className="font-medium dark:text-gray-200">कार्यस्थिति</span></div>
-          <ChevronRight size={16} className="text-gray-400"/>
-        </button>
-       <button onClick={()=>setActiveTab('trips')} className="w-full p-4 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all">
-          <div className="flex items-center gap-3 text-orange-600"><CalendarIcon size={18}/><span className="font-medium dark:text-gray-200">प्रवास योजना</span></div>
-          <ChevronRight size={16} className="text-gray-400"/>
-        </button>
-        <button onClick={()=>setActiveTab('area-mgmt')} className="w-full p-4 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all">
-          <div className="flex items-center gap-3 text-emerald-600"><MapPin size={18}/><span className="font-medium dark:text-gray-200">कार्यक्षेत्र प्रबंधन</span></div>
-          <ChevronRight size={16} className="text-gray-400"/>
-        </button>
-        <button onClick={()=>setActiveTab('reports')} className="w-full p-4 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all border-t dark:border-gray-700">
-          <div className="flex items-center gap-3 text-rose-600"><FileText size={18}/><span className="font-medium dark:text-gray-200">रिपोर्ट्स</span></div>
-          <ChevronRight size={16} className="text-gray-400"/>
-        </button>
-    </div>
-
-    <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700 overflow-hidden shadow-sm">
-       <button onClick={()=>setActiveTab('settings')} className="w-full p-4 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all">
-          <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400"><Settings size={18}/><span className="font-medium dark:text-gray-200">ऐप सेटिंग्स</span></div>
-          <ChevronRight size={16} className="text-gray-400"/>
-        </button>
-    </div>
- </div>
+const Ripple = ({ x, y, onComplete }: { x: number; y: number; onComplete: () => void }) => (
+  <motion.span
+    initial={{ scale: 0, opacity: 0.5 }}
+    animate={{ scale: 4, opacity: 0 }}
+    onAnimationComplete={onComplete}
+    style={{ left: x, top: y }}
+    className="absolute w-10 h-10 bg-white/40 rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2"
+  />
 );
+
+const GridMenuItem = ({ icon: Icon, label, color, onClick, delay = 0, variant = "square" }: any) => {
+  const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
+  
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setRipples(prev => [...prev, { id: Date.now(), x, y }]);
+    setTimeout(() => onClick(), 200);
+  };
+
+  const getVariantStyles = () => {
+    switch(variant) {
+      case 'wide': return "col-span-2 aspect-[2.5/1]";
+      default: return "col-span-1 aspect-square";
+    }
+  };
+
+  return (
+    <motion.button
+      initial={{ scale: 0.95, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ 
+        type: "spring", 
+        stiffness: 350, 
+        damping: 25, 
+        delay: delay * 0.02 
+      }}
+      whileTap={{ scale: 0.95 }}
+      onClick={handleClick}
+      className={`relative group flex flex-col items-center justify-center p-3 rounded-2xl bg-white dark:bg-[#0f172a] border border-gray-100 dark:border-white/5 shadow-sm active:shadow-inner transition-all overflow-hidden ${getVariantStyles()}`}
+    >
+      <AnimatePresence>
+        {ripples.map(ripple => (
+          <Ripple 
+            key={ripple.id} 
+            x={ripple.x} 
+            y={ripple.y} 
+            onComplete={() => setRipples(prev => prev.filter(r => r.id !== ripple.id))} 
+          />
+        ))}
+      </AnimatePresence>
+
+      <div className={`p-2 rounded-xl shadow-md ${color} mb-1.5`}>
+        <Icon size={20} strokeWidth={2.5} />
+      </div>
+      
+      <span className="text-[10px] font-black dark:text-gray-200 text-center leading-tight font-hindi uppercase tracking-tight">
+        {label}
+      </span>
+    </motion.button>
+  );
+};
+
+const MenuTab = ({ userName, setUserName, setActiveTab }: any) => {
+  return (
+    <div className="flex flex-col h-full bg-[#f8fafc] dark:bg-[#020617] overflow-hidden">
+      {/* Compact Static Header */}
+      <div className="p-4 bg-white dark:bg-[#0f172a] border-b border-gray-200 dark:border-gray-800 shadow-sm shrink-0">
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3"
+        >
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white shadow-lg shrink-0">
+            <User size={20} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <input 
+              className="bg-transparent font-black text-gray-900 dark:text-gray-100 text-base w-full outline-none placeholder:text-gray-400 font-hindi truncate" 
+              value={userName} 
+              onChange={e => setUserName(e.target.value)}
+              placeholder="नमो नमः..."
+            />
+            <p className="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.2em] leading-none">Primary Administrator</p>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Grid Optimized for Zero Scroll */}
+      <div className="p-4 flex-1 overflow-hidden flex flex-col">
+        <div className="grid grid-cols-3 gap-3">
+          <GridMenuItem 
+            delay={0}
+            icon={CalendarIcon} 
+            label="कार्यक्रम" 
+            color="bg-rose-500 text-white"
+            onClick={() => setActiveTab('events')} 
+          />
+          <GridMenuItem 
+            delay={1}
+            icon={ListIcon} 
+            label="समूह" 
+            color="bg-indigo-500 text-white"
+            onClick={() => setActiveTab('lists')} 
+          />
+          <GridMenuItem 
+            delay={2}
+            icon={Rocket} 
+            label="प्रवास" 
+            color="bg-orange-500 text-white"
+            onClick={() => setActiveTab('trips')} 
+          />
+          <GridMenuItem 
+            delay={3}
+            icon={Building2} 
+            label="संगठन" 
+            color="bg-blue-600 text-white"
+            onClick={() => setActiveTab('work-status')} 
+          />
+          <GridMenuItem 
+            delay={4}
+            icon={MapPin} 
+            label="क्षेत्रीय" 
+            color="bg-emerald-600 text-white"
+            onClick={() => setActiveTab('area-mgmt')} 
+          />
+          <GridMenuItem 
+            delay={5}
+            icon={Lightbulb} 
+            label="विजन" 
+            color="bg-purple-600 text-white"
+            onClick={() => setActiveTab('ideas')} 
+          />
+          
+          <GridMenuItem 
+            variant="wide"
+            delay={6}
+            icon={FileText} 
+            label="रिपोर्ट्स एवं डेटा" 
+            color="bg-pink-600 text-white"
+            onClick={() => setActiveTab('reports')} 
+          />
+          
+          <GridMenuItem 
+            variant="wide"
+            delay={7}
+            icon={Settings} 
+            label="सेटिंग्स" 
+            color="bg-slate-700 text-white"
+            onClick={() => setActiveTab('settings')} 
+          />
+        </div>
+
+        <div className="mt-auto flex flex-col items-center gap-1 opacity-20 py-4">
+          <p className="text-[8px] font-black text-gray-500 uppercase tracking-[0.3em]">Smart Dashboard System</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PromptModal = ({ title, placeholder, onSubmit, onCancel }: any) => {
    const [val, setVal] = useState('');
