@@ -1,0 +1,101 @@
+2763-        </div>
+2764-      </header>
+2765-
+2766-      <div className="flex-1 overflow-y-auto p-6 space-y-6 max-w-md mx-auto w-full pb-32 relative z-10">
+2767-        <div className="space-y-4">
+2768-           <input placeholder="पूरा नाम" className="w-full bg-white/30 dark:bg-[#080d19]/50 backdrop-blur-2xl border border-white/40 border-t-white/70 shadow-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 dark:border-gray-700/50 p-3 rounded-md outline-none font-bold text-sm" value={name} onChange={e=>setName(e.target.value)} />
+2769-           <input placeholder="मोबाइल नंबर (स्वयं)" type="tel" maxLength={10} className="w-full bg-white/30 dark:bg-[#080d19]/50 backdrop-blur-2xl border border-white/40 border-t-white/70 shadow-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 dark:border-gray-700/50 p-3 rounded-md outline-none font-bold text-sm" value={phone} onChange={e=>setPhone(e.target.value)} />
+2770-           
+2771-           <div className="grid grid-cols-2 gap-3">
+2772-             <select className="p-3 bg-white/30 dark:bg-[#080d19]/50 backdrop-blur-2xl border border-white/40 border-t-white/70 shadow-sm text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md font-bold text-xs outline-none" value={khandId} onChange={e=>{setKhandId(e.target.value); setMandalId(''); setVillageId('');}}>
+2773-               <option value="">खंड चुनें</option>
+2774-               {khands.map((k: any) => <option key={k.id} value={k.id}>{k.name}</option>)}
+2775-             </select>
+2776-             <select className="p-3 bg-white/30 dark:bg-[#080d19]/50 backdrop-blur-2xl border border-white/40 border-t-white/70 shadow-sm text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md font-bold text-xs outline-none disabled:opacity-50" value={mandalId} disabled={!khandId} onChange={e=>{setMandalId(e.target.value); setVillageId('');}}>
+2777-               <option value="">मंडल चुनें</option>
+2778-               {mandals.filter((m: any) => m.khandId === khandId).map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
+2779-             </select>
+2780-           </div>
+2781-           <select className="w-full p-3 bg-white/30 dark:bg-[#080d19]/50 backdrop-blur-2xl border border-white/40 border-t-white/70 shadow-sm text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md font-bold text-xs outline-none disabled:opacity-50" value={villageId} disabled={!mandalId} onChange={e=>setVillageId(e.target.value)}>
+2782-             <option value="">गांव / बस्ती चुनें</option>
+2783-             {villages.filter((v: any)=>v.mandalId===mandalId).map((v: any) => <option key={v.id} value={v.id}>{v.name}</option>)}
+2784-           </select>
+2785-           
+2786-           <div className="grid grid-cols-2 gap-3">
+2787-             <div className="space-y-1">
+2788-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">श्रेणी</label>
+2789-               <div className="relative">
+2790-                 <select className="w-full bg-white/30 dark:bg-[#080d19]/50 backdrop-blur-2xl border border-white/40 border-t-white/70 shadow-sm text-gray-800 dark:text-gray-100 p-3 rounded-md font-bold text-xs appearance-none pl-9 dark:border-gray-700/50 outline-none" value={cat} onChange={e=>setCat(e.target.value)}>
+2791-                   {categories.map((c: any) => <option key={c.id} value={c.name}>{c.name}</option>)}
+2792-                 </select>
+2793-                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-600 dark:text-indigo-400">
+2794-                    <LucideIcon name={categories.find((c:any)=>c.name===cat)?.icon || 'Tag'} size={14} />
+2795-                 </div>
+2796-               </div>
+2797-             </div>
+2798-             <div className="space-y-1">
+2799-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">स्थिति</label>
+2800-               <select className="w-full bg-white/30 dark:bg-[#080d19]/50 backdrop-blur-2xl border border-white/40 border-t-white/70 shadow-sm text-gray-800 dark:text-gray-100 p-3 rounded-md font-bold text-xs dark:border-gray-700/50 outline-none" value={status} onChange={e=>setStatus(e.target.value as Status)}>
+2801-                 {Object.values(Status).map(s => <option key={s} value={s}>{s}</option>)}
+2802-               </select>
+2803-             </div>
+2804-           </div>
+2805-
+2806-           {/* Expandable Volunteer Profile Details */}
+2807-           <div className="pt-2">
+2808-              <button onClick={() => setShowMore(!showMore)} className="w-full py-3 flex items-center justify-center gap-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold rounded-md transition-all">
+2809-                 {showMore ? "कम करें" : "+ अधिक विवरण (स्वयंसेवक विवरण पत्रक)"}
+2810-              </button>
+2811-           </div>
+2812-           
+2813:           {showMore && (
+2814-             <div className="space-y-6 pt-4 border-t dark:border-gray-800 animate-in slide-in-from-top-4 duration-300">
+2815-                <div className="space-y-4">
+2816-                  <h3 className="text-sm font-black text-gray-500 uppercase tracking-widest">व्यक्तिगत विवरण</h3>
+2817-                  <input placeholder="पिता का नाम" className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-sm text-sm font-bold border dark:border-gray-700" value={profile.fatherName || ''} onChange={e=>updateProfile('fatherName', e.target.value)} />
+2818-                  <div className="grid grid-cols-2 gap-3">
+2819-                     <div className="space-y-1">
+2820-                        <label className="text-[10px] font-bold text-gray-400 pl-1">जन्मतिथि</label>
+2821-                        <input type="date" className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-sm text-sm font-bold border dark:border-gray-700" value={profile.dob || ''} onChange={e=>updateProfile('dob', e.target.value)} />
+2822-                     </div>
+2823-                     <div className="space-y-1">
+2824-                        <label className="text-[10px] font-bold text-gray-400 pl-1">रक्त समूह</label>
+2825-                        <input placeholder="A+, B+, O-, etc." className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-sm text-sm font-bold border dark:border-gray-700 uppercase" value={profile.bloodGroup || ''} onChange={e=>updateProfile('bloodGroup', e.target.value)} />
+2826-                     </div>
+2827-                     <select className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-sm text-sm font-bold border dark:border-gray-700" value={profile.maritalStatus || ''} onChange={e=>updateProfile('maritalStatus', e.target.value)}>
+2828-                        <option value="">वैवाहिक स्थिति</option>
+2829-                        <option value="विवाहित">विवाहित</option>
+2830-                        <option value="अविवाहित">अविवाहित</option>
+2831-                     </select>
+2832-                     <input placeholder="मोबाइल 2 (घर)" type="tel" maxLength={10} className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-sm text-sm font-bold border dark:border-gray-700" value={profile.phone2 || ''} onChange={e=>updateProfile('phone2', e.target.value)} />
+2833-                  </div>
+2834-                  <input placeholder="ईमेल" type="email" className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-sm text-sm font-bold border dark:border-gray-700" value={profile.email || ''} onChange={e=>updateProfile('email', e.target.value)} />
+2835-                  <textarea placeholder="स्थानीय पता" rows={2} className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-sm text-sm font-bold border dark:border-gray-700" value={profile.localAddress || ''} onChange={e=>updateProfile('localAddress', e.target.value)} />
+2836-                </div>
+2837-
+2838-                <div className="space-y-4">
+2839-                  <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">शिक्षा एवं व्यवसाय</h3>
+2840-                  <input placeholder="शैक्षणिक योग्यता" className="w-full p-3 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-md text-xs font-bold border dark:border-gray-700 outline-none" value={profile.education || ''} onChange={e=>updateProfile('education', e.target.value)} />
+2841-                  <input placeholder="व्यवसाय" className="w-full p-3 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-md text-xs font-bold border dark:border-gray-700 outline-none" value={profile.profession || ''} onChange={e=>updateProfile('profession', e.target.value)} />
+2842-                  <input placeholder="पद / कार्यालय का विवरण" className="w-full p-3 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-md text-xs font-bold border dark:border-gray-700 outline-none" value={profile.officeDetails || ''} onChange={e=>updateProfile('officeDetails', e.target.value)} />
+2843-                </div>
+2844-
+2845-                <div className="space-y-4">
+2846-                  <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">सांघिक जानकारी</h3>
+2847-                  <div className="grid grid-cols-2 gap-3">
+2848-                     <input placeholder="संघ प्रवेश वर्ष" type="number" className="w-full p-3 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-md text-xs font-bold border dark:border-gray-700 outline-none" value={profile.sanghEntryYear || ''} onChange={e=>updateProfile('sanghEntryYear', e.target.value)} />
+2849-                     <input placeholder="वर्तमान शाखा" className="w-full p-3 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-md text-xs font-bold border dark:border-gray-700 outline-none" value={profile.currentShakha || ''} onChange={e=>updateProfile('currentShakha', e.target.value)} />
+2850-                  </div>
+2851-                  <input placeholder="वर्तमान दायित्व" className="w-full p-3 bg-gray-50 dark:bg-gray-800/50 dark:text-white rounded-md text-xs font-bold border dark:border-gray-700 outline-none" value={profile.currentResponsibility || ''} onChange={e=>updateProfile('currentResponsibility', e.target.value)} />
+2852-                  
+2853-                  <div className="space-y-2 border border-gray-200 dark:border-gray-700 p-3 rounded-md bg-gray-50/50 dark:bg-gray-800/20">
+2854-                    <div className="flex justify-between items-center pb-2 border-b border-gray-200 dark:border-gray-700/50">
+2855-                      <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest px-1">पूर्व दायित्व विवरण</label>
+2856-                      <button onClick={() => addListEntry('previousResponsibilities', { title: '', year: '' })} className="p-1.5 bg-blue-100 text-blue-600 rounded-lg text-xs font-bold active:scale-95"><Plus size={14} /></button>
+2857-                    </div>
+2858-                    {Array.isArray(profile.previousResponsibilities) && profile.previousResponsibilities.map((item: any, idx: number) => (
+2859-                      <div key={idx} className="flex gap-2 items-center">
+2860-                        <input placeholder="दायित्व" className="flex-1 p-2 bg-white dark:bg-gray-800 dark:text-white rounded text-xs border dark:border-gray-700 outline-none" value={item.title || ''} onChange={e => updateListEntry('previousResponsibilities', idx, 'title', e.target.value)} />
+2861-                        <input placeholder="वर्ष" type="number" className="w-20 p-2 bg-white dark:bg-gray-800 dark:text-white rounded text-xs border dark:border-gray-700 outline-none text-center" value={item.year || ''} onChange={e => updateListEntry('previousResponsibilities', idx, 'year', e.target.value)} />
+2862-                        <button onClick={() => removeListEntry('previousResponsibilities', idx)} className="text-gray-400 hover:text-red-500 p-1"><Trash2 size={14}/></button>
+2863-                      </div>

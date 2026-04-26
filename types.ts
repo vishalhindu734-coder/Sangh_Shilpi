@@ -10,7 +10,23 @@ export enum VillageStage {
   SHAKHA = 'शाखा',
   MILAN = 'मिलन',
   MANDALI = 'मंडली',
+  SAMPARK = 'संपर्क',
   NONE = 'कुछ नहीं'
+}
+
+export interface KaryaDetails {
+  location?: string;
+  time?: string;
+  dayOfWeek?: string;
+  daysOfMonth?: string;
+  notes?: string;
+}
+
+export interface KaryaPlan {
+  current?: string;
+  month1?: string;
+  month6?: string;
+  year1?: string;
 }
 
 export enum ShakhaPosition {
@@ -27,12 +43,23 @@ export interface ShakhaData {
   positions: Partial<Record<ShakhaPosition, string>>; // Stores contactId
 }
 
+export interface Target {
+  id: string;
+  title: string;
+  date: string; // YYYY-MM-DD
+  isCompleted?: boolean;
+}
+
 export interface Village {
   id: string;
   name: string;
   mandalId: string;
   stage: VillageStage;
   shakhaData?: ShakhaData;
+  specialty?: string;
+  karyaDetails?: KaryaDetails;
+  karyaPlan?: KaryaPlan;
+  targets?: Target[];
 }
 
 export interface Mandal {
@@ -53,6 +80,43 @@ export interface VisitHistory {
   nextFollowUp?: string;
 }
 
+export interface PreviousResponsibility {
+  responsibility: string;
+  year: string;
+}
+
+export interface SanghTraining {
+  varg: string;
+  year: string;
+  location: string;
+}
+
+export interface VolunteerProfile {
+  fatherName?: string;
+  dob?: string;
+  bloodGroup?: string;
+  maritalStatus?: string;
+  phone2?: string;
+  email?: string;
+  localAddress?: string;
+  education?: string;
+  profession?: string;
+  officeDetails?: string;
+  sanghEntryYear?: string;
+  currentShakha?: string;
+  currentResponsibility?: string;
+  previousResponsibilitiesStr?: string;
+  sanghTraining?: Array<{class: string, year: string, location: string}>;
+  uniformStatus?: string; // पूर्ण, अपूर्ण, नहीं
+  vehicle?: string; // दुपहिया, चौपहिया
+  isPratijnyavan?: boolean;
+  ghoshVadya?: string;
+  specialSkills?: string;
+  areasOfInterest?: string[];
+  availability?: string[];
+  otherDetails?: string;
+}
+
 export interface Contact {
   id: string;
   name: string;
@@ -65,6 +129,14 @@ export interface Contact {
   lastVisited?: string;
   listIds: string[];
   history: VisitHistory[];
+  volunteerProfile?: VolunteerProfile;
+}
+
+export interface TripScheduleItem {
+  id: string;
+  time: string;
+  villageId: string;
+  contactId: string;
 }
 
 export interface TripPlan {
@@ -74,6 +146,7 @@ export interface TripPlan {
   mandalId: string;
   villageIds: string[];
   peopleIds: string[];
+  schedule?: TripScheduleItem[];
   notes: string;
   isCompleted: boolean;
 }

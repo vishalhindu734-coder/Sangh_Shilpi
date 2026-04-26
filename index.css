@@ -1,16 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--app-font-family);
+  --font-serif: var(--app-font-family);
+  --font-mono: var(--app-font-family);
+
+  --color-blue-50: var(--blue-50);
+  --color-blue-100: var(--blue-100);
+  --color-blue-200: var(--blue-200);
+  --color-blue-300: var(--blue-300);
+  --color-blue-400: var(--blue-400);
+  --color-blue-500: var(--blue-500);
+  --color-blue-600: var(--blue-600);
+  --color-blue-700: var(--blue-700);
+  --color-blue-800: var(--blue-800);
+  --color-blue-900: var(--blue-900);
+
+  --color-indigo-50: var(--indigo-50);
+  --color-indigo-100: var(--indigo-100);
+  --color-indigo-200: var(--indigo-200);
+  --color-indigo-300: var(--indigo-300);
+  --color-indigo-400: var(--indigo-400);
+  --color-indigo-500: var(--indigo-500);
+  --color-indigo-600: var(--indigo-600);
+  --color-indigo-700: var(--indigo-700);
+  --color-indigo-800: var(--indigo-800);
+  --color-indigo-900: var(--indigo-900);
+
+  --color-orange-50: var(--orange-50);
+  --color-orange-100: var(--orange-100);
+  --color-orange-200: var(--orange-200);
+  --color-orange-300: var(--orange-300);
+  --color-orange-400: var(--orange-400);
+  --color-orange-500: var(--orange-500);
+  --color-orange-600: var(--orange-600);
+  --color-orange-700: var(--orange-700);
+  --color-orange-800: var(--orange-800);
+  --color-orange-900: var(--orange-900);
+}
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Default Theme (Blue/Indigo/Orange) */
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-800: #1e40af;
+  --blue-900: #1e3a8a;
+
+  --indigo-50: #eef2ff;
+  --indigo-100: #e0e7ff;
+  --indigo-200: #c7d2fe;
+  --indigo-300: #a5b4fc;
+  --indigo-400: #818cf8;
+  --indigo-500: #6366f1;
+  --indigo-600: #4f46e5;
+  --indigo-700: #4338ca;
+  --indigo-800: #3730a3;
+  --indigo-900: #312e81;
+
+  --orange-50: #fff7ed;
+  --orange-100: #ffedd5;
+  --orange-200: #fed7aa;
+  --orange-300: #fdba74;
+  --orange-400: #fb923c;
+  --orange-500: #f97316;
+  --orange-600: #ea580c;
+  --orange-700: #c2410c;
+  --orange-800: #9a3412;
+  --orange-900: #7c2d12;
+
+  --app-font-size: 16px;
+}
+
+html {
+  font-size: var(--app-font-size);
+}
+
+/* Theme 1 - Green/Emerald/Amber (Nature) */
+.theme-nature {
+  --blue-50: #f0fdf4;
+  --blue-100: #dcfce7;
+  --blue-200: #bbf7d0;
+  --blue-300: #86efac;
+  --blue-400: #4ade80;
+  --blue-500: #22c55e;
+  --blue-600: #16a34a;
+  --blue-700: #15803d;
+  --blue-800: #166534;
+  --blue-900: #14532d;
+
+  --indigo-50: #ecfdf5;
+  --indigo-100: #d1fae5;
+  --indigo-200: #a7f3d0;
+  --indigo-300: #6ee7b7;
+  --indigo-400: #34d399;
+  --indigo-500: #10b981;
+  --indigo-600: #059669;
+  --indigo-700: #047857;
+  --indigo-800: #065f46;
+  --indigo-900: #064e3b;
+
+  --orange-50: #fffbeb;
+  --orange-100: #fef3c7;
+  --orange-200: #fde68a;
+  --orange-300: #fcd34d;
+  --orange-400: #fbbf24;
+  --orange-500: #f59e0b;
+  --orange-600: #d97706;
+  --orange-700: #b45309;
+  --orange-800: #92400e;
+  --orange-900: #78350f;
+}
+
+/* Theme 2 - Rose/Pink/Violet (Warm) */
+.theme-rose {
+  --blue-50: #fff1f2;
+  --blue-100: #ffe4e6;
+  --blue-200: #fecdd3;
+  --blue-300: #fda4af;
+  --blue-400: #fb7185;
+  --blue-500: #f43f5e;
+  --blue-600: #e11d48;
+  --blue-700: #be123c;
+  --blue-800: #9f1239;
+  --blue-900: #881337;
+
+  --indigo-50: #fdf4ff;
+  --indigo-100: #fae8ff;
+  --indigo-200: #f3e8ff; /* violet instead of pink */
+  --indigo-300: #f0abfc;
+  --indigo-400: #e879f9;
+  --indigo-500: #d946ef;
+  --indigo-600: #c026d3;
+  --indigo-700: #a21caf;
+  --indigo-800: #86198f;
+  --indigo-900: #701a75;
+
+  --orange-50: #f5f3ff;
+  --orange-100: #ede9fe;
+  --orange-200: #ddd6fe;
+  --orange-300: #c4b5fd;
+  --orange-400: #a78bfa;
+  --orange-500: #8b5cf6;
+  --orange-600: #7c3aed;
+  --orange-700: #6d28d9;
+  --orange-800: #5b21b6;
+  --orange-900: #4c1d95;
+}
+
+:root {
+  --app-font-family: 'Baloo 2', ui-sans-serif, system-ui, sans-serif;
+}
+:root.font-baloo { 
+  --app-font-family: 'Baloo 2', ui-sans-serif, system-ui, sans-serif; 
+}
+:root.font-tiro { 
+  --app-font-family: 'Tiro Devanagari Hindi', ui-serif, Georgia, serif; 
+}
+
+@utility glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@utility glass-dark {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@utility abstract-btn {
+  @apply relative overflow-hidden transition-all duration-300;
+  &::before {
+    content: '';
+    @apply absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300;
+  }
+  &:hover::before {
+    @apply opacity-100;
+  }
+  &::after {
+    content: '';
+    @apply absolute -inset-full bg-linear-to-tr from-transparent via-white/10 to-transparent rotate-45 translate-x-[-100%] transition-transform duration-700;
+  }
+  &:hover::after {
+    @apply translate-x-[100%];
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(10px, -15px) scale(1.02); }
+  66% { transform: translate(-10px, 10px) scale(0.98); }
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 12s ease-in-out infinite;
 }
 
 body {
-  @apply bg-gray-50 transition-colors duration-200;
+  @apply bg-gray-50 text-gray-900 transition-colors duration-200;
   -webkit-tap-highlight-color: transparent;
 }
 
 .dark body {
-  @apply bg-gray-950;
+  @apply bg-gray-950 text-gray-100;
 }
 
 .bottom-nav {

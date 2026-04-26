@@ -38,6 +38,7 @@ export const INITIAL_VILLAGES: Village[] = Array.from({ length: 45 }).map((_, i)
   name: `गांव ${i + 1}`,
   mandalId: `m${Math.floor(i / 5) + 1}`,
   stage: VillageStage.NONE,
+  specialty: i === 0 ? 'यहाँ के कार्यकर्ता बहुत सक्रिय हैं।' : undefined,
 }));
 
 export const INITIAL_CONTACTS: Contact[] = [
