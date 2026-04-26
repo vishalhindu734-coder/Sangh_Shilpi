@@ -44,7 +44,8 @@ import {
   GripVertical,
   LayoutList,
   CalendarDays,
-  ChevronLeft
+  ChevronLeft,
+  Compass
 } from 'lucide-react';
 import { 
   Status, 
@@ -592,29 +593,52 @@ const App: React.FC = () => {
 
     return (
       <div className="p-4 pb-24 space-y-6 animate-in fade-in duration-500">
-        <header className="flex justify-between items-center sticky top-0 z-30 bg-slate-50/95 dark:bg-[#070b14]/95 backdrop-blur-xl -mt-4 -mx-4 p-4 border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm">
-          <div>
-            <h1 className="text-3xl font-bold text-blue-900 dark:text-blue-400 tracking-normal">संगठन शिल्पी</h1>
-            <p className="text-sm text-gray-500 font-medium uppercase mt-1 tracking-widest">नमस्ते, {userName}</p>
+        <header className="sticky top-0 z-30 bg-slate-50/95 dark:bg-[#070b14]/95 backdrop-blur-xl -mt-4 -mx-4 px-4 py-3 border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm flex justify-between items-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-red-500/10 dark:bg-red-500/5 rounded-full blur-2xl -ml-10 -mb-10"></div>
+          <div className="relative flex items-center gap-3 flex-1 min-w-0 pr-4">
+             <div className="w-11 h-11 rounded-xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 shadow-sm flex items-center justify-center p-1.5 shrink-0 overflow-hidden">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/RSS_Flag.svg/512px-RSS_Flag.svg.png" alt="Dhwaj" className="w-full h-full object-contain drop-shadow-sm" />
+             </div>
+             <div className="flex-1 min-w-0 py-0.5">
+               <h1 className="text-[22px] font-extrabold text-orange-600 dark:text-orange-500 tracking-tight leading-tight truncate">संगठन शिल्पी</h1>
+               <p className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest truncate">नमस्ते, {userName}</p>
+             </div>
           </div>
-          <button onClick={() => setDarkMode(!darkMode)} className="p-3 bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md shadow-sm border dark:border-gray-700 active:scale-95 transition-all">
-            {darkMode ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} className="text-blue-600" />}
+          <button onClick={() => setDarkMode(!darkMode)} className="relative p-2.5 bg-white dark:bg-[#0a101f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm active:scale-95 transition-all shrink-0">
+            {darkMode ? <Sun size={18} className="text-yellow-500" /> : <Moon size={18} className="text-blue-600" />}
           </button>
         </header>
 
-        <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-5 rounded-md shadow-sm border dark:border-gray-700 space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <select value={dashKhand} onChange={(e) => { setDashKhand(e.target.value); setDashMandal('all'); }} className="w-full bg-gray-50 dark:bg-gray-900 dark:text-gray-100 p-3 rounded-sm border dark:border-gray-700 font-medium text-xs outline-none">
-              <option value="all">सभी खंड</option>
-              {khands.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
-            </select>
-            <select value={dashMandal} disabled={dashKhand === 'all'} onChange={(e) => setDashMandal(e.target.value)} className="w-full bg-gray-50 dark:bg-gray-900 dark:text-gray-100 p-3 rounded-sm border dark:border-gray-700 font-medium text-xs outline-none disabled:opacity-50">
-              <option value="all">सभी मंडल</option>
-              {mandals.filter(m => m.khandId === dashKhand).map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-            </select>
+        <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-sm text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-5 rounded-2xl relative overflow-hidden">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="p-1.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg">
+              <MapPin size={16} />
+            </div>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">क्षेत्र चुनें</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3 relative z-10">
+            <div className="relative">
+              <select value={dashKhand} onChange={(e) => { setDashKhand(e.target.value); setDashMandal('all'); }} className="w-full bg-white dark:bg-[#0a101f] text-gray-800 dark:text-gray-100 p-3 pl-4 rounded-xl border border-gray-200 dark:border-gray-800 font-bold text-xs outline-none shadow-sm appearance-none focus:ring-2 focus:ring-blue-500/50">
+                <option value="all">सभी खंड</option>
+                {khands.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                <ChevronRight size={14} className="rotate-90" />
+              </div>
+            </div>
+            <div className="relative">
+              <select value={dashMandal} disabled={dashKhand === 'all'} onChange={(e) => setDashMandal(e.target.value)} className="w-full bg-white dark:bg-[#0a101f] text-gray-800 dark:text-gray-100 p-3 pl-4 rounded-xl border border-gray-200 dark:border-gray-800 font-bold text-xs outline-none shadow-sm appearance-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50">
+                <option value="all">सभी मंडल</option>
+                {mandals.filter(m => m.khandId === dashKhand).map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                <ChevronRight size={14} className="rotate-90" />
+              </div>
+            </div>
           </div>
           
-          <div className="grid grid-cols-4 gap-2 pt-2 border-t border-white/30 dark:border-gray-700/50">
+          <div className="grid grid-cols-4 gap-2 pt-4 mt-2 border-t border-gray-200/50 dark:border-gray-700/50">
              <div 
                onClick={() => { setDashStage(VillageStage.SHAKHA); setActiveTab('work-status'); }}
                className="bg-orange-50 dark:bg-orange-900/20 text-orange-600 border border-orange-200 dark:border-orange-800 p-2 rounded-lg shadow-sm flex flex-col justify-center items-center cursor-pointer active:scale-95 transition-all">
@@ -804,45 +828,64 @@ const App: React.FC = () => {
     return (
       <div className="p-3 pb-24 space-y-3">
         <div className="sticky top-0 z-30 pt-3 pb-3 -mt-3 bg-slate-50/95 dark:bg-[#070b14]/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm -mx-3 px-3 space-y-3">
-          <header className="flex justify-between items-center bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2 rounded-2xl shadow-sm">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-indigo-600 text-white rounded-xl shadow-lg">
-                <UsersRound size={18}/>
+          <header className="flex justify-between items-center relative overflow-hidden bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2.5 rounded-2xl shadow-sm">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl flex-none z-0"></div>
+            <div className="relative z-10 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 p-2">
+                <UsersRound size={20} strokeWidth={2.5} />
               </div>
               <div className="flex flex-col">
-                <h1 className="text-lg font-bold dark:text-white tracking-tight leading-none">स्वयंसेवक एवं संपर्क</h1>
-                <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mt-1">कुल डेटा: {contacts.length}</span>
+                <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-tight">स्वयंसेवक एवं संपर्क</h1>
+                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mt-0.5 leading-tight">कुल डेटा: {contacts.length}</span>
               </div>
             </div>
             <button onClick={() => {
               setEditingContact({ category: 'स्वयंसेवक' } as any);
               setIsAddingContact(true);
-            }} className="p-2.5 bg-indigo-600 text-white rounded-xl shadow-lg active:scale-90 transition-all"><Plus size={20}/></button>
+            }} className="relative z-10 p-2.5 bg-gradient-to-br from-indigo-600 to-indigo-700 text-white rounded-xl shadow-lg shadow-indigo-500/30 active:scale-90 transition-all">
+              <Plus size={20} strokeWidth={2.5} />
+            </button>
           </header>
 
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
-              <input type="text" placeholder="खोजें..." value={peopleSearch} onChange={e=>setPeopleSearch(e.target.value)} className="w-full bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 placeholder:text-gray-500 text-sm p-2 pl-8 rounded-xl outline-none shadow-sm font-medium" />
+          <div className="flex flex-col gap-2 bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2.5 rounded-2xl shadow-sm">
+            <div className="flex items-center gap-2 px-1 text-gray-500 dark:text-gray-400">
+              <MapPin size={14} />
+              <span className="text-[10px] font-bold uppercase tracking-widest">क्षेत्र एवं खोज</span>
             </div>
-            <div className="flex gap-1 shrink-0">
-              <select 
-                value={dashKhand} 
-                onChange={(e) => { setDashKhand(e.target.value); setDashMandal('all'); }} 
-                className="bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 p-1.5 rounded-xl font-medium text-xs outline-none shadow-sm"
-              >
-                <option value="all">खंड</option>
-                {khands.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
-              </select>
-              <select 
-                value={dashMandal} 
-                disabled={dashKhand === 'all'} 
-                onChange={(e) => setDashMandal(e.target.value)} 
-                className="bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 p-1.5 rounded-xl font-medium text-xs outline-none shadow-sm disabled:opacity-50"
-              >
-                <option value="all">मंडल</option>
-                {mandals.filter(m => m.khandId === dashKhand).map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-              </select>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                <input type="text" placeholder="खोजें..." value={peopleSearch} onChange={e=>setPeopleSearch(e.target.value)} className="w-full bg-gray-50 dark:bg-[#0a101f] border border-gray-200 dark:border-gray-800 text-gray-800 dark:text-gray-100 placeholder:text-gray-500 text-sm p-3 pl-8 rounded-xl outline-none shadow-sm font-medium focus:ring-2 focus:ring-indigo-500/50 transition-all" />
+              </div>
+              <div className="flex gap-1.5 shrink-0">
+                <div className="relative">
+                  <select 
+                    value={dashKhand} 
+                    onChange={(e) => { setDashKhand(e.target.value); setDashMandal('all'); }} 
+                    className="bg-gray-50 dark:bg-[#0a101f] border border-gray-200 dark:border-gray-800 text-gray-800 dark:text-gray-100 p-3 pr-6 rounded-xl font-bold text-xs outline-none shadow-sm appearance-none focus:ring-2 focus:ring-indigo-500/50"
+                  >
+                    <option value="all">सभी खंड</option>
+                    {khands.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
+                  </select>
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                    <ChevronRight size={12} className="rotate-90" />
+                  </div>
+                </div>
+                <div className="relative">
+                  <select 
+                    value={dashMandal} 
+                    disabled={dashKhand === 'all'} 
+                    onChange={(e) => setDashMandal(e.target.value)} 
+                    className="bg-gray-50 dark:bg-[#0a101f] border border-gray-200 dark:border-gray-800 text-gray-800 dark:text-gray-100 p-3 pr-6 rounded-xl font-bold text-xs outline-none shadow-sm appearance-none focus:ring-2 focus:ring-indigo-500/50 disabled:opacity-50"
+                  >
+                    <option value="all">सभी मंडल</option>
+                    {mandals.filter(m => m.khandId === dashKhand).map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                  </select>
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                    <ChevronRight size={12} className="rotate-90" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -4206,47 +4249,52 @@ const ActivitiesTab = ({
 
   return (
     <div className="p-3 pb-24 space-y-4 animate-in fade-in duration-500">
-      <header className="flex justify-between items-center bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2.5 rounded-2xl shadow-sm">
-        <div className="flex flex-col">
-          <h1 className="text-xl font-bold dark:text-white tracking-tight leading-none">मेरी गतिविधियां</h1>
-          <span className="text-[9px] font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest mt-0.5">इतिहास और प्रगति</span>
-        </div>
-        <div className="p-2 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-500/20">
-          <Rocket size={18} />
-        </div>
-      </header>
+      <div className="sticky top-0 z-30 pt-3 pb-3 -mt-3 bg-slate-50/95 dark:bg-[#070b14]/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm -mx-3 px-3 space-y-2">
+        <header className="flex flex-col gap-3 relative overflow-hidden bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-3 rounded-2xl shadow-sm">
+          <div className="absolute -top-4 -right-4 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+          <div className="flex justify-between items-center relative gap-2">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 p-2">
+                <Rocket size={20} strokeWidth={2.5} />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-tight">मेरी गतिविधियां</h1>
+                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mt-0.5 leading-tight">गतिविधि डैशबोर्ड</span>
+              </div>
+            </div>
+            
+            <div className="flex bg-white/80 dark:bg-[#070b14]/80 backdrop-blur-md border border-gray-200 dark:border-gray-700/50 p-1 rounded-xl shadow-sm overflow-x-auto no-scrollbar">
+              {[
+                { id: 'all', label: 'सभी' },
+                { id: 'day', label: 'आज' },
+                { id: 'week', label: 'सप्ताह' },
+                { id: 'month', label: 'माह' }
+              ].map(t => (
+                <button 
+                  key={t.id} 
+                  onClick={() => setFilter(t.id as any)}
+                  className={`py-1.5 px-3 rounded-lg text-[10px] font-bold transition-all ${filter === t.id ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </header>
 
-      {/* Filter & Summary Combined for Space */}
-      <div className="space-y-2">
-        <div className="flex bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-700/50 p-1 rounded-xl shadow-sm overflow-x-auto no-scrollbar">
-          {[
-            { id: 'all', label: 'सभी' },
-            { id: 'day', label: 'आज' },
-            { id: 'week', label: 'सप्ताह' },
-            { id: 'month', label: 'माह' }
-          ].map(t => (
-            <button 
-              key={t.id} 
-              onClick={() => setFilter(t.id as any)}
-              className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-medium transition-all ${filter === t.id ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500'}`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-3 gap-2">
-           <div onClick={() => setTypeFilter(typeFilter === 'visit' ? 'all' : 'visit')} className={`p-2 rounded-xl border text-center transition-all cursor-pointer ${typeFilter === 'visit' ? 'bg-blue-600 border-blue-600' : 'bg-blue-50/50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800/30'} active:scale-95`}>
-              <div className={`text-sm font-medium ${typeFilter === 'visit' ? 'text-white' : 'text-blue-600'}`}>{summary.visits}</div>
-              <div className={`text-[7px] font-medium uppercase ${typeFilter === 'visit' ? 'text-blue-100' : 'text-gray-400'}`}>संपर्क</div>
+        {/* Dashboard Cards Compact */}
+        <div className="grid grid-cols-3 gap-1.5 pt-1">
+           <div onClick={() => setTypeFilter(typeFilter === 'visit' ? 'all' : 'visit')} className={`py-1.5 px-2 rounded-xl border text-center transition-all cursor-pointer shadow-sm flex flex-col justify-center items-center ${typeFilter === 'visit' ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-blue-500 scale-[1.02]' : 'bg-white/80 dark:bg-[#0a101f]/80 backdrop-blur-md border-gray-200 dark:border-gray-800 active:scale-95'}`}>
+              <div className={`text-xl font-bold leading-none ${typeFilter === 'visit' ? 'text-white' : 'text-blue-600 dark:text-blue-400'}`}>{summary.visits}</div>
+              <div className={`text-[9px] font-medium uppercase mt-0.5 tracking-widest ${typeFilter === 'visit' ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'}`}>संपर्क</div>
            </div>
-           <div onClick={() => setTypeFilter(typeFilter === 'meeting' ? 'all' : 'meeting')} className={`p-2 rounded-xl border text-center transition-all cursor-pointer ${typeFilter === 'meeting' ? 'bg-purple-600 border-purple-600' : 'bg-purple-50/50 dark:bg-purple-900/20 border-purple-100 dark:border-purple-800/30'} active:scale-95`}>
-              <div className={`text-sm font-medium ${typeFilter === 'meeting' ? 'text-white' : 'text-purple-600'}`}>{summary.meetings}</div>
-              <div className={`text-[7px] font-medium uppercase ${typeFilter === 'meeting' ? 'text-purple-100' : 'text-gray-400'}`}>बैठकें</div>
+           <div onClick={() => setTypeFilter(typeFilter === 'meeting' ? 'all' : 'meeting')} className={`py-1.5 px-2 rounded-xl border text-center transition-all cursor-pointer shadow-sm flex flex-col justify-center items-center ${typeFilter === 'meeting' ? 'bg-gradient-to-br from-purple-500 to-purple-600 text-white border-purple-500 scale-[1.02]' : 'bg-white/80 dark:bg-[#0a101f]/80 backdrop-blur-md border-gray-200 dark:border-gray-800 active:scale-95'}`}>
+              <div className={`text-xl font-bold leading-none ${typeFilter === 'meeting' ? 'text-white' : 'text-purple-600 dark:text-purple-400'}`}>{summary.meetings}</div>
+              <div className={`text-[9px] font-medium uppercase mt-0.5 tracking-widest ${typeFilter === 'meeting' ? 'text-purple-100' : 'text-gray-500 dark:text-gray-400'}`}>बैठकें</div>
            </div>
-           <div onClick={() => setTypeFilter(typeFilter === 'trip' ? 'all' : 'trip')} className={`p-2 rounded-xl border text-center transition-all cursor-pointer ${typeFilter === 'trip' ? 'bg-orange-600 border-orange-600' : 'bg-orange-50/50 dark:bg-orange-900/20 border-orange-100 dark:border-orange-800/30'} active:scale-95`}>
-              <div className={`text-sm font-medium ${typeFilter === 'trip' ? 'text-white' : 'text-orange-600'}`}>{summary.trips}</div>
-              <div className={`text-[7px] font-medium uppercase ${typeFilter === 'trip' ? 'text-orange-100' : 'text-gray-400'}`}>प्रवास</div>
+           <div onClick={() => setTypeFilter(typeFilter === 'trip' ? 'all' : 'trip')} className={`py-1.5 px-2 rounded-xl border text-center transition-all cursor-pointer shadow-sm flex flex-col justify-center items-center ${typeFilter === 'trip' ? 'bg-gradient-to-br from-orange-500 to-orange-600 text-white border-orange-500 scale-[1.02]' : 'bg-white/80 dark:bg-[#0a101f]/80 backdrop-blur-md border-gray-200 dark:border-gray-800 active:scale-95'}`}>
+              <div className={`text-xl font-bold leading-none ${typeFilter === 'trip' ? 'text-white' : 'text-orange-600 dark:text-orange-400'}`}>{summary.trips}</div>
+              <div className={`text-[9px] font-medium uppercase mt-0.5 tracking-widest ${typeFilter === 'trip' ? 'text-orange-100' : 'text-gray-500 dark:text-gray-400'}`}>प्रवास</div>
            </div>
         </div>
       </div>
@@ -4466,66 +4514,75 @@ const CalendarTab = ({
 
   return (
     <div className="p-3 pb-24 space-y-3 animate-in fade-in duration-500">
-      <header className="bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2.5 rounded-2xl shadow-sm space-y-3 sticky top-2 z-30">
-        <div className="flex justify-between items-center">
-          <div className="flex flex-col">
-            <h1 className="text-lg font-bold dark:text-white tracking-tight leading-none">कैलेंडर</h1>
-            <span className="text-[9px] font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest mt-0.5">
-              {viewType === 'month' ? 'मासिक अवलोकन' : (viewType === 'schedule' ? 'अनुसूची' : 'विस्तृत दृश्य')}
-            </span>
+      <header className="bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-3 rounded-2xl shadow-sm space-y-3 sticky top-2 z-30 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="flex justify-between items-center relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 p-2">
+              <CalendarDays size={20} strokeWidth={2.5} />
+            </div>
+            <div className="flex flex-col">
+              <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-tight">कैलेंडर</h1>
+              <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mt-0.5 leading-tight">
+                {viewType === 'month' ? 'मासिक अवलोकन' : (viewType === 'schedule' ? 'अनुसूची' : 'विस्तृत दृश्य')}
+              </span>
+            </div>
           </div>
           
           <div className="flex items-center gap-2">
-            <div className="flex items-center bg-gray-100 dark:bg-gray-800/80 rounded-xl p-0.5 border dark:border-gray-700">
-               <button onClick={handlePrev} className="p-1.5 dark:text-white hover:bg-white dark:hover:bg-gray-700 rounded-lg transition-all active:scale-90"><ChevronLeft size={14}/></button>
-               <button onClick={() => setCurrentMonth(new Date())} className="px-2 font-medium text-[9px] dark:text-white hover:text-blue-600 transition-colors uppercase tracking-wider">{monthNamesHindi[currentMonth.getMonth()]}</button>
-               <button onClick={handleNext} className="p-1.5 dark:text-white hover:bg-white dark:hover:bg-gray-700 rounded-lg transition-all active:scale-90"><ChevronRight size={14}/></button>
+            <div className="flex items-center bg-gray-50 dark:bg-gray-800/80 rounded-xl p-1 border border-gray-200 dark:border-gray-700 shadow-sm">
+               <button onClick={handlePrev} className="p-1.5 dark:text-white hover:bg-white dark:hover:bg-gray-700 rounded-lg transition-all active:scale-95"><ChevronLeft size={16}/></button>
+               <button onClick={() => setCurrentMonth(new Date())} className="px-2 font-bold text-[10px] text-gray-700 dark:text-white hover:text-blue-600 transition-colors uppercase tracking-wider">{monthNamesHindi[currentMonth.getMonth()]}</button>
+               <button onClick={handleNext} className="p-1.5 dark:text-white hover:bg-white dark:hover:bg-gray-700 rounded-lg transition-all active:scale-95"><ChevronRight size={16}/></button>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 border-t dark:border-gray-800/50 pt-2.5 overflow-x-auto no-scrollbar">
-          <div className="flex items-center gap-1.5 flex-1 min-w-0">
-            <div className="flex-none p-1.5 bg-blue-600 text-white rounded-lg shadow-sm">
-               <LayoutList size={14} />
-            </div>
-            <div className="flex gap-1">
-              {[
-                { id: '1day', label: '१' },
-                { id: '3day', label: '३' },
-                { id: 'week', label: 'सा' },
-                { id: 'month', label: 'मा' },
-                { id: 'schedule', label: 'अ' }
-              ].map(v => (
-                <button 
-                  key={v.id} 
-                  onClick={() => setViewType(v.id as any)}
-                  className={`px-2.5 py-1.5 rounded-lg text-[9px] font-medium uppercase transition-all border ${viewType === v.id ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-white/40 dark:bg-black/20 border-white/50 dark:border-gray-700/50 text-gray-500 hover:border-blue-400/50'}`}
-                >
-                  {v.label}
-                </button>
-              ))}
-            </div>
+        <div className="flex flex-col gap-2 relative z-10">
+          <div className="flex items-center gap-2 border-t dark:border-gray-800/50 pt-3">
+             <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                {[
+                  { id: '1day', label: '१ दिन' },
+                  { id: '3day', label: '३ दिन' },
+                  { id: 'week', label: 'सप्ताह' },
+                  { id: 'month', label: 'मासिक' },
+                  { id: 'schedule', label: 'सूची' }
+                ].map(v => (
+                  <button 
+                    key={v.id} 
+                    onClick={() => setViewType(v.id as any)}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all whitespace-nowrap ${viewType === v.id ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' : 'bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700/50 text-gray-500 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                  >
+                    {v.label}
+                  </button>
+                ))}
+             </div>
           </div>
-
-          <div className="flex gap-1.5 flex-none items-center pl-2 border-l dark:border-gray-800">
-            <select 
-              value={dashKhand} 
-              onChange={(e) => { setDashKhand(e.target.value); setDashMandal('all'); }}
-              className="bg-gray-100 dark:bg-gray-800 text-[9px] font-medium uppercase p-1.5 rounded-lg border-none focus:ring-1 focus:ring-blue-500/50 dark:text-white max-w-[70px]"
-            >
-              <option value="all">खंड</option>
-              {khands.map((k:any) => <option key={k.id} value={k.id}>{k.name}</option>)}
-            </select>
-            <select 
-              value={dashMandal} 
-              disabled={dashKhand === 'all'}
-              onChange={(e) => setDashMandal(e.target.value)}
-              className="bg-gray-100 dark:bg-gray-800 text-[9px] font-medium uppercase p-1.5 rounded-lg border-none focus:ring-1 focus:ring-blue-500/50 dark:text-white max-w-[70px] disabled:opacity-50"
-            >
-              <option value="all">मंडल</option>
-              {mandals.filter((m:any) => m.khandId === dashKhand).map((m:any) => <option key={m.id} value={m.id}>{m.name}</option>)}
-            </select>
+          <div className="flex gap-1.5 bg-gray-50 dark:bg-[#0a101f] rounded-xl p-1.5 border border-gray-200 dark:border-gray-800">
+            <div className="relative flex-1">
+              <select 
+                value={dashKhand} 
+                onChange={(e) => { setDashKhand(e.target.value); setDashMandal('all'); }}
+                className="w-full bg-transparent text-[10px] font-bold text-gray-700 dark:text-gray-200 uppercase p-2 rounded-lg outline-none appearance-none cursor-pointer"
+              >
+                <option value="all">सभी खंड</option>
+                {khands.map((k:any) => <option key={k.id} value={k.id}>{k.name}</option>)}
+              </select>
+              <ChevronRight size={12} className="absolute right-2 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+            </div>
+            <div className="w-px bg-gray-300 dark:bg-gray-700 mx-0.5"></div>
+            <div className="relative flex-1">
+              <select 
+                value={dashMandal} 
+                disabled={dashKhand === 'all'}
+                onChange={(e) => setDashMandal(e.target.value)}
+                className="w-full bg-transparent text-[10px] font-bold text-gray-700 dark:text-gray-200 uppercase p-2 rounded-lg outline-none appearance-none cursor-pointer disabled:opacity-50"
+              >
+                <option value="all">सभी मंडल</option>
+                {mandals.filter((m:any) => m.khandId === dashKhand).map((m:any) => <option key={m.id} value={m.id}>{m.name}</option>)}
+              </select>
+              <ChevronRight size={12} className="absolute right-2 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+            </div>
           </div>
         </div>
       </header>

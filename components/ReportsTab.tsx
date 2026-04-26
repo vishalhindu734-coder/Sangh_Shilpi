@@ -6,7 +6,7 @@ import { Contact, TripPlan, Meeting, Village, Khand, Mandal } from '../types';
 interface ReportsTabProps {
   contacts: Contact[];
   trips: TripPlan[];
-  events: Meeting[];
+  events: any[];
   villages: Village[];
   khands: Khand[];
   mandals: Mandal[];
