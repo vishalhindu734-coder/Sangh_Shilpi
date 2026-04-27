@@ -11,6 +11,7 @@ interface AreaMgmtViewProps {
   setVillages: React.Dispatch<React.SetStateAction<Village[]>>;
   setActiveTab: (tab: any) => void;
   onBack: () => void;
+  setConfirmation: any;
 }
 
 export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
@@ -18,7 +19,8 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
   mandals, setMandals,
   villages, setVillages,
   setActiveTab,
-  onBack
+  onBack,
+  setConfirmation
 }) => {
   const [selectedKhandId, setSelectedKhandId] = useState<string | null>(null);
   const [selectedMandalId, setSelectedMandalId] = useState<string | null>(null);
@@ -27,17 +29,27 @@ export const AreaMgmtView: React.FC<AreaMgmtViewProps> = ({
 
   const handleDelete = (e: React.MouseEvent, type: 'khand'|'mandal'|'village', id: string) => {
     e.stopPropagation();
-    if (!window.confirm('क्या आप सुनिश्चित हैं कि आप इसे हटाना चाहते हैं?')) return;
     
     if (type === 'khand') {
        if (mandals.some(m => m.khandId === id)) return alert('इस खंड में मंडल हैं। पहले उन्हें हटाएं।');
-       setKhands(prev => prev.filter(x => x.id !== id));
     } else if (type === 'mandal') {
        if (villages.some(v => v.mandalId === id)) return alert('इस मंडल में स्थान/ग्राम हैं। पहले उन्हें हटाएं।');
-       setMandals(prev => prev.filter(x => x.id !== id));
-    } else {
-       setVillages(prev => prev.filter(x => x.id !== id));
     }
+
+    setConfirmation({
+      title: 'हटाने की पुष्टि',
+      message: 'क्या आप सुनिश्चित हैं कि आप इसे हटाना चाहते हैं?',
+      onConfirm: () => {
+        if (type === 'khand') {
+          setKhands(prev => prev.filter(x => x.id !== id));
+        } else if (type === 'mandal') {
+          setMandals(prev => prev.filter(x => x.id !== id));
+        } else {
+          setVillages(prev => prev.filter(x => x.id !== id));
+        }
+        setConfirmation(null);
+      }
+    });
   };
 
   const handleSave = () => {

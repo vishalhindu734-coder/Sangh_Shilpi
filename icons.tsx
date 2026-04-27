@@ -31,7 +31,23 @@ export const ICON_LIST = [
   'ArrowBigUp', 'Asterisk', 'Axe', 'Baby', 'Backpack',
   'BaggageClaim', 'Banana', 'Banknote', 'Barcode', 'Baseline',
   'Bath', 'Battery', 'BatteryCharging', 'BatteryFull', 'BatteryLow',
-  'BatteryMedium', 'BatteryWarning', 'Beaker', 'Bean', 'BeanOff'
+  'BatteryMedium', 'BatteryWarning', 'Beaker', 'Bean', 'BeanOff',
+  'Handshake', 'HeartHandshake', 'Network', 'Siren', 'Megaphone',
+  'FlagTriangleRight', 'Crown', 'Medal', 'ScrollText', 'Newspaper',
+  'Mic2', 'Volume2', 'Radio', 'Wifi', 'Layers',
+  'HardDrive', 'FileText', 'FolderOpen', 'Milestone', 'Trophy',
+  'Target', 'Gavel', 'Scale', 'Hand', 'HelpingHand',
+  'Puzzle', 'Combine', 'GitBranch', 'GitPullRequest', 'Orbit',
+  'Component', 'Shapes', 'Boxes', 'Package', 'LifeBuoy',
+  'ShieldCheck', 'Eye', 'BrainCircuit', 'Timer', 'Hourglass',
+  'Inbox', 'Send', 'Share2', 'ExternalLink', 'Monitor',
+  'Cpu', 'Database', 'CloudUpload', 'Download', 'UserRoundCheck',
+  'UserRoundX', 'Ear', 'Glasses', 'Syringe', 'Umbrella',
+  'Mountain', 'Sunset', 'Sunrise', 'Plug', 'Power',
+  'Terminal', 'Code', 'Braces', 'Sigma', 'SquareFunction',
+  'CircleDollarSign', 'Gem', 'Trello', 'Kanban', 'LayoutList',
+  'Workflow', 'Factory', 'Castle', 'Church', 'Infinity',
+  'Lamp', 'Flashlight', 'Droplets', 'Flame', 'Waves', 'Maximize', 'Minimize'
 ];
 
 export const WhatsappIcon = ({ size = 20, className = "" }: { size?: number, className?: string }) => (

@@ -9,6 +9,8 @@ import {
   Settings, 
   Plus, 
   ChevronRight, 
+  ChevronDown,
+  Mountain,
   Phone, 
   CheckCircle2, 
   ArrowLeft,
@@ -34,6 +36,7 @@ import {
   Award,
   Flag,
   Rocket,
+  ShieldCheck,
   Menu as MenuIcon,
   Palette,
   Type,
@@ -83,6 +86,7 @@ import {
   INITIAL_CONTACTS, 
   INITIAL_TRIPS, 
   INITIAL_LISTS,
+  INITIAL_LIST_CATEGORIES,
   INITIAL_CATEGORIES,
   INITIAL_EVENT_CATEGORIES,
   FLAG_IMAGE_URI
@@ -115,8 +119,9 @@ import {
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
 import { ExportModal } from './components/ExportModal';
 import { ReportsTab } from './components/ReportsTab';
+import { generateVolunteerTemplate, parseVolunteerExcel } from './excelUtils';
 
-type Tab = 'home' | 'swayamsevak' | 'people' | 'trips' | 'lists' | 'groups' | 'work-status' | 'menu' | 'area-mgmt' | 'cat-mgmt' | 'calendar' | 'event-cat-mgmt' | 'activities' | 'ideas' | 'events' | 'event-detail' | 'settings' | 'reports';
+type Tab = 'home' | 'swayamsevak' | 'people' | 'trips' | 'lists' | 'groups' | 'work-status' | 'menu' | 'area-mgmt' | 'cat-mgmt' | 'list-cat-mgmt' | 'calendar' | 'event-cat-mgmt' | 'activities' | 'ideas' | 'events' | 'event-detail' | 'settings' | 'reports';
 
 export interface EventModel {
   id: string;
@@ -240,30 +245,93 @@ const App: React.FC = () => {
   });
 
   const [customLists, setCustomLists] = useState<CustomList[]>(() => loadData('customLists', INITIAL_LISTS));
+  const [listCategories, setListCategories] = useState<Category[]>(() => loadData('listCategories', INITIAL_LIST_CATEGORIES));
   const [meetings, setMeetings] = useState<Meeting[]>(() => loadData('meetings', []));
   const [darkMode, setDarkMode] = useState(() => loadData('darkMode', false));
   const [appTheme, setAppTheme] = useState(() => loadData('appTheme', 'default'));
   const [appFont, setAppFont] = useState(() => loadData('appFont', 'baloo'));
   const [appFontSize, setAppFontSize] = useState(() => loadData('appFontSize', 16));
-  const [userName, setUserName] = useState(() => loadData('userName', 'क्षेत्र कार्यकर्ता'));
+  const [userName, setUserName] = useState(() => loadData('userName', 'क्षेत्र स्वयंसेवक'));
   const [callRecords, setCallRecords] = useState<Record<string, string>>(() => loadData('callRecords', {}));
   const [whatsappMessage, setWhatsappMessage] = useState(() => loadData('whatsappMessage', 'नमस्ते'));
 
   // UI State
   const [dashKhand, setDashKhand] = useState<string>('all');
   const [dashMandal, setDashMandal] = useState<string>('all');
+
+  // Helpers
+  const getKhandName = (id: string) => khands.find(k => k.id === id)?.name || id;
+  const getMandalName = (id: string) => mandals.find(m => m.id === id)?.name || id;
+  const getVillageName = (id: string) => villages.find(v => v.id === id)?.name || id;
   const [dashStage, setDashStage] = useState<string>('all');
   const [peopleSearch, setPeopleSearch] = useState('');
+  const [listCategoryFilter, setListCategoryFilter] = useState<string | 'all'>('all');
   const [peopleStatusFilter, setPeopleStatusFilter] = useState<string | 'all'>('all');
   const [peopleCategoryFilter, setPeopleCategoryFilter] = useState<string | 'all'>('all');
   const [peopleAgeCategoryFilter, setPeopleAgeCategoryFilter] = useState<string | 'all'>('all');
   const [peopleShikshitFilter, setPeopleShikshitFilter] = useState<'all' | 'yes' | 'no'>('all');
   const [peopleShikshanLevelFilter, setPeopleShikshanLevelFilter] = useState<string[]>([]);
+  const [peopleKhandFilter, setPeopleKhandFilter] = useState<string>('all');
+  const [peopleMandalFilter, setPeopleMandalFilter] = useState<string>('all');
   const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
   const [selectedVillageId, setSelectedVillageId] = useState<string | null>(null);
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const [selectedMeetingId, setSelectedMeetingId] = useState<string | null>(null);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [selectedPeopleIds, setSelectedPeopleIds] = useState<string[]>([]);
+    const [isBulkUpdateModalOpen, setIsBulkUpdateModalOpen] = useState(false);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  
+  const toggleSelection = (id: string) => {
+    setSelectedPeopleIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const filteredPeople = useMemo(() => {
+    return contacts.filter(c => {
+      const matchSearch = c.name.toLowerCase().includes(peopleSearch.toLowerCase()) || (c.phone && c.phone.includes(peopleSearch));
+      const matchStatus = peopleStatusFilter === 'all' || c.status === peopleStatusFilter;
+      const matchCategory = peopleCategoryFilter === 'all' || c.category === peopleCategoryFilter;
+      
+      let matchAgeCat = true;
+      if (peopleAgeCategoryFilter !== 'all') {
+         const calculatedAgeCategory = getAgeCategory(calculateAge(c.volunteerProfile?.dob)) || 'अज्ञात';
+         matchAgeCat = calculatedAgeCategory === peopleAgeCategoryFilter;
+      }
+
+      let matchShikshit = true;
+      if (peopleShikshitFilter !== 'all') {
+         const isShikshitUser = isShikshit(c.volunteerProfile?.sanghTraining);
+         matchShikshit = (peopleShikshitFilter === 'yes' && isShikshitUser) || (peopleShikshitFilter === 'no' && !isShikshitUser);
+      }
+
+      let matchShikshanLevel = true;
+      if (peopleShikshitFilter === 'yes' && peopleShikshanLevelFilter.length > 0) {
+         const isMatched = Array.isArray(c.volunteerProfile?.sanghTraining) && 
+            c.volunteerProfile.sanghTraining.some((t: any) => peopleShikshanLevelFilter.includes(t.class));
+         matchShikshanLevel = isMatched;
+      }
+
+      const matchArea = (peopleKhandFilter === 'all' || c.khandId === peopleKhandFilter) && (peopleMandalFilter === 'all' || c.mandalId === peopleMandalFilter);
+      return matchSearch && matchStatus && matchCategory && matchAgeCat && matchShikshit && matchShikshanLevel && matchArea;
+    });
+  }, [contacts, peopleSearch, peopleStatusFilter, peopleCategoryFilter, peopleAgeCategoryFilter, peopleShikshitFilter, peopleShikshanLevelFilter, peopleKhandFilter, peopleMandalFilter]);
+
+  const groupedPeopleData = useMemo(() => {
+    const groups: any = {};
+    filteredPeople.forEach(c => {
+      const kId = c.khandId || 'unknown';
+      const mId = c.mandalId || 'unknown';
+      const vId = c.villageId || 'unknown';
+      
+      if (!groups[kId]) groups[kId] = { id: kId, name: getKhandName(kId), mandals: {} };
+      if (!groups[kId].mandals[mId]) groups[kId].mandals[mId] = { id: mId, name: getMandalName(mId), villages: {} };
+      if (!groups[kId].mandals[mId].villages[vId]) groups[kId].mandals[mId].villages[vId] = { id: vId, name: getVillageName(vId), contacts: [] };
+      
+      groups[kId].mandals[mId].villages[vId].contacts.push(c);
+    });
+    return groups;
+  }, [filteredPeople, khands, mandals, villages]);
+
   const [exportTarget, setExportTarget] = useState<{data: any[], title: string, isGeneric?: boolean} | null>(null);
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab);
@@ -273,6 +341,8 @@ const App: React.FC = () => {
     setSelectedListId(null);
     setSelectedMeetingId(null);
     setSelectedEventId(null);
+    setSelectedPeopleIds([]);
+    setIsBulkUpdateModalOpen(false);
     setExportTarget(null);
   };
   const [isManagingMembers, setIsManagingMembers] = useState(false);
@@ -284,6 +354,7 @@ const App: React.FC = () => {
   const [isAddingContact, setIsAddingContact] = useState(false);
   const [isAddingTrip, setIsAddingTrip] = useState(false);
   const [isAddingList, setIsAddingList] = useState(false);
+  const [editingList, setEditingList] = useState<CustomList | null>(null);
   const [isAddingMeeting, setIsAddingMeeting] = useState(false);
   const [isAddingIdea, setIsAddingIdea] = useState(false);
   const [isLoggingVisit, setIsLoggingVisit] = useState<string | null>(null);
@@ -291,6 +362,7 @@ const App: React.FC = () => {
   const [confirmation, setConfirmation] = useState<{ title: string; message: string; onConfirm: () => void; titleFont?: string; messageFont?: string } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const volunteerExcelInputRef = useRef<HTMLInputElement>(null);
 
   // Persistence
   useEffect(() => {
@@ -302,6 +374,7 @@ const App: React.FC = () => {
     localStorage.setItem('tripViewMode', JSON.stringify(tripViewMode));
     localStorage.setItem('categories', JSON.stringify(categories));
     localStorage.setItem('eventCategories', JSON.stringify(eventCategories));
+    localStorage.setItem('listCategories', JSON.stringify(listCategories));
     localStorage.setItem('customLists', JSON.stringify(customLists));
     localStorage.setItem('meetings', JSON.stringify(meetings));
     localStorage.setItem('ideas', JSON.stringify(ideas));
@@ -329,18 +402,14 @@ const App: React.FC = () => {
 
     // Font size applying
     html.style.setProperty('--app-font-size', `${appFontSize}px`);
-  }, [khands, mandals, villages, contacts, trips, categories, eventCategories, customLists, meetings, userName, darkMode, appTheme, appFont, appFontSize, callRecords, whatsappMessage]);
+  }, [khands, mandals, villages, contacts, trips, categories, eventCategories, listCategories, customLists, meetings, userName, darkMode, appTheme, appFont, appFontSize, callRecords, whatsappMessage]);
 
-  // Helpers
-  const getKhandName = (id: string) => khands.find(k => k.id === id)?.name || id;
-  const getMandalName = (id: string) => mandals.find(m => m.id === id)?.name || id;
-  const getVillageName = (id: string) => villages.find(v => v.id === id)?.name || id;
 
   const isRecentlyCalled = (id: string) => {
     const lastCall = callRecords[id];
     if (!lastCall) return false;
     const diff = Date.now() - new Date(lastCall).getTime();
-    return diff< 3600000; // 1 hour in ms
+    return diff < 48 * 60 * 60 * 1000;
   };
 
   const handleDial = (id: string) => {
@@ -419,6 +488,35 @@ const App: React.FC = () => {
   const handleUpdateContact = (id: string, updates: Partial<Contact>) => {
     setContacts(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
     setEditingContact(null);
+  };
+
+  const handleBulkUpdate = (updates: any) => {
+    setContacts(prev => prev.map(c => {
+      if (!selectedPeopleIds.includes(c.id)) return c;
+      
+      let updatedContact = { ...c, ...updates };
+      
+      // Handle nested volunteerProfile updates
+      if (updates.volunteerProfileUpdates) {
+        updatedContact.volunteerProfile = {
+          ...(c.volunteerProfile || {
+            currentResponsibility: '',
+            shikshan: {
+              prathmikVarg: false,
+              prathamVarsh: false,
+              dwitiyaVarsh: false,
+              tritiyaVarsh: false
+            }
+          }),
+          ...updates.volunteerProfileUpdates
+        };
+        delete updatedContact.volunteerProfileUpdates;
+      }
+      
+      return updatedContact;
+    }));
+    setSelectedPeopleIds([]);
+    setIsBulkUpdateModalOpen(false);
   };
 
   const handleAddContact = (newContact: Omit<Contact, 'id' | 'listIds' | 'history'>) => {
@@ -571,6 +669,28 @@ const App: React.FC = () => {
       }
     };
     reader.readAsText(file);
+    event.target.value = '';
+  };
+
+  const handleImportExcel = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const { contacts: importedContacts, newKhands, newMandals, newVillages } = await parseVolunteerExcel(file, khands, mandals, villages);
+      if (importedContacts.length > 0) {
+        if (newKhands.length > 0) setKhands(prev => [...prev, ...newKhands]);
+        if (newMandals.length > 0) setMandals(prev => [...prev, ...newMandals]);
+        if (newVillages.length > 0) setVillages(prev => [...prev, ...newVillages]);
+        
+        setContacts(prev => [...prev, ...importedContacts]);
+        alert(`${importedContacts.length} स्वयंसेवक सफलतापूर्वक आयात किए गए!`);
+      } else {
+        alert('कोई वैध डेटा नहीं मिला।');
+      }
+    } catch (err) {
+      alert('एक्सेल फाइल पढ़ने में त्रुटि हुई।');
+    }
     event.target.value = '';
   };
 
@@ -764,7 +884,7 @@ const App: React.FC = () => {
                 <span className="font-medium text-orange-600 bg-orange-50 dark:bg-orange-900/30 px-2 py-0.5 text-xs rounded-full"><AnimatedNumber value={count} /></span>
              </div>
             ))}
-            {Object.keys(stats.byStatus).length === 0 &&<div className="col-span-2 text-center text-xs p-3 text-gray-400 font-medium border rounded-md dark:border-gray-700">डेटा नहीं</div>}
+            {Object.keys(stats.byStatus).length === 0 && <div className="col-span-2 text-center text-xs p-3 text-gray-400 font-medium border rounded-md dark:border-gray-700">डेटा नहीं</div>}
          </div>
        </motion.section>
 
@@ -787,8 +907,6 @@ const App: React.FC = () => {
            <div className="text-center text-xs p-3 text-gray-400 font-medium border rounded-md dark:border-gray-700">डेटा नहीं</div>
           )}
        </motion.section>
-
-
 
        <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-4">
          <SectionHeader 
@@ -885,28 +1003,25 @@ const App: React.FC = () => {
                  <select 
                     value={dashKhand} 
                     onChange={(e) => { setDashKhand(e.target.value); setDashMandal('all'); }} 
-                    className="bg-gray-50 dark:bg-[#0a101f] border border-gray-200 dark:border-gray-800 text-gray-800 dark:text-gray-100 p-3 pr-6 rounded-xl font-bold text-xs outline-none shadow-sm appearance-none focus:ring-2 focus:ring-indigo-500/50"
-                  >
-                   <option value="all">सभी खंड</option>
-                    {khands.map(k =><option key={k.id} value={k.id}>{k.name}</option>)}
+                    className="appearance-none bg-gray-50 dark:bg-[#0a101f] border border-gray-200 dark:border-gray-800 text-gray-800 dark:text-gray-100 text-[11px] font-bold py-2.5 pl-3 pr-8 rounded-xl focus:ring-2 focus:ring-indigo-500/30 outline-none transition-all shadow-sm uppercase tracking-wide"
+                 >
+                    <option value="all">सभी खंड</option>
+                    {khands.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
                  </select>
-                 <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                   <ChevronRight size={12} className="rotate-90" />
-                 </div>
+                 <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                </div>
                <div className="relative">
                  <select 
                     value={dashMandal} 
-                    disabled={dashKhand === 'all'} 
                     onChange={(e) => setDashMandal(e.target.value)} 
-                    className="bg-gray-50 dark:bg-[#0a101f] border border-gray-200 dark:border-gray-800 text-gray-800 dark:text-gray-100 p-3 pr-6 rounded-xl font-bold text-xs outline-none shadow-sm appearance-none focus:ring-2 focus:ring-indigo-500/50 disabled:opacity-50"
-                  >
-                   <option value="all">सभी मंडल</option>
-                    {mandals.filter(m => m.khandId === dashKhand).map(m =><option key={m.id} value={m.id}>{m.name}</option>)}
+                    className="appearance-none bg-gray-50 dark:bg-[#0a101f] border border-gray-200 dark:border-gray-800 text-gray-800 dark:text-gray-100 text-[11px] font-bold py-2.5 pl-3 pr-8 rounded-xl focus:ring-2 focus:ring-indigo-500/30 outline-none transition-all shadow-sm uppercase tracking-wide"
+                 >
+                    <option value="all">सभी मंडल</option>
+                    {mandals.filter(m => dashKhand === 'all' || m.khandId === dashKhand).map(m => (
+                      <option key={m.id} value={m.id}>{m.name}</option>
+                    ))}
                  </select>
-                 <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                   <ChevronRight size={12} className="rotate-90" />
-                 </div>
+                 <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                </div>
              </div>
            </div>
@@ -914,65 +1029,68 @@ const App: React.FC = () => {
        </div>
 
        <div className="space-y-4">
-          {Object.keys(grouped).length === 0 ? (
-           <div className="py-12 text-center text-gray-400 font-medium bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 rounded-2xl text-xs uppercase tracking-widest opacity-60">कोई संपर्क नहीं मिला</div>
+          {filtered.length === 0 ? (
+             <div className="py-12 text-center text-gray-400 font-medium bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 rounded-2xl text-xs uppercase tracking-widest opacity-60">कोई संपर्क नहीं मिला</div>
           ) : (
             Object.entries(grouped).sort().map(([mandalName, villageGroup]) => (
              <div key={mandalName} className="space-y-2">
                <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.3 }} className="flex items-center gap-2 px-1">
-                 <h3 className="text-sm font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-800/50 px-2.5 py-1 rounded-md shadow-sm" style={{fontFamily: "inherit"}}>{mandalName}</h3>
+                 <h3 className="text-sm font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-800/50 px-2.5 py-1 rounded-md shadow-sm">{mandalName}</h3>
                  <div className="h-[1px] flex-1 bg-gradient-to-r from-indigo-500/20 to-transparent"></div>
                </motion.div>
-                
-               <div className="grid grid-cols-1 gap-2">
+               <div className="grid grid-cols-1 gap-4">
                   {Object.entries(villageGroup).sort().map(([villageName, people]) => (
                    <div key={villageName} className="space-y-1.5">
-                     <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.1, duration: 0.3 }} className="flex items-center gap-1.5 mt-3 mb-1.5 -ml-1">
-                       <div className="bg-gradient-to-r from-blue-500/20 to-transparent dark:from-blue-500/30 px-3 py-1.5 rounded-r-xl border-l-4 border-blue-500 flex items-center gap-1.5">
-                         <MapPin size={12} className="text-blue-700 dark:text-blue-400" />
-                         <span className="text-sm font-bold text-blue-800 dark:text-blue-200 leading-none" style={{fontFamily: "inherit"}}>{villageName}<span className="opacity-70 dark:opacity-60 text-[10px]">({people.length})</span></span>
+                     <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.1, duration: 0.3 }} className="flex items-center gap-1.5 mt-2 mb-1">
+                       <div className="bg-gradient-to-r from-blue-500/10 to-transparent px-3 py-1 rounded-r-lg border-l-2 border-blue-500 flex items-center gap-1.5">
+                         <MapPin size={12} className="text-blue-600 dark:text-blue-400" />
+                         <span className="text-[13px] font-bold text-blue-800 dark:text-blue-200 leading-none">{villageName} <span className="opacity-60 text-[10px]">({people.length} स्वयंसेवक)</span></span>
                        </div>
                      </motion.div>
-                      
-                     <div className="grid grid-cols-1 gap-1.5">
-                        {people.map((c, i) => {
+                     <div className="grid grid-cols-1 gap-2">
+                        {people.map((c) => {
                           const recentlyCalled = isRecentlyCalled(c.id);
                           const responsibility = c.volunteerProfile?.currentResponsibility;
                           return (
-                           <motion.div key={c.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} onClick={() => setSelectedContactId(c.id)} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/30 dark:border-gray-800/50 p-3 rounded-xl flex items-center gap-3 active:scale-[0.95] active:bg-indigo-100/80 dark:active:bg-indigo-900/60 active:ring-2 active:ring-indigo-400/50 transition-all shadow-sm group">
-                             <div className={`w-10 h-10 rounded-lg flex-none flex items-center justify-center text-white font-medium text-base ${recentlyCalled ? 'bg-orange-500 shadow-lg shadow-orange-500/20' : 'bg-indigo-500 shadow-lg shadow-indigo-500/20'}`}>
-                                {c.name[0]}
-                             </div>
-                             <div className="flex-1 min-w-0 pr-2">
+                            <motion.div 
+                              key={c.id} 
+                              initial={{ opacity: 0, scale: 0.95 }} 
+                              animate={{ opacity: 1, scale: 1 }}
+                              viewport={{ once: true, margin: '-20px' }} 
+                              transition={{ duration: 0.3 }} 
+                              onClick={() => setSelectedContactId(c.id)} 
+                              className={`glass dark:glass-dark border border-white/10 dark:border-gray-800 p-3 rounded-xl flex items-center gap-3 active:scale-[0.98] transition-all shadow-sm group`}
+                            >
+                             <div className="flex-1 min-w-0">
                                <div className="flex items-center gap-2">
-                                 <h4 className="font-medium dark:text-white truncate text-base leading-snug">{c.name}</h4>
+                                 <h4 className="font-medium dark:text-white truncate text-base leading-[1.6] py-0.5">{c.name}</h4>
                                   {responsibility && (
-                                   <span className="text-xs font-medium bg-blue-500/10 text-blue-600 px-2 py-0.5 rounded-lg border border-blue-500/10 truncate max-w-[50%]">{responsibility}</span>
+                                   <span className="text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 px-1.5 py-1 rounded-md border border-blue-500/10 truncate leading-relaxed">{responsibility}</span>
                                   )}
                                </div>
-                               <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-normal truncate mt-1 flex items-center gap-1.5">
-                                 <span className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded-md">{c.category}</span>
-                                 <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></span>
-                                 <span className="text-indigo-500 dark:text-indigo-400 font-medium">{c.status}</span>
-                               </div>
-                             </div>
-                             <div className="flex items-center gap-1.5 flex-none shrink-0">
-                               <a 
-                                  href={`tel:${c.phone}`} 
-                                  onClick={(e) => { e.stopPropagation(); handleDial(c.id); }} 
-                                  className={`p-2.5 rounded-xl transition-all flex items-center justify-center ${recentlyCalled ? 'bg-orange-500 text-white' : 'bg-indigo-500/10 text-indigo-600'}`}
-                                >
-                                 <Phone size={16} />
-                               </a>
-                               <a
-                                  href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`}
-                                  target="_blank" rel="noopener noreferrer" 
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="p-2.5 rounded-xl bg-green-500/10 text-green-600 transition-all flex items-center justify-center hover:bg-green-500/20 active:scale-95"
-                                >
-                                 <WhatsappIcon size={16} />
-                               </a>
-                             </div>
+                               <div className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-0.5 flex items-center gap-1.5">
+                                <span className="bg-gray-100 dark:bg-gray-800 px-1.5 py-1 rounded-md leading-relaxed">{c.category}</span>
+                                <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+                                <span className={`${c.status === Status.SAKRIYA ? "text-green-600 dark:text-green-400" : "text-blue-600 dark:text-blue-400"} leading-relaxed py-0.5`}>{c.status}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <a 
+                                 href={`tel:${c.phone}`} 
+                                 onClick={(e) => { e.stopPropagation(); handleDial(c.id); }} 
+                                 className={`p-2.5 rounded-xl transition-all ${recentlyCalled ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'}`}
+                               >
+                                <Phone size={16} />
+                              </a>
+                              <a
+                                 href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`}
+                                 target="_blank" rel="noopener noreferrer" 
+                                 onClick={(e) => e.stopPropagation()}
+                                 className="p-2.5 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-500 transition-all flex items-center justify-center shadow-sm hover:scale-105 active:scale-95"
+                               >
+                                <WhatsappIcon size={16} />
+                              </a>
+                            </div>
                            </motion.div>
                           );
                         })}
@@ -988,60 +1106,85 @@ const App: React.FC = () => {
     );
   };
 
+
   const renderPeople = () => {
-    const filtered = contacts.filter(c => {
-      const matchSearch = c.name.toLowerCase().includes(peopleSearch.toLowerCase()) || c.phone.includes(peopleSearch);
-      const matchStatus = peopleStatusFilter === 'all' || c.status === peopleStatusFilter;
-      const matchCategory = peopleCategoryFilter === 'all' || c.category === peopleCategoryFilter;
-      
-      let matchAgeCat = true;
-      if (peopleAgeCategoryFilter !== 'all') {
-         const calculatedAgeCategory = getAgeCategory(calculateAge(c.volunteerProfile?.dob)) || 'अज्ञात';
-         matchAgeCat = calculatedAgeCategory === peopleAgeCategoryFilter;
-      }
+    const handleSelectAll = (isFiltered: boolean) => {
+       const ids = isFiltered ? filteredPeople.map(c => c.id) : contacts.map(c => c.id);
+       setSelectedPeopleIds(ids);
+    };
 
-      let matchShikshit = true;
-      if (peopleShikshitFilter !== 'all') {
-         const isShikshitUser = isShikshit(c.volunteerProfile?.sanghTraining);
-         matchShikshit = (peopleShikshitFilter === 'yes' && isShikshitUser) || (peopleShikshitFilter === 'no' && !isShikshitUser);
-      }
-
-      let matchShikshanLevel = true;
-      if (peopleShikshitFilter === 'yes' && peopleShikshanLevelFilter.length > 0) {
-         const highestShikshan = getHighestShikshan(c.volunteerProfile?.sanghTraining);
-         // You can optionally match if ANY of their trainings matches, but usually the "highest" or specific is enough.
-         // Let's match if any training contains this level.
-         matchShikshanLevel = Array.isArray(c.volunteerProfile?.sanghTraining) && 
-            c.volunteerProfile.sanghTraining.some((t: any) => peopleShikshanLevelFilter.includes(t.class));
-      }
-
-      const matchArea = (dashKhand === 'all' || c.khandId === dashKhand) && (dashMandal === 'all' || c.mandalId === dashMandal);
-      return matchSearch && matchStatus && matchCategory && matchAgeCat && matchShikshit && matchShikshanLevel && matchArea;
-    });
     return (
-     <div className="p-3 pb-24 space-y-3 animate-in slide-in-from-right duration-300">
-       <header className="flex justify-between items-center bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2 rounded-2xl shadow-sm sticky top-2 z-30">
-         <div className="flex items-center gap-2">
-           <div className="p-2 bg-blue-600 text-white rounded-xl shadow-lg">
-             <Users size={18}/>
-           </div>
-           <div className="flex flex-col">
-             <h1 className="text-lg font-bold dark:text-white tracking-tight leading-normal">संपर्क</h1>
-             <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest mt-1">कुल डेटा: <AnimatedNumber value={filtered.length} /></span>
-           </div>
-         </div>
-         <div className="flex gap-2">
-           <button onClick={() => setExportTarget({ data: filtered, title: 'संपर्क_सूची' })} className="p-2.5 bg-[#080d19]/10 dark:bg-white/10 text-gray-700 dark:text-gray-200 rounded-xl shadow-lg active:scale-90 transition-all">
-             <Download size={20}/>
-           </button>
-           <button onClick={() => setIsAddingContact(true)} className="p-2.5 bg-blue-600 text-white rounded-xl shadow-lg active:scale-90 transition-all"><Plus size={20}/></button>
-         </div>
-       </header>
+      <div className="p-3 pb-24 space-y-3 animate-in slide-in-from-right duration-300">
+        <header className="flex justify-between items-center bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-2 rounded-2xl shadow-sm sticky top-2 z-30">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-blue-600 text-white rounded-xl shadow-lg">
+              <Users size={18}/>
+            </div>
+            <div className="flex flex-col">
+              <h1 className="text-lg font-bold dark:text-white tracking-tight leading-normal">संपर्क</h1>
+              <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest mt-1">कुल डेटा: <AnimatedNumber value={filteredPeople.length} /></span>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button 
+              onClick={() => {
+                setIsSelectionMode(!isSelectionMode);
+                if (isSelectionMode) setSelectedPeopleIds([]);
+              }} 
+              className={`p-2.5 rounded-xl transition-all shadow-lg active:scale-90 ${isSelectionMode ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-200'}`}
+              title={isSelectionMode ? "चयन समाप्त करें" : "बल्क चयन"}
+            >
+              <CheckCircle2 size={20}/>
+            </button>
+            <button onClick={() => setExportTarget({ data: filteredPeople, title: 'संपर्क_सूची' })} className="p-2.5 bg-[#080d19]/10 dark:bg-white/10 text-gray-700 dark:text-gray-200 rounded-xl shadow-lg active:scale-90 transition-all">
+              <Download size={20}/>
+            </button>
+            <button onClick={() => setIsAddingContact(true)} className="p-2.5 bg-blue-600 text-white rounded-xl shadow-lg active:scale-90 transition-all"><Plus size={20}/></button>
+          </div>
+        </header>
+
+        {isSelectionMode && (
+          <div className="flex gap-2 p-1 animate-in slide-in-from-top-2 duration-300 overflow-x-auto no-scrollbar">
+             <button onClick={() => handleSelectAll(true)} className="flex-none px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 border border-indigo-200 text-xs font-bold rounded-lg whitespace-nowrap">फिल्टर किए गए सभी चुनें ({filteredPeople.length})</button>
+             <button onClick={() => setSelectedPeopleIds([])} className="flex-none px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 border border-red-200 text-xs font-bold rounded-lg whitespace-nowrap">चयन हटाएं</button>
+             {selectedPeopleIds.length > 0 && (
+               <button onClick={() => setIsBulkUpdateModalOpen(true)} className="flex-none px-3 py-1.5 bg-green-600 text-white shadow-md text-xs font-bold rounded-lg whitespace-nowrap">बल्क अपडेट ({selectedPeopleIds.length})</button>
+             )}
+          </div>
+        )}
 
        <div className="relative">
          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
          <input type="text" placeholder="खोजें..." value={peopleSearch} onChange={e=>setPeopleSearch(e.target.value)} className="w-full bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 placeholder:text-gray-500 text-sm p-2 pl-8 rounded-xl outline-none shadow-sm font-medium" />
        </div>
+
+       <div className="grid grid-cols-2 gap-2">
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500" size={12} />
+            <select 
+              value={peopleKhandFilter} 
+              onChange={(e) => { setPeopleKhandFilter(e.target.value); setPeopleMandalFilter('all'); }} 
+              className="w-full bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 text-xs p-2 pl-8 rounded-xl outline-none shadow-sm font-bold appearance-none"
+            >
+              <option value="all">सभी खंड</option>
+              {khands.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={12} />
+          </div>
+          <div className="relative">
+            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-500" size={12} />
+            <select 
+              value={peopleMandalFilter} 
+              onChange={(e) => setPeopleMandalFilter(e.target.value)} 
+              disabled={peopleKhandFilter === 'all'}
+              className="w-full bg-white/40 dark:bg-[#080d19]/40 border border-white/50 dark:border-gray-800 text-gray-800 dark:text-gray-100 text-xs p-2 pl-8 rounded-xl outline-none shadow-sm font-bold appearance-none disabled:opacity-50"
+            >
+              <option value="all">सभी मंडल</option>
+              {mandals.filter(m => m.khandId === peopleKhandFilter).map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={12} />
+          </div>
+        </div>
         
         {peopleShikshitFilter === 'yes' && (
          <div className="animate-in fade-in slide-in-from-top-2 duration-300">
@@ -1064,8 +1207,18 @@ const App: React.FC = () => {
         )}
 
         {/* Compact Filters Banner */}
-        {(peopleStatusFilter !== 'all' || peopleCategoryFilter !== 'all' || peopleAgeCategoryFilter !== 'all' || peopleShikshitFilter !== 'all' || peopleShikshanLevelFilter.length > 0) && (
+        {(peopleStatusFilter !== 'all' || peopleCategoryFilter !== 'all' || peopleAgeCategoryFilter !== 'all' || peopleShikshitFilter !== 'all' || peopleShikshanLevelFilter.length > 0 || peopleKhandFilter !== 'all' || peopleMandalFilter !== 'all') && (
           <div className="flex flex-wrap gap-1.5 animate-in fade-in duration-200">
+              {peopleKhandFilter !== 'all' && (
+                <div className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 border border-blue-200/50 dark:border-blue-800/30 px-2 py-0.5 rounded-lg text-xs font-medium uppercase tracking-tight">
+                    {getKhandName(peopleKhandFilter)}
+                </div>
+              )}
+              {peopleMandalFilter !== 'all' && (
+                <div className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 border border-indigo-200/50 dark:border-indigo-800/30 px-2 py-0.5 rounded-lg text-xs font-medium uppercase tracking-tight">
+                    {getMandalName(peopleMandalFilter)}
+                </div>
+              )}
               {peopleCategoryFilter !== 'all' && (
                 <div className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 border border-indigo-200/50 dark:border-indigo-800/30 px-2 py-0.5 rounded-lg text-xs font-medium uppercase tracking-tight">
                     {peopleCategoryFilter}
@@ -1092,7 +1245,7 @@ const App: React.FC = () => {
                 </div>
               )}
              <button 
-                 onClick={() => { setPeopleCategoryFilter('all'); setPeopleStatusFilter('all'); setPeopleAgeCategoryFilter('all'); setPeopleShikshitFilter('all'); setPeopleShikshanLevelFilter([]); }}
+                 onClick={() => { setPeopleCategoryFilter('all'); setPeopleStatusFilter('all'); setPeopleAgeCategoryFilter('all'); setPeopleShikshitFilter('all'); setPeopleShikshanLevelFilter([]); setPeopleKhandFilter('all'); setPeopleMandalFilter('all'); }}
                  className="text-xs font-medium text-gray-400 uppercase tracking-widest hover:text-red-500 transition-colors ml-1"
               >
                  क्लियर
@@ -1100,57 +1253,162 @@ const App: React.FC = () => {
           </div>
         )}
 
-       <div className="grid grid-cols-1 gap-2">
-          {filtered.length === 0 ? (
-           <div className="py-12 text-center text-gray-400 font-medium bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 rounded-2xl text-xs uppercase tracking-widest opacity-60">कोई संपर्क नहीं मिला</div>
+        <div className="space-y-8 pb-32">
+          {filteredPeople.length === 0 ? (
+            <div className="py-12 text-center text-gray-400 font-medium bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 rounded-2xl text-xs uppercase tracking-widest opacity-60 font-hindi">कोई संपर्क नहीं मिला</div>
           ) : (
-            filtered.map(c => {
-              const recentlyCalled = isRecentlyCalled(c.id);
-              const responsibility = c.volunteerProfile?.currentResponsibility;
-              return (
-               <div key={c.id} onClick={() => setSelectedContactId(c.id)} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/30 dark:border-gray-800/50 p-3 rounded-xl flex items-center gap-3 active:scale-[0.98] transition-all shadow-sm">
-                 <div className={`w-10 h-10 rounded-lg flex-none flex items-center justify-center text-white font-medium text-base ${recentlyCalled ? 'bg-orange-500 shadow-lg shadow-orange-500/20' : 'bg-blue-500 shadow-lg shadow-blue-500/20'}`}>
-                    {c.name[0]}
-                 </div>
-                 <div className="flex-1 min-w-0">
-                   <div className="flex items-center gap-2">
-                     <h4 className="font-medium dark:text-white truncate text-base leading-snug">{c.name}</h4>
-                      {responsibility && (
-                       <span className="text-xs font-medium bg-blue-500/10 text-blue-600 px-2 py-0.5 rounded-lg border border-blue-500/10 truncate max-w-[50%]">{responsibility}</span>
-                      )}
+            Object.values(groupedPeopleData).sort((a: any, b: any) => a.name.localeCompare(b.name)).map((khand: any, ki: number) => (
+              <motion.div 
+                key={khand.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: ki * 0.05 }}
+                className="space-y-4"
+              >
+                {/* Khand Graphic Header */}
+                <div className="relative overflow-hidden p-5 rounded-[2rem] bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-700 shadow-2xl shadow-blue-500/30 border border-white/10">
+                   <div className="absolute -top-12 -right-12 p-1 opacity-10 -rotate-12">
+                      <MapPin size={200} />
                    </div>
-                   <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-tighter flex items-center gap-1.5 mt-1">
-                     <span className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded-md">{c.category}</span>
-                     <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></span>
-                     <span className="text-blue-500 dark:text-blue-400 font-medium">{c.status}</span>
+                   <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/20 to-transparent"></div>
+                   
+                   <div className="relative z-10 flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                         <div className="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/30 shadow-inner">
+                            <MapPin className="text-white" size={28} />
+                         </div>
+                         <div>
+                            <h2 className="text-2xl font-bold text-white font-hindi tracking-tight">{khand.name} खंड</h2>
+                            <div className="flex items-center gap-2 mt-1">
+                               <div className="h-1 w-10 bg-orange-400 rounded-full"></div>
+                               <span className="text-[10px] text-blue-100 font-bold uppercase tracking-[0.2em]">खंड इकाई</span>
+                            </div>
+                         </div>
+                      </div>
+                      <div className="flex flex-col items-end">
+                         <div className="px-4 py-1.5 bg-black/20 backdrop-blur-md rounded-2xl border border-white/10 text-[11px] font-bold text-white uppercase tracking-wider">
+                            {(Object.values(khand.mandals) as any[]).reduce((acc: number, m: any) => acc + (Object.values(m.villages) as any[]).reduce((acc2: number, v: any) => acc2 + (v.contacts as any[]).length, 0), 0) as number} संपर्क
+                         </div>
+                      </div>
                    </div>
-                 </div>
-                 <div className="flex items-center gap-1.5 flex-none shrink-0">
-                   <a 
-                      href={`tel:${c.phone}`} 
-                      onClick={(e) => { e.stopPropagation(); handleDial(c.id); }} 
-                      className={`p-2.5 rounded-xl transition-all flex items-center justify-center ${recentlyCalled ? 'bg-orange-500 text-white' : 'bg-blue-500/10 text-blue-600'}`}
+                </div>
+
+                <div className="space-y-10 pl-0 sm:pl-0 ml-0 mt-4">
+                  {Object.values(khand.mandals).sort((a: any, b: any) => a.name.localeCompare(b.name)).map((mandal: any, mi: number) => (
+                    <motion.div 
+                      key={mandal.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4 }}
+                      className="space-y-5 relative"
                     >
-                     <Phone size={16} />
-                   </a>
-                   <a
-                      href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`}
-                      target="_blank" rel="noopener noreferrer" 
-                      onClick={(e) => e.stopPropagation()}
-                      className="p-2.5 rounded-xl bg-green-500/10 text-green-600 transition-all flex items-center justify-center hover:bg-green-500/20 active:scale-95"
-                    >
-                     <WhatsappIcon size={16} />
-                   </a>
-                 </div>
-               </div>
-              );
-            })
+
+                      
+                      {/* Mandal Header */}
+                      <div className="flex items-center gap-4 group">
+                        <div className="w-12 h-12 bg-white dark:bg-gray-800 text-indigo-600 rounded-2xl flex items-center justify-center shadow-lg border border-indigo-100 dark:border-indigo-900/30 group-hover:scale-110 transition-all duration-300">
+                           <Building2 size={22} />
+                        </div>
+                        <div className="flex-1">
+                           <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 font-hindi">{mandal.name} मंडल</h3>
+                           <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-[10px] text-indigo-500 dark:text-indigo-400 font-bold uppercase tracking-widest">मंडल क्षेत्र</span>
+                              <div className="h-[1px] flex-1 bg-indigo-500/20"></div>
+                           </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-8 pl-1 border-l border-indigo-500/5 ml-1">
+                        {Object.values(mandal.villages).sort((a: any, b: any) => a.name.localeCompare(b.name)).map((village: any) => (
+                          <div key={village.id} className="space-y-4 relative">
+                            {/* Connector Line to Village */}
+                            <div className="absolute -left-[14px] top-4 w-3.5 h-[1px] bg-indigo-500/10"></div>
+                            
+                            {/* Village Header */}
+                            <div className="flex items-center justify-between pr-2">
+                               <div className="flex items-center gap-2.5 px-4 py-1.5 bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-800/40 dark:to-transparent rounded-r-none rounded-l-xl border-l-4 border-emerald-500">
+                                  <Mountain className="text-emerald-500" size={16} />
+                                  <span className="text-sm font-bold text-gray-700 dark:text-gray-300 font-hindi">{village.name} ग्राम</span>
+                               </div>
+                               <div className="flex items-center gap-2">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/40"></div>
+                                  <span className="text-[10px] font-bold text-gray-500 dark:text-gray-500 uppercase tracking-tighter">{village.contacts.length} स्वयंसेवक</span>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-3 pl-2">
+                              {village.contacts.map((c: any) => {
+                                const recentlyCalled = isRecentlyCalled(c.id);
+                                const responsibility = c.volunteerProfile?.currentResponsibility;
+                                const isSelected = selectedPeopleIds.includes(c.id);
+                                return (
+                                   <motion.div 
+                                      key={c.id} 
+                                      layout
+                                      initial={{ opacity: 0, scale: 0.95 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      transition={{ duration: 0.3 }}
+                                      onClick={() => isSelectionMode ? toggleSelection(c.id) : setSelectedContactId(c.id)} 
+                                      className={`p-4 rounded-2xl flex items-center gap-4 active:scale-[0.98] transition-all shadow-md border ${isSelected ? 'glass dark:glass-dark border-indigo-500 ring-4 ring-indigo-500/20' : 'glass dark:glass-dark border-white/10 dark:border-gray-800/50'}`}
+                                   >
+                                     {isSelectionMode ? (
+                                       <div className={`w-12 h-12 rounded-xl flex-none flex items-center justify-center transition-all ${isSelected ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 border border-gray-200 dark:border-gray-700'}`}>
+                                          {isSelected ? <Check size={24} strokeWidth={3} /> : <div className="w-6 h-6 rounded-lg border-2 border-gray-300 dark:border-gray-600"></div>}
+                                       </div>
+                                     ) : (
+                                       <div className={`w-12 h-12 rounded-xl flex-none flex items-center justify-center text-white font-bold text-lg shadow-inner ${recentlyCalled ? 'bg-gradient-to-br from-orange-400 to-orange-600 shadow-orange-500/20' : 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-blue-500/20'}`}>
+                                          {c.name[0]}
+                                       </div>
+                                     )}
+                                     <div className="flex-1 min-w-0">
+                                       <div className="flex items-center gap-2">
+                                         <h4 className="font-medium text-gray-800 dark:text-white truncate text-base leading-[1.6] py-0.5">{c.name}</h4>
+                                          {responsibility && (
+                                           <span className="text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-lg border border-blue-500/10 truncate max-w-[50%] leading-relaxed">{responsibility}</span>
+                                          )}
+                                       </div>
+                                       <div className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2 mt-1.5 overflow-hidden">
+                                         <span className="bg-gray-100 dark:bg-gray-800/80 px-2 py-1 rounded-md whitespace-nowrap leading-relaxed">{c.category}</span>
+                                         <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700 shrink-0"></div>
+                                         <span className="text-blue-600 dark:text-blue-400 font-extrabold whitespace-nowrap leading-relaxed py-0.5">{c.status}</span>
+                                       </div>
+                                     </div>
+                                     <div className="flex items-center gap-2 flex-none shrink-0">
+                                       <a 
+                                          href={`tel:${c.phone}`} 
+                                          onClick={(e) => { e.stopPropagation(); handleDial(c.id); }} 
+                                          className={`w-11 h-11 rounded-xl transition-all flex items-center justify-center shadow-sm ${recentlyCalled ? 'bg-orange-500 text-white' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'}`}
+                                        >
+                                         <Phone size={18} />
+                                       </a>
+                                       <a
+                                          href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`}
+                                          target="_blank" rel="noopener noreferrer" 
+                                          onClick={(e) => e.stopPropagation()}
+                                          className="w-11 h-11 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-500 transition-all flex items-center justify-center shadow-sm hover:scale-105 active:scale-95"
+                                        >
+                                         <WhatsappIcon size={18} />
+                                       </a>
+                                     </div>
+                                   </motion.div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            ))
           )}
-       </div>
-     </div>
+        </div>
+      </div>
     );
   };
-
   const renderTrips = () => {
     if (viewingTrip) {
       return (
@@ -1370,9 +1628,9 @@ const App: React.FC = () => {
             <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-500 mb-2">
                <Trash2 size={32} />
             </div>
-            <div className="text-gray-500 font-medium text-center">यह बैठक जिस सूची से जुड़ी थी वह हटा दी गई है, या यह बैठक किसी सूची से नहीं जुड़ी है।</div>
+            <div className="text-gray-500 font-medium text-center font-hindi">यह बैठक जिस सूची से जुड़ी थी वह हटा दी गई है, या यह बैठक किसी सूची से नहीं जुड़ी है।</div>
             <div className="flex w-full gap-3">
-                <button onClick={() => { setSelectedMeetingId(null); setSelectedListId(null); setActiveTab('home'); }} className="flex-1 p-4 bg-gray-100 dark:bg-gray-800 rounded-md font-medium active:scale-95 transition-all text-gray-600 dark:text-gray-300">वापस जाएं</button>
+                <button onClick={() => { setSelectedMeetingId(null); setSelectedListId(null); setActiveTab('home'); }} className="flex-1 p-4 bg-gray-100 dark:bg-gray-800 rounded-md font-medium active:scale-95 transition-all text-gray-600 dark:text-gray-300 font-hindi">वापस जाएं</button>
                 <button 
                     onClick={() => {
                       setMeetings(prev => prev.filter(m => m.id !== meeting.id));
@@ -1380,7 +1638,7 @@ const App: React.FC = () => {
                       setSelectedListId(null);
                       setActiveTab('home');
                     }}
-                    className="flex-1 p-4 bg-red-600 text-white rounded-md font-medium active:scale-95 transition-all shadow-md"
+                    className="flex-1 p-4 bg-red-600 text-white rounded-md font-medium active:scale-95 transition-all shadow-md font-hindi"
                  >
                     बैठक हटाएं
                 </button>
@@ -1410,7 +1668,7 @@ const App: React.FC = () => {
          <header className="flex items-center gap-4">
            <button onClick={() => setSelectedMeetingId(null)} className="p-2 bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-sm border dark:border-gray-700 active:scale-95 transition-all"><ArrowLeft size={20} className="dark:text-white"/></button>
            <div className="flex-1">
-             <h2 className="text-xl font-bold dark:text-white">{meeting.title}</h2>
+             <h2 className="text-xl font-bold dark:text-white font-hindi">{meeting.title}</h2>
              <div className="text-xs font-medium text-gray-400 uppercase">{new Date(meeting.date).toLocaleDateString('hi-IN')}</div>
            </div>
            <button 
@@ -1441,14 +1699,14 @@ const App: React.FC = () => {
                   ].map(s => (
                    <div key={s.label} className={`${s.bg} p-3 rounded-md border dark:border-gray-700 text-center space-y-1`}>
                      <div className={`text-lg font-medium ${s.color}`}><AnimatedNumber value={s.count} /></div>
-                     <div className="text-xs font-medium uppercase text-gray-400">{s.label}</div>
+                     <div className="text-xs font-medium uppercase text-gray-400 font-hindi">{s.label}</div>
                    </div>
                   ))}
                </div>
 
           {meeting.notes && (
            <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-md border border-blue-100 dark:border-blue-900/30">
-              <div className="text-[10px] font-medium text-blue-600 dark:text-blue-400 uppercase mb-1">बैठक के नोट्स</div>
+              <div className="text-[10px] font-medium text-blue-600 dark:text-blue-400 uppercase mb-1 font-hindi">बैठक के नोट्स</div>
               <div className="text-xs dark:text-gray-300 italic">"{meeting.notes}"</div>
            </div>
           )}
@@ -1461,7 +1719,7 @@ const App: React.FC = () => {
              }}
              className="w-full p-4 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-lg border border-purple-200 dark:border-purple-800 shadow-sm active:scale-95 transition-all flex items-center justify-between"
           >
-            <div className="flex items-center gap-3 font-medium">
+            <div className="flex items-center gap-3 font-medium font-hindi">
                <Flag size={20} />
                 विस्तृत कार्यक्रम नियोजन में जाएं
             </div>
@@ -1470,7 +1728,7 @@ const App: React.FC = () => {
           
          <div className="space-y-6">
            <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-3">
-             <h3 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest px-2.5 py-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-md w-fit mb-2">उपस्थिति और प्रतिपुष्टि</h3>
+             <h3 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest px-2.5 py-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-md w-fit mb-2 font-hindi">उपस्थिति और प्रतिपुष्टि</h3>
               {listContacts.map(c => {
                 const status = meeting.attendance[c.id] || AttendanceStatus.PENDING;
                 const isPresent = meeting.presentPeopleIds.includes(c.id);
@@ -1488,7 +1746,7 @@ const App: React.FC = () => {
                      <div className="flex gap-2">
                        <button 
                           onClick={() => togglePresence(c.id)}
-                          className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-[10px] font-medium uppercase transition-all ${isPresent ? 'bg-green-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'}`}
+                          className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-[10px] font-medium uppercase transition-all font-hindi ${isPresent ? 'bg-green-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'}`}
                         >
                          <UserCheck size={14}/> {isPresent ? 'उपस्थित' : 'अनुपस्थित'}
                        </button>
@@ -1506,7 +1764,7 @@ const App: React.FC = () => {
                           onClick={() => {
                             setMeetings(prev => prev.map(m => m.id === meeting.id ? { ...m, attendance: { ...m.attendance, [c.id]: s } } : m));
                           }}
-                          className={`flex-1 py-1.5 rounded-lg text-[8px] font-medium uppercase transition-all ${status === s ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-50 dark:bg-gray-900 text-gray-400 border dark:border-gray-800 focus:outline-none'}`}
+                          className={`flex-1 py-1.5 rounded-lg text-[8px] font-medium uppercase transition-all font-hindi ${status === s ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-50 dark:bg-gray-900 text-gray-400 border dark:border-gray-800 focus:outline-none'}`}
                         >
                           {s}
                        </button>
@@ -1516,7 +1774,7 @@ const App: React.FC = () => {
                 );
               })}
               {listContacts.length === 0 && (
-               <div className="py-20 text-center text-gray-400 font-medium bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700 text-xs">सूची में कोई सदस्य नहीं है</div>
+               <div className="py-20 text-center text-gray-400 font-medium bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700 text-xs font-hindi">सूची में कोई सदस्य नहीं है</div>
               )}
            </motion.section>
          </div>
@@ -1560,10 +1818,10 @@ const App: React.FC = () => {
 
           <div className="space-y-8">
              <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-4">
-               <h3 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest px-2.5 py-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-md w-fit mb-2">बैठकें और कार्यक्रम</h3>
+               <h3 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest px-2.5 py-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-md w-fit mb-2 font-hindi">बैठकें और कार्यक्रम</h3>
                <div className="space-y-3">
                   {listMeetings.length === 0 ? (
-                   <div className="p-8 text-center text-gray-400 font-medium bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-lg border dark:border-gray-700 text-[10px]">कोई बैठक निर्धारित नहीं है</div>
+                   <div className="p-8 text-center text-gray-400 font-medium bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-lg border dark:border-gray-700 text-[10px] font-hindi">कोई बैठक निर्धारित नहीं है</div>
                   ) : (
                     listMeetings.map(m => (
                      <div key={m.id} onClick={() => setSelectedMeetingId(m.id)} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-4 rounded-lg border dark:border-gray-700 flex justify-between items-center shadow-sm active:scale-95 transition-all border-l-4 border-l-blue-500">
@@ -1573,18 +1831,23 @@ const App: React.FC = () => {
                         </div>
                         <div className="flex flex-col items-end gap-1">
                            <div className="flex gap-1 items-center">
-                             <div className="text-[8px] font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-1.5 py-0.5 rounded-lg border border-blue-100 dark:border-blue-900/30">
+                             <div className="text-[8px] font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-1.5 py-0.5 rounded-lg border border-blue-100 dark:border-blue-900/30 font-hindi">
                                 {Object.values(m.attendance || {}).filter(v => v === AttendanceStatus.COMING).length} आ रहे
                              </div>
-                             <div className="text-[8px] font-medium text-green-600 bg-green-50 dark:bg-green-900/20 px-1.5 py-0.5 rounded-lg border border-green-100 dark:border-green-900/30">
+                             <div className="text-[8px] font-medium text-green-600 bg-green-50 dark:bg-green-900/20 px-1.5 py-0.5 rounded-lg border border-green-100 dark:border-green-900/30 font-hindi">
                                 {m.presentPeopleIds.length} उपस्थित
                              </div>
                              <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  if (confirm(`क्या आप '${m.title}' कार्यक्रम को हटाना चाहते हैं?`)) {
-                                      setMeetings(prev => prev.filter(meet => meet.id !== m.id));
-                                  }
+                                  setConfirmation({
+                                    title: 'कार्यक्रम हटाएं?',
+                                    message: `क्या आप '${m.title}' कार्यक्रम को हटाना चाहते हैं?`,
+                                    onConfirm: () => {
+                                        setMeetings(prev => prev.filter(meet => meet.id !== m.id));
+                                        setConfirmation(null);
+                                    }
+                                  });
                                 }}
                                 className="ml-2 p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all cursor-pointer"
                               >
@@ -1599,11 +1862,10 @@ const App: React.FC = () => {
              </motion.section>
 
              <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="space-y-4">
-               <h3 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest px-2.5 py-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-md w-fit mb-2">सूची के सदस्य ({list.peopleIds.length})</h3>
+               <h3 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest px-2.5 py-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-md w-fit mb-2 font-hindi">सूची के सदस्य ({list.peopleIds.length})</h3>
                <div className="space-y-3">
                   {contacts.filter(c => list.peopleIds.includes(c.id)).map(c => {
                     const recentlyCalled = isRecentlyCalled(c.id);
-                    const hasIdea = ideas.some(i => !i.isCompleted && i.contactId === c.id);
                     return (
                      <div key={c.id} onClick={() => { setSelectedContactId(c.id); }} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-4 rounded-md border dark:border-gray-700 flex items-center gap-4 active:scale-95 transition-all shadow-sm">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-medium ${recentlyCalled ? 'bg-orange-500' : 'bg-indigo-500 shadow-lg shadow-indigo-500/20'}`}>{c.name[0]}</div>
@@ -1632,7 +1894,7 @@ const App: React.FC = () => {
                     );
                   })}
                   {list.peopleIds.length === 0 && (
-                   <div className="py-20 text-center text-gray-400 font-medium bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700">इस सूची में कोई सदस्य नहीं है</div>
+                   <div className="py-20 text-center text-gray-400 font-medium bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700 font-hindi">इस सूची में कोई सदस्य नहीं है</div>
                   )}
                </div>
              </motion.section>
@@ -1640,50 +1902,219 @@ const App: React.FC = () => {
        </div>
       );
     }
+
+    // Main lists view
+    const statsByCategory = listCategories.map(cat => ({
+      ...cat,
+      count: customLists.filter(l => l.categoryId === cat.id).length
+    }));
+
+    const filteredCategories = listCategoryFilter === 'all' 
+      ? listCategories 
+      : listCategories.filter(c => c.id === listCategoryFilter);
+
+    const ungroupedLists = customLists.filter(l => !l.categoryId || !listCategories.find(c => c.id === l.categoryId));
+    const showUngrouped = listCategoryFilter === 'all';
+
     return (
-     <div className="p-4 pb-24 space-y-6 animate-in slide-in-from-right duration-300">
-       <header className="flex justify-between items-center">
-         <h1 className="text-2xl font-bold dark:text-white">मेरी सूचियां (गट)</h1>
-         <button onClick={() => setIsAddingList(true)} className="p-3 bg-indigo-600 text-white rounded-md shadow-lg active:scale-90 transition-all"><Plus/></button>
-       </header>
-       <div className="grid grid-cols-1 gap-3">
-           {customLists.map(list => (
-             <div key={list.id} onClick={() => setSelectedListId(list.id)} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-5 rounded-md border dark:border-gray-700 flex justify-between items-center shadow-sm active:scale-95 transition-all">
-                <div className="flex items-center gap-4">
-                   <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 rounded-md"><ListIcon size={24}/></div>
-                   <div>
-                      <div className="font-medium dark:text-white font-hindi">{list.name}</div>
-                      <div className="text-xs font-medium text-gray-400 uppercase">{list.peopleIds.length} सदस्य</div>
+      <div className="p-4 pb-24 space-y-6 animate-in slide-in-from-right duration-300">
+        <header className="flex justify-between items-center bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl p-4 -mx-4 -mt-4 sticky top-0 z-10 border-b border-white/20 dark:border-gray-800/50">
+          <div className="flex items-center gap-3">
+             <button onClick={() => setActiveTab('home')} className="p-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg active:scale-90 transition-all">
+                <ArrowLeft size={18} />
+             </button>
+             <h1 className="text-xl font-bold dark:text-white font-hindi">मेरी सूचियां (गट)</h1>
+          </div>
+          <button onClick={() => setIsAddingList(true)} className="p-2.5 bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-500/20 active:scale-90 transition-all hover:bg-indigo-700">
+             <Plus size={20} />
+          </button>
+        </header>
+
+        {/* Compact Dashboard - 6 Groups in Grid */}
+        <div className="flex overflow-x-auto pb-2 -mx-1 px-1 gap-1.5 no-scrollbar scroll-smooth">
+           <button 
+             onClick={() => setListCategoryFilter('all')}
+             className={`p-1.5 rounded-lg border transition-all flex flex-col items-center gap-0.5 min-w-[56px] ${listCategoryFilter === 'all' ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' : 'bg-white/40 dark:bg-gray-900/40 border-white/20 dark:border-gray-800/50 text-gray-600 dark:text-gray-400'}`}
+           >
+              <div className={`w-6 h-6 rounded-md flex items-center justify-center ${listCategoryFilter === 'all' ? 'bg-indigo-500' : 'bg-gray-100 dark:bg-gray-800'}`}>
+                 <LayoutList size={12} />
+              </div>
+              <span className="text-[8px] font-bold font-hindi">सभी</span>
+              <span className="text-[9px] font-black">{customLists.length}</span>
+           </button>
+            {statsByCategory.map((stat, i) => {
+             const isActive = listCategoryFilter === stat.id;
+             return (
+               <motion.button 
+                 key={stat.id}
+                 initial={{ opacity: 0, scale: 0.9 }}
+                 animate={{ opacity: 1, scale: 1 }}
+                 transition={{ delay: i * 0.03 }}
+                 onClick={() => setListCategoryFilter(isActive ? 'all' : stat.id)}
+                 className={`p-1.5 rounded-lg border transition-all flex flex-col items-center gap-0.5 min-w-[56px] ${isActive ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' : 'bg-white/40 dark:bg-gray-900/40 border-white/20 dark:border-gray-800/50 text-gray-600 dark:text-gray-400 hover:border-indigo-400/50'}`}
+               >
+                 <div className={`w-6 h-6 rounded-md flex items-center justify-center ${isActive ? 'bg-indigo-500' : 'bg-gray-100 dark:bg-gray-800'}`}>
+                    <LucideIcon name={stat.icon} size={12} className={isActive ? 'text-white' : ''} />
+                 </div>
+                 <span className="text-[8px] font-bold font-hindi truncate w-12 text-center">{stat.name}</span>
+                 <span className="text-[9px] font-black"><AnimatedNumber value={stat.count} /></span>
+               </motion.button>
+             );
+           })}
+        </div>
+
+        <div className="space-y-8 pt-2">
+          {filteredCategories.map(cat => {
+            const listsInCat = customLists.filter(l => l.categoryId === cat.id);
+            if (listsInCat.length === 0) return null;
+
+            return (
+              <div key={cat.id} className="space-y-2">
+                <div className="flex items-center gap-2 px-1">
+                   <div className="w-6 h-6 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-md flex items-center justify-center">
+                      <LucideIcon name={cat.icon} size={12} />
                    </div>
+                   <h2 className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">{cat.name}</h2>
+                   <div className="flex-1 h-[1px] bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent"></div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        setConfirmation({
-                          title: 'सूची हटाएं?',
-                          message: `क्या आप '${list.name}' सूची को हटाना चाहते हैं?`,
-                          messageFont: "font-hindi",
-                          onConfirm: () => {
-                            setCustomLists(prev => prev.filter(l => l.id !== list.id));
-                            setMeetings(prev => prev.filter(m => m.listId !== list.id));
-                            setConfirmation(null);
-                          }
-                        });
-                      }} 
-                      className="p-2 text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg"
-                    >
-                     <Trash2 size={16}/>
-                  </button>
-                  <ChevronRight className="text-gray-300"/>
+                
+                <div className="grid grid-cols-4 gap-1">
+                  {listsInCat.map((list, i) => (
+                      <motion.div 
+                        key={list.id} 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.03 }}
+                        onClick={() => setSelectedListId(list.id)} 
+                        className="group bg-white/40 dark:bg-[#080d19]/60 backdrop-blur-3xl border border-white/60 dark:border-gray-800/80 p-1.5 rounded-lg flex flex-col justify-between shadow-sm hover:shadow-md hover:border-indigo-500/30 transition-all active:scale-[0.98] cursor-pointer min-h-[76px]"
+                      >
+                        <div className="flex flex-col gap-1">
+                          <div className="w-5 h-5 bg-gray-50 dark:bg-gray-800 rounded-md flex items-center justify-center text-gray-500 dark:text-gray-400">
+                             <LucideIcon name={list.icon || cat.icon || 'List'} size={10} />
+                          </div>
+                          <div className="font-bold dark:text-white font-hindi text-[11px] line-clamp-2 leading-tight min-h-[28px]">{list.name}</div>
+                          <div className="text-[8px] font-bold text-gray-400 bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded-md uppercase w-fit">{list.peopleIds.length} सदस्य</div>
+                        </div>
+                        <div className="flex items-center justify-between mt-auto pt-1 border-t border-gray-100 dark:border-gray-800/30">
+                          <div className="flex items-center gap-2">
+                           <button 
+                               onClick={(e) => { 
+                                 e.stopPropagation(); 
+                                 setEditingList(list);
+                                 setIsAddingList(true);
+                               }} 
+                               className="text-gray-300 hover:text-indigo-500 transition-colors p-0.5"
+                             >
+                              <Edit2 size={10}/>
+                           </button>
+                           <button 
+                               onClick={(e) => { 
+                                 e.stopPropagation(); 
+                                 setConfirmation({
+                                   title: 'सूची हटाएं?',
+                                   message: `क्या आप '${list.name}' सूची को हटाना चाहते हैं?`,
+                                   messageFont: "font-hindi",
+                                   onConfirm: () => {
+                                     setCustomLists(prev => prev.filter(l => l.id !== list.id));
+                                     setMeetings(prev => prev.filter(m => m.listId !== list.id));
+                                     setConfirmation(null);
+                                   }
+                                 });
+                               }} 
+                               className="text-gray-300 hover:text-red-500 transition-colors p-0.5"
+                             >
+                              <Trash2 size={10}/>
+                           </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+
+          {showUngrouped && ungroupedLists.length > 0 && (
+             <div className="space-y-2">
+                <div className="flex items-center gap-2 px-1">
+                   <div className="w-6 h-6 bg-gray-100 dark:bg-gray-800 text-gray-500 rounded-md flex items-center justify-center">
+                      <Layers size={12} />
+                   </div>
+                   <h2 className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest font-hindi">अन्य सूचियां</h2>
+                   <div className="flex-1 h-[1px] bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent"></div>
+                </div>
+                <div className="grid grid-cols-4 gap-1">
+                  {ungroupedLists.map((list, i) => (
+                      <motion.div 
+                        key={list.id} 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.03 }}
+                        onClick={() => setSelectedListId(list.id)} 
+                        className="group bg-white/40 dark:bg-[#080d19]/60 backdrop-blur-3xl border border-white/60 dark:border-gray-800/80 p-1.5 rounded-lg flex flex-col justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[76px]"
+                      >
+                        <div className="flex flex-col gap-1">
+                          <div className="w-5 h-5 bg-gray-50 dark:bg-gray-800 rounded-md flex items-center justify-center text-gray-500 dark:text-gray-400">
+                             <LucideIcon name={list.icon || 'List'} size={10} />
+                          </div>
+                          <div className="font-bold dark:text-white font-hindi text-[11px] line-clamp-2 leading-tight min-h-[28px]">{list.name}</div>
+                          <div className="text-[8px] font-bold text-gray-400 bg-gray-50 dark:bg-gray-800 px-1 py-0.5 rounded-full uppercase w-fit">{list.peopleIds.length} सदस्य</div>
+                        </div>
+                        <div className="flex items-center justify-between mt-auto pt-1 border-t border-gray-100 dark:border-gray-800/30">
+                          <div className="text-[7px] text-gray-400 font-hindi uppercase tracking-wider">अवर्गीकृत</div>
+                          <div className="flex items-center gap-2">
+                           <button 
+                               onClick={(e) => { 
+                                 e.stopPropagation(); 
+                                 setEditingList(list);
+                                 setIsAddingList(true);
+                               }} 
+                               className="text-gray-300 hover:text-indigo-500 transition-colors p-0.5"
+                             >
+                              <Edit2 size={10}/>
+                           </button>
+                           <button 
+                               onClick={(e) => { 
+                                 e.stopPropagation(); 
+                                 setConfirmation({
+                                   title: 'सूची हटाएं?',
+                                   message: `क्या आप '${list.name}' सूची को हटाना चाहते हैं?`,
+                                   messageFont: "font-hindi",
+                                   onConfirm: () => {
+                                     setCustomLists(prev => prev.filter(l => l.id !== list.id));
+                                     setMeetings(prev => prev.filter(m => m.listId !== list.id));
+                                     setConfirmation(null);
+                                   }
+                                 });
+                               }} 
+                               className="text-gray-300 hover:text-red-500 transition-colors"
+                             >
+                              <Trash2 size={10}/>
+                           </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
              </div>
-           ))}
-           {customLists.length === 0 && (
-             <div className="py-20 text-center text-gray-400 font-medium bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700">अभी कोई सूची नहीं है</div>
-           )}
-       </div>
-     </div>
+          )}
+
+          {((listCategoryFilter === 'all' && customLists.length === 0) || (listCategoryFilter !== 'all' && customLists.filter(l => l.categoryId === listCategoryFilter).length === 0)) && (
+            <div className="py-20 flex flex-col items-center justify-center gap-4 text-center">
+               <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-3xl flex items-center justify-center text-gray-300">
+                  <LayoutList size={40} />
+               </div>
+               <div>
+                  <div className="text-gray-500 font-bold text-lg font-hindi">कोई सूची नहीं मिली</div>
+                  <div className="text-gray-400 text-sm mt-1 font-hindi">शायद इस श्रेणी में कोई सूची नहीं है</div>
+               </div>
+               {listCategoryFilter !== 'all' && (
+                 <button onClick={() => setListCategoryFilter('all')} className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-full font-bold shadow-lg active:scale-95 transition-all font-hindi">सभी सूचियां देखें</button>
+               )}
+            </div>
+          )}
+        </div>
+      </div>
     );
   };
 
@@ -1936,6 +2367,7 @@ const App: React.FC = () => {
             villages={villages} setVillages={setVillages}
             setActiveTab={setActiveTab}
             onBack={() => setActiveTab('menu')}
+            setConfirmation={setConfirmation}
           />
         )}
         {activeTab === 'reports' && (
@@ -1960,12 +2392,16 @@ const App: React.FC = () => {
             setActiveTab={setActiveTab} 
             exportData={exportData} 
             importData={() => fileInputRef.current?.click()}
+            generateVolunteerTemplate={generateVolunteerTemplate}
+            volunteerExcelInputRef={volunteerExcelInputRef}
+            handleImportExcel={handleImportExcel}
             resetAllData={resetAllData} 
             clearAllKaryas={clearAllKaryas}
           />
         )}
         {activeTab === 'cat-mgmt' &&<CatMgmt categories={categories} setCategories={setCategories} onBack={()=>setActiveTab('settings')} setConfirmation={setConfirmation} />}
         {activeTab === 'event-cat-mgmt' &&<CatMgmt title="कार्यक्रम श्रेणी प्रबंधन" categories={eventCategories} setCategories={setEventCategories} onBack={()=>setActiveTab('settings')} setConfirmation={setConfirmation} />}
+        {activeTab === 'list-cat-mgmt' &&<CatMgmt title="सूची श्रेणी प्रबंधन" categories={listCategories} setCategories={setListCategories} onBack={()=>setActiveTab('settings')} setConfirmation={setConfirmation} />}
         {selectedContactId && contacts.find(c => c.id === selectedContactId) && (
          <div className="fixed inset-0 z-[100] bg-slate-50 dark:bg-[#070b14] overflow-y-auto w-full h-[100dvh]">
            <div className="w-full max-w-md mx-auto min-h-[100dvh] relative">
@@ -2017,7 +2453,7 @@ const App: React.FC = () => {
        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
         
        <NavBtn active={activeTab === 'home'} onClick={() => handleTabChange('home')} icon={<Home />} />
-       <NavBtn active={activeTab === 'swayamsevak'} onClick={() => handleTabChange('swayamsevak')} icon={<UsersRound />} />
+       <NavBtn active={activeTab === 'people' || activeTab === 'swayamsevak'} onClick={() => handleTabChange('people')} icon={<UsersRound />} />
        <NavBtn active={activeTab === 'activities'} onClick={() => handleTabChange('activities')} icon={<Rocket />} />
        <NavBtn active={activeTab === 'calendar'} onClick={() => handleTabChange('calendar')} icon={<CalendarIcon />} />
         <NavBtn active={activeTab === 'menu'} onClick={() => handleTabChange('menu')} icon={<MenuIcon />} />
@@ -2045,12 +2481,22 @@ const App: React.FC = () => {
           onSubmit={(data: any) => editingTrip ? handleUpdateTrip(editingTrip.id, data) : handleAddTrip(data)} 
         />
       )}
-      {isAddingList && (
-        <PromptModal 
-            title="नई सूची" 
-            placeholder="सूची का नाम लिखें..." 
-            onSubmit={(name: string) => { if(name) { setCustomLists(prev => [...prev, { id: `l${Date.now()}`, name, peopleIds: [] }]); setIsAddingList(false); } }} 
-            onCancel={() => setIsAddingList(false)} 
+      {(isAddingList || editingList) && (
+        <ListFormModal 
+            categories={listCategories}
+            initialData={editingList}
+            onClose={() => { setIsAddingList(false); setEditingList(null); }} 
+            onSubmit={(data: { name: string, categoryId: string, icon: string }) => { 
+                if(data.name && data.categoryId) { 
+                    if (editingList) {
+                      setCustomLists(prev => prev.map(l => l.id === editingList.id ? { ...l, name: data.name, categoryId: data.categoryId, icon: data.icon } : l));
+                    } else {
+                      setCustomLists(prev => [...prev, { id: `l${Date.now()}`, name: data.name, categoryId: data.categoryId, icon: data.icon, peopleIds: [] }]); 
+                    }
+                    setIsAddingList(false);
+                    setEditingList(null);
+                } 
+            }} 
          />
       )}
       {isLoggingVisit && (
@@ -2120,6 +2566,18 @@ const App: React.FC = () => {
             }));
             setIsManagingMembers(false);
           }}
+        />
+      )}
+      {isBulkUpdateModalOpen && (
+        <BulkUpdateModal 
+          selectedCount={selectedPeopleIds.length}
+          contacts={contacts}
+          khands={khands}
+          mandals={mandals}
+          villages={villages}
+          categories={categories}
+          onClose={() => setIsBulkUpdateModalOpen(false)}
+          onUpdate={handleBulkUpdate}
         />
       )}
       {confirmation && (
@@ -3988,7 +4446,7 @@ const SettingsTab = ({
   appFontSize, setAppFontSize,
   whatsappMessage, setWhatsappMessage,
   setActiveTab, 
-  exportData, importData, resetAllData, clearAllKaryas 
+  exportData, importData, generateVolunteerTemplate, volunteerExcelInputRef, handleImportExcel, resetAllData, clearAllKaryas 
 }: any) => (
  <div className="p-4 pb-24 space-y-6 animate-in slide-in-from-right duration-300">
     <header className="flex items-center gap-4">
@@ -4077,6 +4535,10 @@ const SettingsTab = ({
             <div className="flex items-center gap-3 text-purple-600"><Flag size={18}/><span className="font-medium dark:text-gray-200">कार्यक्रम श्रेणी प्रबंधन</span></div>
             <ChevronRight size={16} className="text-gray-400"/>
           </button>
+          <button onClick={()=>setActiveTab('list-cat-mgmt')} className="w-full p-3 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all border-t dark:border-gray-700">
+            <div className="flex items-center gap-3 text-indigo-600"><Layers size={18}/><span className="font-medium dark:text-gray-200 font-hindi">सूची श्रेणी प्रबंधन</span></div>
+            <ChevronRight size={16} className="text-gray-400"/>
+          </button>
         </div>
       </div>
 
@@ -4089,6 +4551,23 @@ const SettingsTab = ({
           <button onClick={clearAllKaryas} className="w-full p-3 flex justify-between items-center text-orange-600 active:bg-orange-50 dark:active:bg-orange-900/10 transition-all border-t dark:border-gray-700"><div className="flex items-center gap-3"><Trash2 size={18}/><span className="font-medium">सभी शाखा/मिलन हटाएं</span></div></button>
           <button onClick={resetAllData} className="w-full p-3 flex justify-between items-center text-red-600 active:bg-red-50 dark:active:bg-red-900/10 transition-all border-t dark:border-gray-700"><div className="flex items-center gap-3"><RotateCcw size={18}/><span className="font-medium">ऐप रिसेट करें</span></div></button>
         </div>
+      </div>
+
+      {/* Volunteer Data Management Category */}
+      <div>
+        <h2 className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest px-2.5 py-1 bg-indigo-50 dark:bg-indigo-900/30 rounded inline-block mb-2 shadow-sm border border-indigo-100 dark:border-indigo-800/30">स्वयंसेवक डेटा आयात</h2>
+        <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-md border dark:border-gray-700 overflow-hidden divide-y dark:divide-gray-700 shadow-sm text-sm">
+          <button onClick={generateVolunteerTemplate} className="w-full p-3 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 transition-all">
+            <div className="flex items-center gap-3 text-green-600"><FileText size={18}/><span className="font-medium dark:text-gray-200">टेम्पलेट डाउनलोड करें</span></div>
+            <ChevronRight size={16} className="text-gray-400"/>
+          </button>
+          <button onClick={() => volunteerExcelInputRef.current?.click()} className="w-full p-3 flex justify-between items-center active:bg-gray-50 dark:active:bg-gray-900/40 border-t dark:border-gray-700 transition-all">
+            <div className="flex items-center gap-3 text-blue-600"><Upload size={18}/><span className="font-medium dark:text-gray-200">एक्सेल डेटा इम्पोर्ट करें</span></div>
+            <ChevronRight size={16} className="text-gray-400"/>
+          </button>
+          <input type="file" ref={volunteerExcelInputRef} onChange={handleImportExcel} accept=".xlsx, .xls" className="hidden" />
+        </div>
+        <p className="p-2 text-[10px] text-gray-500 font-medium italic">नया डेटा जोड़ने के लिए एक्सेल टेम्पलेट का उपयोग करें।</p>
       </div>
     </div>
  </div>
@@ -4662,7 +5141,7 @@ const ActivitiesTab = ({
                       <div className="text-[8px] font-medium uppercase text-gray-400 tracking-tighter leading-normal mb-0.5">
                         {format(parseISO(activity.date), 'd MMM')} • {activity.type === 'visit' ? 'अनुवर्तन' : activity.type === 'meeting' ? 'बैठक' : 'प्रवास'}
                      </div>
-                     <h4 className="font-medium dark:text-white text-xs truncate leading-snug">{activity.contactName}</h4>
+                     <h4 className="font-medium dark:text-white text-xs truncate leading-[1.6] py-0.5">{activity.contactName}</h4>
                       {activity.location && (
                        <div className="text-[9px] font-medium text-blue-500 flex items-center gap-1 mt-0.5 truncate bg-blue-50/50 dark:bg-blue-900/10 w-fit px-1.5 py-0.5 rounded-lg">
                          <MapPin size={8} /> {activity.location}
@@ -5316,6 +5795,118 @@ const IdeasTab = ({ ideas, onUpdate, onDelete, onAdd, contacts, villages, mandal
   );
 };
 
+const ListFormModal = ({ categories, onClose, onSubmit, initialData }: any) => {
+  const [name, setName] = useState(initialData?.name || '');
+  const [categoryId, setCategoryId] = useState(initialData?.categoryId || '');
+  const [icon, setIcon] = useState(initialData?.icon || '');
+  const [showIconPicker, setShowIconPicker] = useState(false);
+
+  return (
+    <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full max-w-md mx-auto">
+      <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+           <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-gray-700/50 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
+           <h2 className="text-xl font-bold dark:text-white tracking-tight font-hindi">{initialData ? 'सूची संपादित करें' : 'नई सूची बनाएं'}</h2>
+        </div>
+      </header>
+
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 max-w-md mx-auto w-full pb-32 relative z-10">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-gray-400 uppercase tracking-widest px-1 font-hindi">सूची का नाम</label>
+              <input 
+                 autoFocus 
+                 className="w-full bg-white/30 dark:bg-[#080d19]/50 backdrop-blur-2xl border border-white/40 border-t-white/70 shadow-[inset_0_1px_2px_rgba(255,255,255,0.6),0_2px_8px_rgba(0,0,0,0.05)] text-gray-800 dark:text-gray-100 p-4 rounded-xl outline-none font-medium text-lg font-hindi" 
+                 placeholder="जैसे: मुख्य कार्यकर्ता, मंडल टोली आदि" 
+                 value={name} 
+                 onChange={e => setName(e.target.value)} 
+               />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-gray-400 uppercase tracking-widest px-1 font-hindi">आइकन (Icon) चुनें</label>
+              <button 
+                onClick={() => setShowIconPicker(!showIconPicker)}
+                className="w-full bg-white/30 dark:bg-[#080d19]/50 backdrop-blur-2xl border border-white/40 border-t-white/70 p-4 rounded-xl flex items-center justify-between group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 rounded-lg flex items-center justify-center">
+                    <LucideIcon 
+                      name={icon || categories.find((c: any) => c.id === categoryId)?.icon || 'List'} 
+                      size={20} 
+                    />
+                  </div>
+                  <span className="font-medium text-gray-700 dark:text-gray-300 font-hindi">
+                    {icon ? icon : (categories.find((c: any) => c.id === categoryId)?.icon ? 'श्रेणी से (From Category)' : 'डिफ़ॉल्ट आइकन')}
+                  </span>
+                </div>
+                <div className="text-indigo-600 dark:text-indigo-400 flex items-center gap-1 text-sm font-bold font-hindi">
+                  बदलें <ChevronRight size={16} />
+                </div>
+              </button>
+
+              <AnimatePresence>
+                {showIconPicker && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="grid grid-cols-6 gap-2 p-4 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800 mt-2 max-h-48 overflow-y-auto">
+                      {ICON_LIST.map((iconName) => (
+                        <button
+                          key={iconName}
+                          onClick={() => {
+                            setIcon(iconName);
+                            setShowIconPicker(false);
+                          }}
+                          className={`w-full aspect-square flex items-center justify-center rounded-lg transition-all ${icon === iconName ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        >
+                          <LucideIcon name={iconName} size={18} />
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <label className="text-xs font-medium text-gray-400 uppercase tracking-widest px-1 font-hindi">श्रेणी (Category) चुनें</label>
+            <div className="grid grid-cols-2 gap-2">
+               {categories.map((cat: any) => {
+                 return (
+                   <button 
+                      key={cat.id}
+                      onClick={() => setCategoryId(cat.id)}
+                      className={`flex items-center gap-3 p-4 rounded-2xl border transition-all ${categoryId === cat.id ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20 active:scale-95' : 'bg-white/40 dark:bg-gray-900/40 border-white/60 dark:border-gray-800/80 text-gray-600 dark:text-gray-400'}`}
+                   >
+                     <div className={`p-2 rounded-lg ${categoryId === cat.id ? 'bg-indigo-500' : 'bg-gray-100 dark:bg-gray-800'}`}>
+                        <LucideIcon name={cat.icon} size={18} />
+                     </div>
+                     <span className="font-bold text-sm truncate font-hindi">{cat.name}</span>
+                   </button>
+                 );
+               })}
+            </div>
+          </div>
+
+        <div className="pt-4">
+          <button 
+             onClick={() => onSubmit({ name, categoryId, icon })} 
+             disabled={!name || !categoryId}
+             className="w-full p-4 bg-indigo-600 dark:bg-indigo-500 text-white font-bold rounded-2xl shadow-xl shadow-indigo-600/20 active:scale-95 transition-all disabled:opacity-50 font-hindi"
+           >
+             {initialData ? 'अपडेट करें' : 'सूची बनाएं'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const IdeaFormModal = ({ contacts, villages, mandals, khands, customLists, onClose, onSubmit }: any) => {
   const [content, setContent] = useState('');
   const [linkType, setLinkType] = useState<'none' | 'contact' | 'village' | 'mandal' | 'customList'>('none');
@@ -5469,6 +6060,200 @@ const IdeaFormModal = ({ contacts, villages, mandals, khands, customLists, onClo
        </button>
      </div>
    </div>
+  );
+};
+
+const BulkUpdateModal = ({ selectedCount, contacts, khands, mandals, villages, categories, onClose, onUpdate }: any) => {
+  const [useStatus, setUseStatus] = useState(false);
+  const [status, setStatus] = useState(Status.SAKRIYA);
+  
+  const [useCategory, setUseCategory] = useState(false);
+  const [category, setCategory] = useState(categories[0]?.name || '');
+  
+  const [useResponsibility, setUseResponsibility] = useState(false);
+  const [responsibility, setResponsibility] = useState('');
+  
+  const [useLocation, setUseLocation] = useState(false);
+  const [khandId, setKhandId] = useState('');
+  const [mandalId, setMandalId] = useState('');
+  const [villageId, setVillageId] = useState('');
+
+  const handleUpdate = () => {
+    const updates: any = {};
+    if (useStatus) updates.status = status;
+    if (useCategory) updates.category = category;
+    if (useResponsibility) {
+      updates.volunteerProfileUpdates = { currentResponsibility: responsibility };
+    }
+    if (useLocation) {
+      if (khandId) updates.khandId = khandId;
+      if (mandalId) updates.mandalId = mandalId;
+      if (villageId) updates.villageId = villageId;
+    }
+    
+    if (Object.keys(updates).length === 0) {
+      alert('कृपया कम से कम एक फ़ील्ड चुनें जिसे आप अपडेट करना चाहते हैं।');
+      return;
+    }
+    
+    onUpdate(updates);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[300] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full max-w-md mx-auto">
+      <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-gray-700/50 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
+          <div className="flex flex-col">
+            <h2 className="text-xl font-bold dark:text-white tracking-tight">बल्क अपडेट</h2>
+            <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">{selectedCount} व्यक्ति चयनित</span>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 max-w-md mx-auto w-full pb-32">
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl border border-blue-100 dark:border-blue-800/40 text-xs font-medium text-blue-800 dark:text-blue-300 leading-relaxed italic">
+          आप एक साथ मुख्य क्षेत्रों को अपडेट कर सकते हैं। केवल उन्हीं क्षेत्रों को चुनें जिन्हें आप बदलना चाहते हैं।
+        </div>
+
+        <div className="space-y-4">
+          {/* Status Block */}
+          <div className={`p-4 rounded-2xl border transition-all ${useStatus ? 'bg-white dark:bg-gray-800 border-indigo-500 shadow-lg ring-1 ring-indigo-500/20' : 'bg-gray-50/50 dark:bg-gray-900/20 border-transparent dark:border-gray-800 opacity-70'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${useStatus ? 'bg-indigo-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500'}`}>
+                  <ShieldCheck size={18} />
+                </div>
+                <span className={`font-bold text-sm ${useStatus ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500'}`}>शक्ति (Status)</span>
+              </div>
+              <button 
+                onClick={() => setUseStatus(!useStatus)} 
+                className={`text-[10px] font-bold px-2 py-1 rounded-full transition-all uppercase tracking-widest ${useStatus ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-200 dark:bg-gray-800 text-gray-500'}`}
+              >
+                {useStatus ? 'हटाएं' : 'चुनें'}
+              </button>
+            </div>
+            {useStatus && (
+              <div className="flex bg-gray-50 dark:bg-gray-900 p-1 rounded-xl gap-1">
+                {Object.values(Status).map((s: any) => (
+                  <button 
+                    key={s} 
+                    onClick={() => setStatus(s)} 
+                    className={`flex-1 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all ${status === s ? 'bg-indigo-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'}`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Category Block */}
+          <div className={`p-4 rounded-2xl border transition-all ${useCategory ? 'bg-white dark:bg-gray-800 border-purple-500 shadow-lg ring-1 ring-purple-500/20' : 'bg-gray-50/50 dark:bg-gray-900/20 border-transparent dark:border-gray-800 opacity-70'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${useCategory ? 'bg-purple-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500'}`}>
+                  <Tag size={18} />
+                </div>
+                <span className={`font-bold text-sm ${useCategory ? 'text-purple-600 dark:text-purple-400' : 'text-gray-500'}`}>संपर्क श्रेणी</span>
+              </div>
+              <button 
+                onClick={() => setUseCategory(!useCategory)} 
+                className={`text-[10px] font-bold px-2 py-1 rounded-full transition-all uppercase tracking-widest ${useCategory ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-200 dark:bg-gray-800 text-gray-500'}`}
+              >
+                {useCategory ? 'हटाएं' : 'चुनें'}
+              </button>
+            </div>
+            {useCategory && (
+              <div className="grid grid-cols-2 gap-2">
+                {categories.map((c: any) => (
+                  <button 
+                    key={c.id} 
+                    onClick={() => setCategory(c.name)} 
+                    className={`p-2 rounded-xl border text-[9px] font-bold uppercase transition-all flex items-center gap-2 ${category === c.name ? 'bg-purple-600 text-white border-purple-600 shadow-lg' : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-500'}`}
+                  >
+                    <LucideIcon name={c.icon} size={14} />
+                    <span className="truncate">{c.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Responsibility Block */}
+          <div className={`p-4 rounded-2xl border transition-all ${useResponsibility ? 'bg-white dark:bg-gray-800 border-orange-500 shadow-lg ring-1 ring-orange-500/20' : 'bg-gray-50/50 dark:bg-gray-900/20 border-transparent dark:border-gray-800 opacity-70'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${useResponsibility ? 'bg-orange-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500'}`}>
+                  <Award size={18} />
+                </div>
+                <span className={`font-bold text-sm ${useResponsibility ? 'text-orange-600 dark:text-orange-400' : 'text-gray-500'}`}>वर्तमान दायित्व</span>
+              </div>
+              <button 
+                onClick={() => setUseResponsibility(!useResponsibility)} 
+                className={`text-[10px] font-bold px-2 py-1 rounded-full transition-all uppercase tracking-widest ${useResponsibility ? 'bg-orange-600 text-white shadow-md' : 'bg-gray-200 dark:bg-gray-800 text-gray-500'}`}
+              >
+                {useResponsibility ? 'हटाएं' : 'चुनें'}
+              </button>
+            </div>
+            {useResponsibility && (
+              <div className="relative">
+                <input 
+                  type="text" 
+                  placeholder="दायित्व का नाम..." 
+                  value={responsibility} 
+                  onChange={e => setResponsibility(e.target.value)} 
+                  className="w-full bg-gray-50 dark:bg-gray-900 p-3 rounded-xl outline-none border dark:border-gray-700 font-medium text-xs dark:text-white"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Location Block */}
+          <div className={`p-4 rounded-2xl border transition-all ${useLocation ? 'bg-white dark:bg-gray-800 border-emerald-500 shadow-lg ring-1 ring-emerald-500/20' : 'bg-gray-50/50 dark:bg-gray-900/20 border-transparent dark:border-gray-800 opacity-70'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${useLocation ? 'bg-emerald-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500'}`}>
+                  <MapPin size={18} />
+                </div>
+                <span className={`font-bold text-sm ${useLocation ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-500'}`}>क्षेत्र (Location)</span>
+              </div>
+              <button 
+                onClick={() => setUseLocation(!useLocation)} 
+                className={`text-[10px] font-bold px-2 py-1 rounded-full transition-all uppercase tracking-widest ${useLocation ? 'bg-emerald-600 text-white shadow-md' : 'bg-gray-200 dark:bg-gray-800 text-gray-500'}`}
+              >
+                {useLocation ? 'हटाएं' : 'चुनें'}
+              </button>
+            </div>
+            {useLocation && (
+              <div className="grid grid-cols-1 gap-2">
+                  <select value={khandId} onChange={e => { setKhandId(e.target.value); setMandalId(''); setVillageId(''); }} className="w-full bg-gray-50 dark:bg-gray-900 p-3 rounded-xl outline-none border dark:border-gray-700 font-medium text-[10px] dark:text-white appearance-none">
+                    <option value="">खंड चुनें...</option>
+                    {khands.map((k: any) =><option key={k.id} value={k.id}>{k.name}</option>)}
+                  </select>
+                  <select value={mandalId} onChange={e => { setMandalId(e.target.value); setVillageId(''); }} className="w-full bg-gray-50 dark:bg-gray-900 p-3 rounded-xl outline-none border dark:border-gray-700 font-medium text-[10px] dark:text-white appearance-none disabled:opacity-50" disabled={!khandId}>
+                    <option value="">मंडल चुनें...</option>
+                    {mandals.filter((m: any) => m.khandId === khandId).map((m: any) =><option key={m.id} value={m.id}>{m.name}</option>)}
+                  </select>
+                  <select value={villageId} onChange={e => setVillageId(e.target.value)} className="w-full bg-gray-50 dark:bg-gray-900 p-3 rounded-xl outline-none border dark:border-gray-700 font-medium text-[10px] dark:text-white appearance-none disabled:opacity-50" disabled={!mandalId}>
+                    <option value="">गांव चुनें...</option>
+                    {villages.filter((v: any) => v.mandalId === mandalId).map((v: any) =><option key={v.id} value={v.id}>{v.name}</option>)}
+                  </select>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="pt-8">
+          <button 
+            onClick={handleUpdate} 
+            className="w-full p-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-xl shadow-indigo-600/20 active:scale-95 transition-all text-sm uppercase tracking-widest"
+          >
+            {selectedCount} डेटा अपडेट करें
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

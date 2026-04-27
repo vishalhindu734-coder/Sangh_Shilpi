@@ -59,8 +59,18 @@ export const INITIAL_CONTACTS: Contact[] = [
 
 export const INITIAL_TRIPS: TripPlan[] = [];
 
+export const INITIAL_LIST_CATEGORIES: Category[] = [
+  { id: 'lc1', name: 'मुख्य कार्यकर्ता', icon: 'UserCheck', color: 'indigo' },
+  { id: 'lc2', name: 'मंडल टोली', icon: 'Users', color: 'blue' },
+  { id: 'lc3', name: 'ग्राम संपर्क', icon: 'MapPin', color: 'green' },
+  { id: 'lc4', name: 'आईटी सेल', icon: 'Cpu', color: 'purple' },
+  { id: 'lc5', name: 'मीडिया टीम', icon: 'Radio', color: 'orange' },
+  { id: 'lc6', name: 'नगर टोली', icon: 'Building', color: 'pink' },
+];
+
 export const INITIAL_LISTS: CustomList[] = [
-  { id: 'l1', name: 'विशेष संपर्क', peopleIds: ['c1'] }
+  { id: 'l1', name: 'विशेष संपर्क - दिल्ली', peopleIds: ['c1'], categoryId: 'lc1', icon: 'Star' },
+  { id: 'l2', name: 'मंडल टोली - पश्चिम', peopleIds: [], categoryId: 'lc2', icon: 'Users' }
 ];
 
 

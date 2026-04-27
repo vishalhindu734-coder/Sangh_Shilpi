@@ -155,6 +155,8 @@ export interface CustomList {
   id: string;
   name: string;
   peopleIds: string[];
+  categoryId?: string;
+  icon?: string;
 }
 
 export enum AttendanceStatus {
@@ -168,6 +170,7 @@ export interface Category {
   id: string;
   name: string;
   icon: string; // Lucide icon name
+  color?: string;
 }
 
 export interface Meeting {
