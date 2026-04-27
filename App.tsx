@@ -397,7 +397,8 @@ const App: React.FC = () => {
       html.classList.add(`theme-${appTheme}`);
     }
     
-    html.classList.remove('font-baloo', 'font-tiro', 'font-noto', 'font-mukta', 'font-kalam', 'font-yatra');
+    const fontClasses = ['font-baloo', 'font-tiro', 'font-mukta', 'font-noto-sans', 'font-noto-serif', 'font-yatra', 'font-kalam', 'font-amita', 'font-rajdhani', 'font-hind', 'font-rozha', 'font-eczar', 'font-poppins', 'font-laila', 'font-karma', 'font-sura', 'font-vesper', 'font-tillana', 'font-glegoo', 'font-khula', 'font-yantramanav', 'font-martel'];
+    html.classList.remove(...fontClasses);
     html.classList.add(`font-${appFont}`);
 
     // Font size applying
@@ -1063,12 +1064,12 @@ const App: React.FC = () => {
                             >
                              <div className="flex-1 min-w-0">
                                <div className="flex items-center gap-2">
-                                 <h4 className="font-medium dark:text-white truncate text-base leading-[1.6] py-0.5">{c.name}</h4>
+                                 <h4 className="font-medium dark:text-white truncate text-base leading-[1.6] py-0.5 font-hindi">{c.name}</h4>
                                   {responsibility && (
-                                   <span className="text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 px-1.5 py-1 rounded-md border border-blue-500/10 truncate leading-relaxed">{responsibility}</span>
+                                   <span className="text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 px-1.5 py-1 rounded-md border border-blue-500/10 truncate leading-relaxed font-hindi">{responsibility}</span>
                                   )}
                                </div>
-                               <div className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-0.5 flex items-center gap-1.5">
+                               <div className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-0.5 flex items-center gap-1.5 font-hindi">
                                 <span className="bg-gray-100 dark:bg-gray-800 px-1.5 py-1 rounded-md leading-relaxed">{c.category}</span>
                                 <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
                                 <span className={`${c.status === Status.SAKRIYA ? "text-green-600 dark:text-green-400" : "text-blue-600 dark:text-blue-400"} leading-relaxed py-0.5`}>{c.status}</span>
@@ -1364,12 +1365,12 @@ const App: React.FC = () => {
                                      )}
                                      <div className="flex-1 min-w-0">
                                        <div className="flex items-center gap-2">
-                                         <h4 className="font-medium text-gray-800 dark:text-white truncate text-base leading-[1.6] py-0.5">{c.name}</h4>
+                                         <h4 className="font-medium text-gray-800 dark:text-white truncate text-base leading-[1.6] py-0.5 font-hindi">{c.name}</h4>
                                           {responsibility && (
-                                           <span className="text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-lg border border-blue-500/10 truncate max-w-[50%] leading-relaxed">{responsibility}</span>
+                                           <span className="text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-lg border border-blue-500/10 truncate max-w-[50%] leading-relaxed font-hindi">{responsibility}</span>
                                           )}
                                        </div>
-                                       <div className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2 mt-1.5 overflow-hidden">
+                                       <div className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2 mt-1.5 overflow-hidden font-hindi">
                                          <span className="bg-gray-100 dark:bg-gray-800/80 px-2 py-1 rounded-md whitespace-nowrap leading-relaxed">{c.category}</span>
                                          <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700 shrink-0"></div>
                                          <span className="text-blue-600 dark:text-blue-400 font-extrabold whitespace-nowrap leading-relaxed py-0.5">{c.status}</span>
@@ -1466,7 +1467,7 @@ const App: React.FC = () => {
            </div>
            <div className="flex flex-col">
              <h1 className="text-lg font-bold dark:text-white tracking-tight leading-normal">प्रवास योजना</h1>
-             <span className="text-[9px] font-medium text-orange-600 dark:text-orange-400 uppercase tracking-widest mt-0.5">नियोजन</span>
+             <span className="text-[11px] font-medium text-orange-600 dark:text-orange-400 uppercase tracking-widest mt-0.5">नियोजन</span>
            </div>
          </div>
          <div className="flex items-center gap-2">
@@ -1488,11 +1489,11 @@ const App: React.FC = () => {
                  <div className="flex gap-2">
                    <div className="flex items-center gap-1">
                      <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                     <span className="text-[8px] font-medium text-gray-500 uppercase tracking-tight">पूर्ण</span>
+                     <span className="text-[10px] font-medium text-gray-500 uppercase tracking-tight">पूर्ण</span>
                    </div>
                    <div className="flex items-center gap-1">
                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                     <span className="text-[8px] font-medium text-gray-500 uppercase tracking-tight">कुल</span>
+                     <span className="text-[10px] font-medium text-gray-500 uppercase tracking-tight">कुल</span>
                    </div>
                  </div>
                </div>
@@ -1500,8 +1501,8 @@ const App: React.FC = () => {
                   {Object.entries(statsByKhand).map(([kName, data]) => (
                    <div key={kName} className="bg-orange-50/50 dark:bg-orange-900/10 border border-orange-100/50 dark:border-orange-800/30 rounded-xl p-2 min-h-0 overflow-hidden">
                      <div className="flex justify-between items-center mb-1 pb-1 border-b dark:border-orange-800/50">
-                       <span className="text-[9px] font-medium dark:text-orange-200 truncate pr-1">{kName}</span>
-                       <div className="flex items-center text-[8px] font-medium flex-none">
+                       <span className="text-[11px] font-medium dark:text-orange-200 truncate pr-1">{kName}</span>
+                       <div className="flex items-center text-[10px] font-medium flex-none">
                          <span className="text-green-600 dark:text-green-400"><AnimatedNumber value={data.completed} /></span>
                          <span className="text-gray-400 mx-0.5">/</span>
                          <span className="text-blue-600 dark:text-blue-400"><AnimatedNumber value={data.planned} /></span>
@@ -1510,10 +1511,10 @@ const App: React.FC = () => {
                      <div className="grid grid-cols-1 gap-0.5 max-h-[100px] overflow-y-auto no-scrollbar">
                         {Object.entries(data.mandals).filter(([_, c]) => c.planned > 0).map(([mName, counts]) => (
                          <div key={mName} className="flex justify-between items-center px-1">
-                           <span className="text-[8px] font-medium text-gray-500 dark:text-gray-400 truncate max-w-[60%]">{mName}</span>
+                           <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400 truncate max-w-[60%]">{mName}</span>
                            <div className="flex items-center gap-0.5">
                              <div className={`w-1 h-1 rounded-full ${counts.completed > 0 ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-800'}`}></div>
-                             <span className={`text-[8px] font-medium ${counts.planned > 0 ? 'text-gray-700 dark:text-gray-300' : 'text-gray-300 dark:text-gray-700'}`}><AnimatedNumber value={counts.planned} /></span>
+                             <span className={`text-[10px] font-medium ${counts.planned > 0 ? 'text-gray-700 dark:text-gray-300' : 'text-gray-300 dark:text-gray-700'}`}><AnimatedNumber value={counts.planned} /></span>
                            </div>
                          </div>
                         ))}
@@ -1533,7 +1534,7 @@ const App: React.FC = () => {
                 { id: 'month', label: 'मा' },
                 { id: 'year', label: 'वृ' }
               ].map(f => (
-               <button key={f.id} onClick={() => setTripTimeFilter(f.id as any)} className={`flex-none px-3.5 py-1.5 rounded-xl text-[9px] font-medium uppercase transition-all border ${tripTimeFilter === f.id ? 'bg-orange-600 text-white border-orange-600 shadow-sm' : 'bg-white/40 dark:bg-[#080d19]/40 border-white/50 dark:border-gray-700/50 text-gray-500 hover:border-orange-400/50'}`}>{f.label}</button>
+               <button key={f.id} onClick={() => setTripTimeFilter(f.id as any)} className={`flex-none px-3.5 py-1.5 rounded-xl text-[11px] font-medium uppercase transition-all border ${tripTimeFilter === f.id ? 'bg-orange-600 text-white border-orange-600 shadow-sm' : 'bg-white/40 dark:bg-[#080d19]/40 border-white/50 dark:border-gray-700/50 text-gray-500 hover:border-orange-400/50'}`}>{f.label}</button>
               ))}
            </div>
 
@@ -1547,30 +1548,30 @@ const App: React.FC = () => {
                    <div key={trip.id} onClick={() => setViewingTrip(trip)} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-3 rounded-xl shadow-sm border-l-4 border-l-orange-500 relative animate-in slide-in-from-bottom-2 duration-300">
                      <div className="flex justify-between items-start mb-1.5">
                        <div className="min-w-0 pr-4">
-                         <div className="text-[8px] font-medium text-blue-600 dark:text-blue-400 uppercase tracking-tighter mb-0.5">
+                         <div className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-tighter mb-0.5">
                             {format(parseISO(trip.date), 'd MMMM, yyyy')}
                          </div>
-                         <h4 className="font-medium dark:text-white text-xs truncate flex items-center gap-1.5 leading-snug">
+                         <h4 className="font-medium dark:text-white text-base truncate flex items-center gap-1.5 leading-snug">
                             {getMandalName(trip.mandalId)} 
-                           <span className="text-[9px] font-medium text-gray-400">({getKhandName(trip.khandId)})</span>
+                           <span className="text-sm font-medium text-gray-400">({getKhandName(trip.khandId)})</span>
                             {hasIdea && !trip.isCompleted &&<span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>}
                          </h4>
                        </div>
-                       <div className={`px-1.5 py-0.5 rounded-lg text-[7px] font-medium uppercase ${trip.isCompleted ? 'bg-green-100 text-green-700 dark:bg-green-900/30' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30'}`}>
+                       <div className={`px-1.5 py-0.5 rounded-lg text-[11px] font-medium uppercase ${trip.isCompleted ? 'bg-green-100 text-green-700 dark:bg-green-900/30' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30'}`}>
                           {trip.isCompleted ? 'पूर्ण' : 'लंबित'}
                        </div>
                      </div>
                       
                      <div className="flex flex-wrap gap-1 mb-2">
                         {trip.villageIds.slice(0, 4).map(vid => (
-                         <span key={vid} className="px-1.5 py-0.5 bg-gray-50/50 dark:bg-gray-800 rounded-lg text-[8px] font-medium dark:text-gray-300 border dark:border-gray-700/50">{getVillageName(vid)}</span>
+                         <span key={vid} className="px-1.5 py-0.5 bg-gray-50/50 dark:bg-gray-800 rounded-lg text-xs font-medium dark:text-gray-300 border dark:border-gray-700/50">{getVillageName(vid)}</span>
                         ))}
-                        {trip.villageIds.length > 4 &&<span className="text-[8px] text-gray-400 font-medium">+{trip.villageIds.length - 4}</span>}
+                        {trip.villageIds.length > 4 &&<span className="text-xs text-gray-400 font-medium">+{trip.villageIds.length - 4}</span>}
                      </div>
 
                      <div className="flex items-center gap-1.5 pt-2 border-t dark:border-gray-800/50">
                         {!trip.isCompleted && (
-                         <button onClick={(e) => { e.stopPropagation(); handleUpdateTrip(trip.id, { isCompleted: true }); }} className="flex-1 py-1.5 bg-green-500/10 text-green-600 rounded-lg text-[8px] font-medium uppercase flex items-center justify-center gap-1 active:scale-[0.98] transition-all">
+                         <button onClick={(e) => { e.stopPropagation(); handleUpdateTrip(trip.id, { isCompleted: true }); }} className="flex-1 py-1.5 bg-green-500/10 text-green-600 rounded-lg text-xs font-medium uppercase flex items-center justify-center gap-1 active:scale-[0.98] transition-all">
                            <CheckCircle2 size={10}/> पूर्ण
                          </button>
                         )}
@@ -1669,7 +1670,7 @@ const App: React.FC = () => {
            <button onClick={() => setSelectedMeetingId(null)} className="p-2 bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 rounded-sm border dark:border-gray-700 active:scale-95 transition-all"><ArrowLeft size={20} className="dark:text-white"/></button>
            <div className="flex-1">
              <h2 className="text-xl font-bold dark:text-white font-hindi">{meeting.title}</h2>
-             <div className="text-xs font-medium text-gray-400 uppercase">{new Date(meeting.date).toLocaleDateString('hi-IN')}</div>
+             <div className="text-sm font-medium text-gray-400 uppercase">{new Date(meeting.date).toLocaleDateString('hi-IN')}</div>
            </div>
            <button 
               onClick={() => {
@@ -1740,7 +1741,7 @@ const App: React.FC = () => {
                           {isPresent ?<UserCheck size={14}/> : c.name[0]}
                        </div>
                        <div>
-                         <div className="font-medium dark:text-white text-sm">{c.name}</div>
+                         <div className="font-medium dark:text-white text-sm font-hindi">{c.name} ({getVillageName(c.villageId)})</div>
                        </div>
                      </div>
                      <div className="flex gap-2">
@@ -1869,8 +1870,8 @@ const App: React.FC = () => {
                     return (
                      <div key={c.id} onClick={() => { setSelectedContactId(c.id); }} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-4 rounded-md border dark:border-gray-700 flex items-center gap-4 active:scale-95 transition-all shadow-sm">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-medium ${recentlyCalled ? 'bg-orange-500' : 'bg-indigo-500 shadow-lg shadow-indigo-500/20'}`}>{c.name[0]}</div>
-                        <div className="flex-1 font-medium dark:text-gray-100 text-sm flex items-center gap-2">
-                            {c.name}
+                        <div className="flex-1 font-medium dark:text-gray-100 text-sm flex items-center gap-2 font-hindi">
+                            {c.name} ({getVillageName(c.villageId)})
                         </div>
                         <div className="flex items-center gap-1.5 flex-none shrink-0">
                           <a 
@@ -2176,7 +2177,7 @@ const App: React.FC = () => {
     return (
      <div className="p-4 pb-24 space-y-6 animate-in slide-in-from-right duration-300">
        <header className="flex justify-between items-center sticky top-0 z-30 pt-4 pb-2 -mt-4 bg-slate-50/95 dark:bg-[#070b14]/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm -mx-4 px-4">
-         <h1 className="text-2xl font-bold dark:text-white">कार्यस्थिति</h1>
+         <h1 className="text-2xl font-bold dark:text-white font-hindi">कार्यस्थिति</h1>
          <Building2 className="text-blue-600" />
        </header>
 
@@ -2186,25 +2187,25 @@ const App: React.FC = () => {
              onClick={() => setDashStage(dashStage === VillageStage.SHAKHA ? 'all' : VillageStage.SHAKHA)}
              className={`bg-orange-50 dark:bg-orange-900/20 text-orange-600 border ${dashStage === VillageStage.SHAKHA ? 'border-orange-500 ring-2 ring-orange-500/50' : 'border-orange-200 dark:border-orange-800'} p-2 rounded-lg shadow-sm flex flex-col justify-center items-center cursor-pointer active:scale-95 transition-all`}>
              <div className="text-xl font-bold"><AnimatedNumber value={statusCounts.shakha} /></div>
-             <div className="text-[9px] font-medium uppercase tracking-wider">शाखा</div>
+             <div className="text-[9px] font-medium uppercase tracking-wider font-hindi">शाखा</div>
           </div>
           <div 
              onClick={() => setDashStage(dashStage === VillageStage.MILAN ? 'all' : VillageStage.MILAN)}
              className={`bg-pink-50 dark:bg-pink-900/20 text-pink-600 border ${dashStage === VillageStage.MILAN ? 'border-pink-500 ring-2 ring-pink-500/50' : 'border-pink-200 dark:border-pink-800'} p-2 rounded-lg shadow-sm flex flex-col justify-center items-center cursor-pointer active:scale-95 transition-all`}>
              <div className="text-xl font-bold"><AnimatedNumber value={statusCounts.milan} /></div>
-             <div className="text-[9px] font-medium uppercase tracking-wider">मिलन</div>
+             <div className="text-[9px] font-medium uppercase tracking-wider font-hindi">मिलन</div>
           </div>
           <div 
              onClick={() => setDashStage(dashStage === VillageStage.MANDALI ? 'all' : VillageStage.MANDALI)}
              className={`bg-purple-50 dark:bg-purple-900/20 text-purple-600 border ${dashStage === VillageStage.MANDALI ? 'border-purple-500 ring-2 ring-purple-500/50' : 'border-purple-200 dark:border-purple-800'} p-2 rounded-lg shadow-sm flex flex-col justify-center items-center cursor-pointer active:scale-95 transition-all`}>
              <div className="text-xl font-bold"><AnimatedNumber value={statusCounts.mandali} /></div>
-             <div className="text-[9px] font-medium uppercase tracking-wider">मंडली</div>
+             <div className="text-[9px] font-medium uppercase tracking-wider font-hindi">मंडली</div>
           </div>
           <div 
              onClick={() => setDashStage(dashStage === VillageStage.SAMPARK ? 'all' : VillageStage.SAMPARK)}
              className={`bg-blue-50 dark:bg-blue-900/20 text-blue-600 border ${dashStage === VillageStage.SAMPARK ? 'border-blue-500 ring-2 ring-blue-500/50' : 'border-blue-200 dark:border-blue-800'} p-2 rounded-lg shadow-sm flex flex-col justify-center items-center cursor-pointer active:scale-95 transition-all`}>
              <div className="text-xl font-bold"><AnimatedNumber value={statusCounts.sampark} /></div>
-             <div className="text-[9px] font-medium uppercase tracking-wider">संपर्क</div>
+             <div className="text-[9px] font-medium uppercase tracking-wider font-hindi">संपर्क</div>
           </div>
        </div>
 
@@ -2232,7 +2233,7 @@ const App: React.FC = () => {
        <div className="space-y-8">
           {groupedData.map(khand => (
             <div key={khand.id} className="space-y-4">
-               <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 px-1 border-b-2 border-orange-500/30 pb-2 inline-block">{khand.name}</h2>
+               <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 px-1 border-b-2 border-orange-500/30 pb-2 inline-block font-hindi">{khand.name}</h2>
                <div className="space-y-6">
                    {khand.mandals.map(mandal => (
                      <div key={mandal.id} className="space-y-3">
@@ -2243,10 +2244,10 @@ const App: React.FC = () => {
                         <div className="grid grid-cols-3 gap-2">
                             {mandal.villages.map(v => (
                               <div key={v.id} onClick={() => setSelectedVillageId(v.id)} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-3 rounded-lg flex flex-col justify-between items-start gap-1.5 active:scale-95 transition-all cursor-pointer">
-                                 <div className="font-medium dark:text-white text-xs line-clamp-1 w-full">
+                                 <div className="font-medium dark:text-white text-xs line-clamp-1 w-full font-hindi">
                                      {v.name}
                                  </div>
-                                 <span className={`text-[9px] font-medium uppercase px-1.5 py-0.5 rounded-sm shadow-sm ${v.stage === VillageStage.SHAKHA ? 'bg-orange-500 text-white' : v.stage === VillageStage.MILAN ? 'bg-pink-500 text-white' : v.stage === VillageStage.MANDALI ? 'bg-purple-500 text-white' : v.stage === VillageStage.SAMPARK ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700'}`}>{v.stage !== VillageStage.NONE ? v.stage : '-'}</span>
+                                 <span className={`text-[9px] font-medium uppercase px-1.5 py-0.5 rounded-sm shadow-sm font-hindi ${v.stage === VillageStage.SHAKHA ? 'bg-orange-500 text-white' : v.stage === VillageStage.MILAN ? 'bg-pink-500 text-white' : v.stage === VillageStage.MANDALI ? 'bg-purple-500 text-white' : v.stage === VillageStage.SAMPARK ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700'}`}>{v.stage !== VillageStage.NONE ? v.stage : '-'}</span>
                               </div>
                             ))}
                         </div>
@@ -3087,7 +3088,7 @@ const ContactProfile = ({ contact, villages, mandals, categories, onDelete, onEd
      </header>
      <div className="text-center space-y-4">
         <div className={`w-24 h-24 rounded-full mx-auto flex items-center justify-center text-white text-3xl font-medium shadow-xl ring-4 ring-white dark:ring-gray-800 transition-colors ${isRecentlyCalled ? 'bg-orange-500' : 'bg-blue-600'}`}>{contact.name[0]}</div>
-        <h2 className="text-2xl font-medium dark:text-white">{contact.name}</h2>
+        <h2 className="text-2xl font-medium dark:text-white font-hindi">{contact.name}</h2>
         <div className="flex items-center justify-center gap-3">
           <a 
             href={`tel:${contact.phone}`} 
@@ -3112,9 +3113,9 @@ const ContactProfile = ({ contact, villages, mandals, categories, onDelete, onEd
              <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-sm">
                 <LucideIcon name={categories.find((c: any) => c.name === contact.category)?.icon || 'Tag'} size={18} />
              </div>
-             <div><label className="text-xs font-medium text-gray-400 uppercase">श्रेणी</label><div className="text-sm font-medium dark:text-white mt-1">{contact.category}</div></div>
+             <div><label className="text-xs font-medium text-gray-400 uppercase font-hindi">श्रेणी</label><div className="text-sm font-medium dark:text-white mt-1 font-hindi">{contact.category}</div></div>
            </div>
-           <div><label className="text-xs font-medium text-gray-400 uppercase">स्थिति</label><div className="text-sm font-medium dark:text-white mt-1">{contact.status}</div></div>
+           <div><label className="text-xs font-medium text-gray-400 uppercase font-hindi">स्थिति</label><div className="text-sm font-medium dark:text-white mt-1 font-hindi">{contact.status}</div></div>
         </div>
 
          {(contact.volunteerProfile || contact.category) && (
@@ -4004,8 +4005,8 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
        <div className="flex items-center gap-2">
           <button onClick={onBack} className="p-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg active:scale-90 transition-transform"><ArrowLeft size={16} className="dark:text-white"/></button>
           <div className="min-w-0">
-             <h2 className="text-sm font-bold dark:text-white tracking-tight leading-normal">प्रवास विवरण</h2>
-             <div className="text-[10px] font-medium text-gray-500 leading-normal mt-1" style={{fontFamily: "inherit"}}>{mandalName} मण्डल</div>
+             <h2 className="text-lg font-bold dark:text-white tracking-tight leading-normal">प्रवास विवरण</h2>
+             <div className="text-sm font-medium text-gray-500 leading-normal mt-1" style={{fontFamily: "inherit"}}>{mandalName} मण्डल</div>
           </div>
        </div>
        <div className="flex gap-1">
@@ -4015,13 +4016,13 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
      </header>
 
      <div className="bg-white/90 dark:bg-[#080d19]/90 backdrop-blur-md border-b dark:border-gray-800 flex p-1 z-10 sticky top-[49px]">
-       <button onClick={() => setActiveSubTab('schedule')} className={`flex-1 py-1.5 text-[9px] font-medium uppercase tracking-tighter rounded-lg transition-all flex items-center justify-center gap-1.5 ${activeSubTab === 'schedule' ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-400'}`}>
+       <button onClick={() => setActiveSubTab('schedule')} className={`flex-1 py-1.5 text-xs font-medium uppercase tracking-tighter rounded-lg transition-all flex items-center justify-center gap-1.5 ${activeSubTab === 'schedule' ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-400'}`}>
          <Clock size={10}/> अनुसूची
        </button>
-       <button onClick={() => setActiveSubTab('ideas')} className={`flex-1 py-1.5 text-[9px] font-medium uppercase tracking-tighter rounded-lg transition-all flex items-center justify-center gap-1.5 ${activeSubTab === 'ideas' ? 'bg-orange-600 text-white shadow-md' : 'text-gray-400'}`}>
-         <Lightbulb size={10}/> विचार {relevantIdeas.length > 0 &&<span className="bg-orange-500 text-[7px] px-1 rounded-full text-white">{relevantIdeas.length}</span>}
+       <button onClick={() => setActiveSubTab('ideas')} className={`flex-1 py-1.5 text-xs font-medium uppercase tracking-tighter rounded-lg transition-all flex items-center justify-center gap-1.5 ${activeSubTab === 'ideas' ? 'bg-orange-600 text-white shadow-md' : 'text-gray-400'}`}>
+         <Lightbulb size={10}/> विचार {relevantIdeas.length > 0 &&<span className="bg-orange-500 text-[9px] px-1 rounded-full text-white">{relevantIdeas.length}</span>}
        </button>
-       <button onClick={() => setActiveSubTab('notes')} className={`flex-1 py-1.5 text-[9px] font-medium uppercase tracking-tighter rounded-lg transition-all flex items-center justify-center gap-1.5 ${activeSubTab === 'notes' ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-400'}`}>
+       <button onClick={() => setActiveSubTab('notes')} className={`flex-1 py-1.5 text-xs font-medium uppercase tracking-tighter rounded-lg transition-all flex items-center justify-center gap-1.5 ${activeSubTab === 'notes' ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-400'}`}>
          <FileText size={10}/> टिप्पणी
        </button>
      </div>
@@ -4035,12 +4036,12 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
               className="bg-blue-50 dark:bg-blue-900/20 p-2.5 rounded-lg border border-blue-100 dark:border-blue-800/40 space-y-1 shadow-sm relative overflow-hidden group"
             >
               <div className="absolute top-0 right-0 p-6 bg-blue-500/5 rounded-full -mr-4 -mt-4 group-hover:scale-110 transition-transform duration-700" />
-              <div className="text-[8px] font-medium text-blue-500 uppercase tracking-widest">दिनांक और स्थान</div>
+              <div className="text-xs font-medium text-blue-500 uppercase tracking-widest">दिनांक और स्थान</div>
               <div className="space-y-0.5">
-                <div className="text-[10px] font-medium text-blue-800 dark:text-blue-300 flex items-center gap-2 uppercase tracking-tight">
+                <div className="text-[12px] font-medium text-blue-800 dark:text-blue-300 flex items-center gap-2 uppercase tracking-tight">
                    {new Date(trip.date).toLocaleDateString('hi-IN', { dateStyle: 'long' })}
                 </div>
-                <div className="text-xs font-medium dark:text-white flex items-center gap-1 tracking-tight">
+                <div className="text-sm font-medium dark:text-white flex items-center gap-1 tracking-tight">
                   <MapPin size={12} className="text-blue-500"/> {mandalName} मण्डल • {khandName}
                 </div>
               </div>
@@ -4048,7 +4049,7 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
 
            <div className="space-y-2">
                <div className="flex justify-between items-center px-1">
-                 <h3 className="font-bold dark:text-white text-sm tracking-tighter uppercase">नियोजित अनुसूची</h3>
+                 <h3 className="font-bold dark:text-white text-base tracking-tighter uppercase">नियोजित अनुसूची</h3>
                </div>
 
                 {schedule.length === 0 ? (
@@ -4058,8 +4059,8 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
                     className="bg-gray-50/50 dark:bg-gray-800/20 p-6 rounded-xl border-2 border-dashed dark:border-gray-700/50 text-center space-y-2"
                   >
                     <div className="w-10 h-10 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto shadow-inner"><Clock className="text-gray-400" size={16}/></div>
-                    <p className="text-[11px] font-medium text-gray-500">अभी कोई समय निर्धारित नहीं है।</p>
-                    <p className="text-[8px] uppercase font-medium text-gray-400 tracking-widest ">नीचे से कार्ड यहाँ खींचे</p>
+                    <p className="text-sm font-medium text-gray-500">अभी कोई समय निर्धारित नहीं है।</p>
+                    <p className="text-xs uppercase font-medium text-gray-400 tracking-widest ">नीचे से कार्ड यहाँ खींचे</p>
                  </motion.div>
                 ) : (
                  <div className="relative pl-[4.5rem] pr-2 space-y-3 py-1">
@@ -4082,7 +4083,7 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
                              </div>
                              <div className="absolute left-[-19px] w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-[#070b14] z-20 shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
                              <div className="absolute left-[-15px] right-0 h-px bg-red-500/50 dark:bg-red-500/30 flex items-center z-10">
-                                <span className="text-[10px] font-medium text-red-500 bg-slate-50 dark:bg-[#070b14] px-1 ml-6 uppercase">अभी</span>
+                                <span className="text-red-500 bg-slate-50 dark:bg-[#070b14] px-1 ml-6 uppercase">अभी</span>
                              </div>
                            </motion.div>
                           );
@@ -4097,7 +4098,7 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
                           className="relative mb-3 last:mb-0"
                         >
                          <div className="bg-white/60 dark:bg-[#080d19]/60 backdrop-blur-xl border border-white/50 border-t-white/80 shadow-sm rounded-lg dark:border-gray-700/50 relative transition-all hover:shadow-md">
-                            <div className="text-[10px] font-medium text-indigo-500 uppercase tracking-widest px-3 pt-2 pb-1.5 bg-white/40 dark:bg-black/20 rounded-t-lg border-b border-white/50 dark:border-gray-700/50 flex items-center gap-1.5">
+                            <div className="text-sm font-medium text-indigo-500 uppercase tracking-widest px-3 pt-2 pb-1.5 bg-white/40 dark:bg-black/20 rounded-t-lg border-b border-white/50 dark:border-gray-700/50 flex items-center gap-1.5">
                                <MapPin size={10} className="text-indigo-400" />
                                 {getVillageName(group.villageId)}
                             </div>
@@ -4118,7 +4119,7 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
                                       </div>
                                       <div className="absolute left-[calc(-19px-2px)] w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-[#070b14] z-20 shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
                                       <div className="absolute left-[-15px] right-[-12px] h-px bg-red-500/80 flex items-center z-10 shadow-[0_0_8px_rgba(239,68,68,0.4)]">
-                                         <span className="text-[10px] font-medium text-red-500 bg-white dark:bg-[#070b14] px-1.5 ml-8 uppercase rounded-full shadow-sm">अभी</span>
+                                         <span className="text-red-500 bg-white dark:bg-[#070b14] px-1.5 ml-8 uppercase rounded-full shadow-sm">अभी</span>
                                       </div>
                                     </motion.div>
                                    );
@@ -4128,7 +4129,7 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
                                  return (
                                   <div key={item.id} className="relative group/slot min-h-[56px] flex flex-col justify-center p-3 border-b border-gray-100 dark:border-gray-800/50 last:border-0">
                                      <div className="absolute left-[-4.5rem] top-1/2 -translate-y-1/2 w-[52px] pr-2 text-right">
-                                        <div className="text-[11px] whitespace-nowrap font-medium text-gray-500 dark:text-gray-400 uppercase tracking-widest">{formatTime(item.time)}</div>
+                                        <div className="text-xs whitespace-nowrap font-medium text-gray-500 dark:text-gray-400 uppercase tracking-widest">{formatTime(item.time)}</div>
                                      </div>
                                      <div className="absolute left-[-19px] top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-600 rounded-full ring-2 ring-white dark:ring-[#070b14] z-10 outline outline-1 outline-blue-100 dark:outline-blue-900/50 transition-transform group-hover/slot:scale-125"></div>
                                       
@@ -4146,7 +4147,7 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
                                            <div className="flex items-center gap-2">
                                              <div className="w-8 h-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-lg flex items-center justify-center font-medium text-xs shadow-sm shrink-0 border border-white dark:border-gray-700/50">{contact?.name[0]}</div>
                                              <div className="flex-1 min-w-[100px] cursor-pointer group/name" onClick={() => onLogVisit(item.contactId)}>
-                                               <div className="text-[13px] font-medium dark:text-white group-hover/name:text-blue-500 transition-colors uppercase truncate tracking-tight">{contact?.name}</div>
+                                               <div className="text-base font-medium dark:text-white group-hover/name:text-blue-500 transition-colors uppercase truncate tracking-tight font-hindi">{contact?.name} ({getVillageName(contact?.villageId)})</div>
                                              </div>
                                               {contact?.phone && (
                                                <div className="flex items-center gap-1.5 flex-none shrink-0">
@@ -4181,9 +4182,9 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
 
             {unscheduledContacts.length > 0 && (
              <div className="space-y-2 pt-4 border-t dark:border-gray-800/50">
-               <div className="text-[8px] font-medium text-gray-400 uppercase tracking-widest px-2 flex justify-between items-center">
+               <div className="text-[10px] font-medium text-gray-400 uppercase tracking-widest px-2 flex justify-between items-center">
                  <span>निर्धारित नहीं (खींचें)</span>
-                 <span className="text-[7px] bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded-full font-medium">{unscheduledContacts.length} शेष</span>
+                 <span className="text-[9px] bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded-full font-medium">{unscheduledContacts.length} शेष</span>
                </div>
                <div className="flex flex-wrap gap-1.5">
                     {unscheduledContacts.map((c: any) => (
@@ -4196,8 +4197,8 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
                         onPointerDown={(e) => startDrag(e, c)}
                       >
                        <div className="flex flex-col">
-                         <span className="text-[9px] font-medium dark:text-gray-200 uppercase tracking-tight">{c.title}</span>
-                         <span className="text-[7px] font-medium text-gray-400 uppercase tracking-widest">{c.subtitle}</span>
+                         <span className="text-xs font-medium dark:text-gray-200 uppercase tracking-tight">{c.title}</span>
+                         <span className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">{c.subtitle}</span>
                        </div>
                        <GripVertical 
                             size={10} 
@@ -4213,7 +4214,7 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
 
         {activeSubTab === 'ideas' && (
          <div className="space-y-4 pt-2">
-            <div className="text-xs font-medium text-orange-500 uppercase tracking-widest px-1 flex items-center gap-2">
+            <div className="text-base font-medium text-orange-500 uppercase tracking-widest px-1 flex items-center gap-2">
                <Lightbulb size={14}/> मण्डल/गांव से जुड़े विचार ({relevantIdeas.length})
             </div>
              {relevantIdeas.length === 0 ? (
@@ -4228,7 +4229,7 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
                        <Lightbulb size={18}/>
                      </div>
                      <div className="flex-1">
-                       <div className="text-sm font-medium text-gray-800 dark:text-gray-200 leading-relaxed font-baloo">{idea.content}</div>
+                       <div className="text-base font-medium text-gray-800 dark:text-gray-200 leading-relaxed">{idea.content}</div>
                        <div className="text-[9px] font-medium uppercase text-gray-400 mt-3 flex items-center gap-1.5">
                          <MapPin size={10}/> {idea.villageId ? getVillageName(idea.villageId) : getMandalName(idea.mandalId as string)}
                        </div>
@@ -4242,11 +4243,11 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
 
         {activeSubTab === 'notes' && (
          <div className="space-y-4 pt-2">
-            <div className="text-xs font-medium text-emerald-500 uppercase tracking-widest px-1 flex items-center gap-2">
+            <div className="text-sm font-medium text-emerald-500 uppercase tracking-widest px-1 flex items-center gap-2">
                <FileText size={14}/> योजना विवरण और टिप्पणी
             </div>
              {trip.notes ? (
-               <div className="p-6 bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05)] rounded-2xl text-sm whitespace-pre-wrap font-medium leading-relaxed dark:text-gray-200 border dark:border-gray-700 font-baloo">
+               <div className="p-6 bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05)] rounded-2xl text-base whitespace-pre-wrap font-medium leading-relaxed dark:text-gray-200 border dark:border-gray-700">
                   {trip.notes}
                </div>
              ) : (
@@ -4255,7 +4256,7 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
                </div>
              )}
              
-            <button onClick={onEdit} className="w-full p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded-xl border border-emerald-100 dark:border-emerald-900/30 font-medium text-xs uppercase flex items-center justify-center gap-2">
+            <button onClick={onEdit} className="w-full p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded-xl border border-emerald-100 dark:border-emerald-900/30 font-medium text-sm uppercase flex items-center justify-center gap-2">
               <Edit2 size={16}/> टिप्पणी संपादित करें
             </button>
          </div>
@@ -4657,7 +4658,7 @@ const MenuTab = ({ userName, setUserName, setActiveTab }: any) => {
               onChange={e => setUserName(e.target.value)}
               placeholder="नमो नमः..."
             />
-            <p className="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.2em] leading-none">Primary Administrator</p>
+            <p className="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.2em] leading-none">मुख्य व्यवस्थापक</p>
           </div>
         </motion.div>
       </div>
@@ -4728,7 +4729,7 @@ const MenuTab = ({ userName, setUserName, setActiveTab }: any) => {
         </div>
 
         <div className="mt-auto flex flex-col items-center gap-1 opacity-20 py-4">
-          <p className="text-[8px] font-black text-gray-500 uppercase tracking-[0.3em]">Smart Dashboard System</p>
+          <p className="text-[8px] font-black text-gray-500 uppercase tracking-[0.3em]">स्मार्ट डैशबोर्ड सिस्टम</p>
         </div>
       </div>
     </div>
@@ -4934,7 +4935,7 @@ const ManageListMembersModal = ({ list, contacts, khands, mandals, villages, onC
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-medium ${isSelected ? 'bg-blue-600' : 'bg-gray-400'}`}>{c.name[0]}</div>
                   <div className="flex-1 text-left">
-                     <div className={`font-medium text-sm ${isSelected ? 'text-blue-700 dark:text-blue-400' : 'dark:text-white'}`}>{c.name}</div>
+                     <div className={`font-medium text-sm font-hindi ${isSelected ? 'text-blue-700 dark:text-blue-400' : 'dark:text-white'}`}>{c.name} ({villages.find((v:any)=>v.id===c.villageId)?.name})</div>
                      <div className="text-[10px] text-gray-400">{villages.find((v:any)=>v.id===c.villageId)?.name}</div>
                   </div>
                    {isSelected &&<CheckCircle2 size={18} className="text-blue-600"/>}
@@ -4975,15 +4976,16 @@ const ActivitiesTab = ({
   const [editVal, setEditVal] = useState('');
 
   const allActivities = useMemo(() => {
-    const visits = contacts.flatMap((c: any) => 
-      c.history.map((h: any) => ({ 
+    const visits = contacts.flatMap((c: any) => {
+      const vName = villages.find((v: any) => v.id === c.villageId)?.name || 'अज्ञात गांव';
+      return c.history.map((h: any) => ({ 
         ...h, 
         type: 'visit', 
-        contactName: c.name, 
+        contactName: `${c.name} (${vName})`, 
         contactId: c.id,
-        location: villages.find((v: any) => v.id === c.villageId)?.name
-      }))
-    );
+        location: vName
+      }));
+    });
     const m = meetings.map((meet: any) => ({ 
       ...meet, 
       type: 'meeting', 
@@ -5764,7 +5766,7 @@ const IdeasTab = ({ ideas, onUpdate, onDelete, onAdd, contacts, villages, mandal
                    <div className="text-xs font-medium uppercase text-blue-500 mb-1">
                       {new Date(group.date).toLocaleDateString('hi-IN')}
                       {hasMultipleContacts && ` • ${group.contactIds.length} संपर्कों से जुड़ा`}
-                      {singleContact && ` • संपर्क: ${singleContact.name}`}
+                      {singleContact && ` • संपर्क: ${singleContact.name} (${villages.find((v: any) => v.id === singleContact.villageId)?.name})`}
                       {!hasMultipleContacts && !singleContact && village && ` • गाँव: ${village.name}`}
                       {!hasMultipleContacts && !singleContact && !village && mandal && ` • मंडल: ${mandal.name}`}
                    </div>
