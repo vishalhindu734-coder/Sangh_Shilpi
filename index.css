@@ -157,6 +157,114 @@ html {
   --orange-900: #4c1d95;
 }
 
+/* Theme 3 - Ocean (Sky/Cyan/Teal) */
+.theme-ocean {
+  --blue-50: #f0f9ff;
+  --blue-100: #e0f2fe;
+  --blue-200: #bae6fd;
+  --blue-300: #7dd3fc;
+  --blue-400: #38bdf8;
+  --blue-500: #0ea5e9;
+  --blue-600: #0284c7;
+  --blue-700: #0369a1;
+  --blue-800: #075985;
+  --blue-900: #0c4a6e;
+
+  --indigo-50: #ecfeff;
+  --indigo-100: #cffafe;
+  --indigo-200: #a5f3fc;
+  --indigo-300: #67e8f9;
+  --indigo-400: #22d3ee;
+  --indigo-500: #06b6d4;
+  --indigo-600: #0891b2;
+  --indigo-700: #0e7490;
+  --indigo-800: #155e75;
+  --indigo-900: #164e63;
+
+  --orange-50: #f0fdfa;
+  --orange-100: #ccfbf1;
+  --orange-200: #99f6e4;
+  --orange-300: #5eead4;
+  --orange-400: #2dd4bf;
+  --orange-500: #14b8a6;
+  --orange-600: #0d9488;
+  --orange-700: #0f766e;
+  --orange-800: #115e59;
+  --orange-900: #134e4a;
+}
+
+/* Theme 4 - Sunset (Red/Rose/Amber) */
+.theme-sunset {
+  --blue-50: #fef2f2;
+  --blue-100: #fee2e2;
+  --blue-200: #fecaca;
+  --blue-300: #fca5a5;
+  --blue-400: #f87171;
+  --blue-500: #ef4444;
+  --blue-600: #dc2626;
+  --blue-700: #b91c1c;
+  --blue-800: #991b1b;
+  --blue-900: #7f1d1d;
+
+  --indigo-50: #fff1f2;
+  --indigo-100: #ffe4e6;
+  --indigo-200: #fecdd3;
+  --indigo-300: #fda4af;
+  --indigo-400: #fb7185;
+  --indigo-500: #f43f5e;
+  --indigo-600: #e11d48;
+  --indigo-700: #be123c;
+  --indigo-800: #9f1239;
+  --indigo-900: #881337;
+
+  --orange-50: #fffbeb;
+  --orange-100: #fef3c7;
+  --orange-200: #fde68a;
+  --orange-300: #fcd34d;
+  --orange-400: #fbbf24;
+  --orange-500: #f59e0b;
+  --orange-600: #d97706;
+  --orange-700: #b45309;
+  --orange-800: #92400e;
+  --orange-900: #78350f;
+}
+
+/* Theme 5 - Monochrome (Slate/Gray/Zinc) */
+.theme-monochrome {
+  --blue-50: #f8fafc;
+  --blue-100: #f1f5f9;
+  --blue-200: #e2e8f0;
+  --blue-300: #cbd5e1;
+  --blue-400: #94a3b8;
+  --blue-500: #64748b;
+  --blue-600: #475569;
+  --blue-700: #334155;
+  --blue-800: #1e293b;
+  --blue-900: #0f172a;
+
+  --indigo-50: #f9fafb;
+  --indigo-100: #f3f4f6;
+  --indigo-200: #e5e7eb;
+  --indigo-300: #d1d5db;
+  --indigo-400: #9ca3af;
+  --indigo-500: #6b7280;
+  --indigo-600: #4b5563;
+  --indigo-700: #374151;
+  --indigo-800: #1f2937;
+  --indigo-900: #111827;
+
+  --orange-50: #fafafa;
+  --orange-100: #f4f4f5;
+  --orange-200: #e4e4e7;
+  --orange-300: #d4d4d8;
+  --orange-400: #a1a1aa;
+  --orange-500: #71717a;
+  --orange-600: #52525b;
+  --orange-700: #3f3f46;
+  --orange-800: #27272a;
+  --orange-900: #18181b;
+}
+
 :root {
   --app-font-family: 'Baloo 2', ui-sans-serif, system-ui, sans-serif;
 }

@@ -725,16 +725,16 @@ const App: React.FC = () => {
     };
 
     return (
-     <div className="p-4 pb-24 space-y-6 animate-in fade-in duration-500">
-       <header className="sticky top-0 z-30 bg-slate-50/95 dark:bg-[#070b14]/95 backdrop-blur-xl -mt-4 -mx-4 px-4 py-3 border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm flex justify-between items-center relative overflow-hidden">
-         <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
-         <div className="absolute bottom-0 left-0 w-24 h-24 bg-red-500/10 dark:bg-red-500/5 rounded-full blur-2xl -ml-10 -mb-10"></div>
+     <div className="p-4 pb-24 animate-in fade-in duration-500 lg:p-8">
+       <header className="sticky top-0 z-30 bg-slate-50/95 dark:bg-[#070b14]/95 backdrop-blur-xl -mt-4 -mx-4 px-4 py-3 border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm flex justify-between items-center relative overflow-hidden mb-6">
+         <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-2xl -mr-10 -mt-10 transition-colors duration-500"></div>
+         <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-2xl -ml-10 -mb-10 transition-colors duration-500"></div>
          <div className="relative flex items-center gap-3 flex-1 min-w-0 pr-4">
-            <div className="w-11 h-11 rounded-xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 shadow-sm flex items-center justify-center p-1.5 shrink-0 overflow-hidden">
+            <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/50 shadow-sm flex items-center justify-center p-1.5 shrink-0 overflow-hidden transition-colors duration-500">
                <img src={FLAG_IMAGE_URI} alt="Dhwaj" className="w-full h-full object-contain drop-shadow-sm" />
             </div>
             <div className="flex-1 min-w-0 py-1">
-              <h1 className="text-[22px] font-extrabold text-orange-600 dark:text-orange-500 tracking-tight leading-normal break-words pt-1">संगठन शिल्पी</h1>
+              <h1 className="text-[22px] font-extrabold text-blue-600 dark:text-blue-500 tracking-tight leading-normal break-words pt-1 transition-colors duration-500">संगठन शिल्पी</h1>
               <p className="text-[10.5px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest truncate pb-1">नमस्ते, {userName}</p>
             </div>
          </div>
@@ -743,7 +743,8 @@ const App: React.FC = () => {
          </button>
        </header>
 
-       <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-sm text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-5 rounded-2xl relative overflow-hidden">
+       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+         <motion.section initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20px' }} transition={{ duration: 0.4 }} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-sm text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-5 rounded-2xl relative overflow-hidden">
          <SectionHeader icon={MapPin} title="क्षेत्र चुनें" className="mb-4" variant="blue" />
          <div className="grid grid-cols-2 gap-3 relative z-10">
            <div className="relative">
@@ -916,7 +917,7 @@ const App: React.FC = () => {
            variant="green"
            rightElement={<button onClick={() => setActiveTab('calendar')} className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider hover:underline">सभी</button>} 
          />
-         <div className="space-y-3">
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-3 space-y-0">
              {upcomingMeetings.map(m => (
                <div key={m.id} onClick={() => { setSelectedListId(m.listId); setSelectedMeetingId(m.id); setActiveTab('lists'); }} className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-4 rounded-lg border dark:border-gray-700 flex items-center gap-4 shadow-sm active:scale-95 transition-all border-l-4 border-l-orange-500">
                   <div className="p-3 bg-orange-50 dark:bg-orange-900/20 text-orange-600 rounded-md">
@@ -945,6 +946,7 @@ const App: React.FC = () => {
              )}
          </div>
        </motion.section>
+       </div>
      </div>
     );
   };
@@ -1048,7 +1050,7 @@ const App: React.FC = () => {
                          <span className="text-[13px] font-bold text-blue-800 dark:text-blue-200 leading-none">{villageName} <span className="opacity-60 text-[10px]">({people.length} स्वयंसेवक)</span></span>
                        </div>
                      </motion.div>
-                     <div className="grid grid-cols-1 gap-2">
+                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                         {people.map((c) => {
                           const recentlyCalled = isRecentlyCalled(c.id);
                           const responsibility = c.volunteerProfile?.currentResponsibility;
@@ -1339,7 +1341,7 @@ const App: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-3 pl-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 pl-2">
                               {village.contacts.map((c: any) => {
                                 const recentlyCalled = isRecentlyCalled(c.id);
                                 const responsibility = c.volunteerProfile?.currentResponsibility;
@@ -1416,7 +1418,7 @@ const App: React.FC = () => {
        <TripDetailModal
            trip={trips.find(t => t.id === viewingTrip.id) || viewingTrip}
            khands={khands} mandals={mandals} villages={villages} contacts={contacts} ideas={ideas}
-           onClose={() => setViewingTrip(null)}
+           onBack={() => setViewingTrip(null)}
            onEdit={() => { setEditingTrip(trips.find(t => t.id === viewingTrip.id) || viewingTrip); setViewingTrip(null); }}
            onUpdate={(updates: Partial<TripPlan>) => handleUpdateTrip(viewingTrip.id, updates)}
            whatsappMessage={whatsappMessage}
@@ -1538,7 +1540,7 @@ const App: React.FC = () => {
               ))}
            </div>
 
-           <div className="grid grid-cols-1 gap-2.5">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
               {sortedTrips.length === 0 ? (
                <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 dark:border-gray-800 p-8 rounded-2xl text-center text-gray-400 font-medium text-[10px] uppercase tracking-widest italic opacity-60">कोई योजना नहीं</div>
               ) : (
@@ -2267,10 +2269,33 @@ const App: React.FC = () => {
   };
 
   return (
-   <div className="min-h-[100dvh] w-full relative font-sans transition-colors duration-300 bg-transparent">
+   <div className="min-h-[100dvh] w-full relative font-sans transition-colors duration-300 bg-transparent flex">
      <AbstractBackground />
-     <div className="max-w-md mx-auto min-h-[100dvh] relative z-0 flex flex-col">
-       <main className="flex-1 relative z-10 pb-[100px] w-full">
+
+     {/* Desktop Sidebar */}
+     <aside className="hidden lg:flex flex-col w-72 fixed inset-y-0 left-0 bg-white/70 dark:bg-[#070b14]/70 backdrop-blur-3xl border-r border-gray-200/50 dark:border-gray-800/50 z-[100] shadow-xl pt-6 pb-6 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+       <div className="px-8 mt-4 mb-10">
+           <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 dark:from-blue-400 dark:to-blue-500 bg-clip-text text-transparent transform origin-left transition-all duration-500 tracking-tight font-hindi flex items-center gap-3 drop-shadow-sm">
+               <span className="bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 p-2 rounded-xl transition-colors duration-500">
+                   <MapPin size={26} className="stroke-[2.5px]" />
+               </span>
+               फील्ड कनेक्ट
+           </h2>
+       </div>
+       
+       <div className="flex-1 overflow-y-auto px-6 space-y-3 no-scrollbar">
+         <SidebarNavBtn active={activeTab === 'home'} onClick={() => handleTabChange('home')} icon={<Home />} label="होम" />
+         <SidebarNavBtn active={activeTab === 'people' || activeTab === 'swayamsevak'} onClick={() => handleTabChange('people')} icon={<UsersRound />} label="संपर्क" />
+         <SidebarNavBtn active={activeTab === 'activities'} onClick={() => handleTabChange('activities')} icon={<Rocket />} label="गतिविधियां" />
+         <SidebarNavBtn active={activeTab === 'calendar'} onClick={() => handleTabChange('calendar')} icon={<CalendarIcon />} label="कैलेंडर" />
+         <div className="pt-5 mt-5 border-t border-gray-200/50 dark:border-gray-800/50"></div>
+         <SidebarNavBtn active={activeTab === 'menu'} onClick={() => handleTabChange('menu')} icon={<MenuIcon />} label="मेनू" />
+       </div>
+     </aside>
+
+     <div className="flex-1 lg:pl-72 flex flex-col min-h-[100dvh] relative z-0">
+        <div className="max-w-md lg:max-w-7xl mx-auto w-full flex-1 flex flex-col relative z-10 px-4 sm:px-0">
+           <main className="flex-1 relative z-10 pb-[100px] lg:pb-12 lg:pt-8 w-full">
         {activeTab === 'home' && renderHome()}
         {activeTab === 'swayamsevak' && renderSwayamsevak()}
         {activeTab === 'people' && renderPeople()}
@@ -2404,8 +2429,8 @@ const App: React.FC = () => {
         {activeTab === 'event-cat-mgmt' &&<CatMgmt title="कार्यक्रम श्रेणी प्रबंधन" categories={eventCategories} setCategories={setEventCategories} onBack={()=>setActiveTab('settings')} setConfirmation={setConfirmation} />}
         {activeTab === 'list-cat-mgmt' &&<CatMgmt title="सूची श्रेणी प्रबंधन" categories={listCategories} setCategories={setListCategories} onBack={()=>setActiveTab('settings')} setConfirmation={setConfirmation} />}
         {selectedContactId && contacts.find(c => c.id === selectedContactId) && (
-         <div className="fixed inset-0 z-[100] bg-slate-50 dark:bg-[#070b14] overflow-y-auto w-full h-[100dvh]">
-           <div className="w-full max-w-md mx-auto min-h-[100dvh] relative">
+         <div className="fixed inset-0 z-[100] bg-slate-50 dark:bg-[#070b14] lg:bg-slate-50/80 lg:dark:bg-[#070b14]/90 lg:backdrop-blur-3xl overflow-y-auto w-full h-[100dvh] lg:flex lg:items-center lg:justify-center">
+           <div className="w-full max-w-md lg:max-w-4xl mx-auto min-h-[100dvh] lg:min-h-[85vh] lg:max-h-[85vh] lg:bg-white lg:dark:bg-[#0c1222] lg:shadow-2xl lg:border lg:border-white/20 lg:dark:border-gray-800 lg:rounded-2xl lg:overflow-y-auto relative">
              <ContactProfile 
                 contact={contacts.find(c => c.id === selectedContactId)!} 
                 khands={khands} mandals={mandals} villages={villages} categories={categories}
@@ -2445,11 +2470,11 @@ const App: React.FC = () => {
         className="hidden" 
       />
 
-     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/80 dark:bg-[#080d19]/90 backdrop-blur-2xl border-t border-gray-200/50 dark:border-gray-800/50 flex justify-around items-center p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] z-[100] shadow-[0_-8px_30px_rgba(0,0,0,0.08)] overflow-hidden rounded-t-[2.5rem]">
+     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/80 dark:bg-[#080d19]/90 backdrop-blur-2xl border border-gray-200/50 dark:border-gray-800/50 flex justify-around items-center p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] z-[100] shadow-[0_-8px_30px_rgba(0,0,0,0.08)] overflow-hidden rounded-t-[2.5rem] lg:hidden transition-colors duration-500">
         {/* Abstract Dark Gradients */}
-       <div className="absolute inset-0 pointer-events-none opacity-40 dark:opacity-60 overflow-hidden">
-         <div className="absolute top-0 left-1/4 w-1/2 h-full bg-blue-500/10 blur-[60px] animate-pulse"></div>
-         <div className="absolute bottom-0 right-1/4 w-1/2 h-full bg-purple-500/10 blur-[60px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+       <div className="absolute inset-0 pointer-events-none opacity-40 dark:opacity-60 overflow-hidden text-transparent">
+         <div className="absolute top-0 left-1/4 w-1/2 h-full bg-blue-500/10 blur-[60px] animate-pulse transition-colors duration-500"></div>
+         <div className="absolute bottom-0 right-1/4 w-1/2 h-full bg-indigo-500/10 blur-[60px] animate-pulse transition-colors duration-500" style={{ animationDelay: '1s' }}></div>
        </div>
        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
         
@@ -2601,6 +2626,7 @@ const App: React.FC = () => {
        </div>
       )}
      </div>
+    </div>
    </div>
   );
 };
@@ -2608,12 +2634,12 @@ const App: React.FC = () => {
 // --- Helper Components ---
 
 const AbstractBackground = React.memo(() => (
- <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 bg-slate-50 dark:bg-[#070b14]">
+ <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 bg-slate-50 dark:bg-[#070b14] transition-colors duration-500">
     {/* Glowing blurred blobs / Backlight */}
-   <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[70%] bg-blue-300/60 dark:bg-blue-600/40 blur-[100px] rounded-full animate-float"></div>
-   <div className="absolute top-[10%] right-[-20%] w-[70%] h-[60%] bg-cyan-200/50 dark:bg-cyan-500/30 blur-[120px] rounded-full animate-float" style={{ animationDelay: '1s' }}></div>
-   <div className="absolute bottom-[20%] left-[-10%] w-[80%] h-[70%] bg-orange-200/60 dark:bg-orange-600/20 blur-[100px] rounded-full animate-float-delayed"></div>
-   <div className="absolute bottom-[-10%] right-[-10%] w-[80%] h-[60%] bg-amber-200/50 dark:bg-amber-600/30 blur-[120px] rounded-full animate-float" style={{ animationDelay: '2s' }}></div>
+   <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[70%] bg-blue-300/60 dark:bg-blue-600/40 blur-[100px] rounded-full animate-float transition-colors duration-500"></div>
+   <div className="absolute top-[10%] right-[-20%] w-[70%] h-[60%] bg-indigo-200/50 dark:bg-indigo-500/30 blur-[120px] rounded-full animate-float transition-colors duration-500" style={{ animationDelay: '1s' }}></div>
+   <div className="absolute bottom-[20%] left-[-10%] w-[80%] h-[70%] bg-orange-200/60 dark:bg-orange-600/20 blur-[100px] rounded-full animate-float-delayed transition-colors duration-500"></div>
+   <div className="absolute bottom-[-10%] right-[-10%] w-[80%] h-[60%] bg-blue-200/50 dark:bg-blue-600/30 blur-[120px] rounded-full animate-float transition-colors duration-500" style={{ animationDelay: '2s' }}></div>
     
     {/* Crystal Glass Shards */}
    <div className="absolute inset-0 z-10 opacity-[0.8] dark:opacity-[0.4] mix-blend-overlay drop-shadow-2xl">
@@ -2890,6 +2916,38 @@ const NavBtn = ({ active, onClick, icon }: any) => (
 );
 
 
+const SidebarNavBtn = ({ active, onClick, icon, label }: any) => (
+  <button 
+    onClick={onClick} 
+    className={`flex items-center gap-4 w-full p-4 rounded-2xl transition-all relative group outline-none overflow-hidden
+      ${active ? 'bg-gradient-to-r from-blue-500/10 to-transparent dark:from-blue-500/20' : 'hover:bg-blue-500/5 dark:hover:bg-white/5'}
+    `}
+  >
+    {active && (
+     <div className="absolute inset-0 bg-blue-500/10 dark:bg-blue-400/10 blur-[20px] -z-10"></div>
+    )}
+    <div className={`
+      flex items-center justify-center w-11 h-11 rounded-[1.1rem] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] relative
+      ${active 
+        ? 'bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-[0_8px_20px_-4px_rgba(37,99,235,0.5)] border border-white/20' 
+        : 'text-gray-400 dark:text-gray-500 group-hover:scale-110 group-hover:text-blue-500'
+      }
+    `}>
+      {active &&<div className="absolute top-[10%] left-[20%] right-[20%] h-[30%] bg-gradient-to-b from-white/30 to-transparent rounded-t-full"></div>}
+     <div className={`transition-all ${active ? 'scale-[1.1] drop-shadow-sm' : 'scale-100'}`}>
+         {icon}
+     </div>
+    </div>
+    <span className={`font-semibold tracking-wide text-sm transition-all duration-300 ${active ? 'text-blue-700 dark:text-blue-300 scale-105' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-200'}`}>
+      {label}
+    </span>
+    {active && (
+     <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,1)]"></div>
+    )}
+  </button>
+);
+
+
 function AnimatedNumber({ value, delayMs = 0 }: { value: number | string, delayMs?: number }) {
   const numericValue = typeof value === 'string' ? parseInt(value.replace(/,/g, ''), 10) : value;
   const [displayValue, setDisplayValue] = React.useState(0);
@@ -3108,7 +3166,7 @@ const ContactProfile = ({ contact, villages, mandals, categories, onDelete, onEd
         </div>
      </div>
      <div className="bg-white/40 dark:bg-[#080d19]/40 backdrop-blur-2xl border border-white/50 border-t-white/80 shadow-[0_4px_24px_-1px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_0_0_1px_rgba(255,255,255,0.2)] text-gray-800 dark:text-gray-100 dark:border-gray-700/50 p-6 rounded-sm border dark:border-gray-700 space-y-6">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
            <div className="flex items-center gap-2">
              <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-sm">
                 <LucideIcon name={categories.find((c: any) => c.name === contact.category)?.icon || 'Tag'} size={18} />
@@ -3514,7 +3572,8 @@ const ContactFormModal = ({ khands, mandals, villages, categories, initialData, 
   const DAYS = ['सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि', 'रवि'];
 
   return (
-   <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full max-w-md mx-auto">
+   <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full lg:max-w-4xl mx-auto lg:max-h-[85vh] lg:my-auto lg:rounded-2xl lg:shadow-2xl lg:border lg:border-white/20">
+     <div className="flex-1 flex flex-col w-full h-full lg:overflow-hidden relative">
      <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
        <div className="flex items-center gap-3">
           <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-gray-700/50 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
@@ -3552,14 +3611,13 @@ const ContactFormModal = ({ khands, mandals, villages, categories, initialData, 
           </div>
 
            {/* Expandable Volunteer Profile Details */}
-          <div className="pt-2">
+          <div className="pt-2 lg:hidden">
              <button onClick={() => setShowMore(!showMore)} className="w-full py-2.5 flex items-center justify-center gap-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium text-xs rounded-md transition-all">
                  {showMore ? "विवरण बंद करें" : "+ अधिक विवरण जोड़ें"}
              </button>
           </div>
            
-           {showMore && (
-            <div className="space-y-4 pt-3 border-t dark:border-gray-800 animate-in slide-in-from-top-4 duration-300">
+           <div className={`${showMore ? 'block' : 'hidden'} lg:block space-y-4 pt-3 border-t dark:border-gray-800 animate-in slide-in-from-top-4 duration-300 lg:animate-none lg:border-t-0 lg:pt-0`}>
                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-2.5 border dark:border-gray-800">
                  <h3 className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-1 rounded w-fit uppercase tracking-widest mb-2">व्यक्तिगत जानकारी</h3>
                  <div className="grid grid-cols-2 gap-2">
@@ -3688,16 +3746,16 @@ const ContactFormModal = ({ khands, mandals, villages, categories, initialData, 
 
                <textarea placeholder="अन्य विवरण या टिप्पणी..." rows={2} className="w-full bg-white dark:bg-[#070b14] border border-gray-200 text-gray-800 dark:text-gray-100 placeholder:text-gray-400 dark:border-gray-700 p-2.5 rounded-lg outline-none font-medium text-xs resize-none" value={profile.otherDetails || ''} onChange={e=>updateProfile('otherDetails', e.target.value)} />
             </div>
-           )}
 
        </div>
-       <div className="flex gap-3 pt-6 pb-2">
+      </div>
+      <div className="bg-white dark:bg-[#070b14] p-4 lg:p-6 border-t border-gray-200 dark:border-gray-800 flex gap-3 relative z-20">
           <button onClick={onClose} className="flex-1 p-3 bg-gray-100 dark:bg-gray-800 dark:text-white font-medium rounded-lg active:scale-95 transition-all text-gray-500 text-sm">रद्द</button>
           <button disabled={!name || !phone || !villageId || isSubmitting} onClick={() => {
              setIsSubmitting(true);
              onSubmit({ name, phone, khandId, mandalId, villageId, category: cat, status, volunteerProfile: profile });
            }} className="flex-1 p-3 bg-indigo-600 dark:bg-indigo-500 text-white font-medium rounded-lg shadow-sm active:scale-95 transition-all disabled:opacity-50 text-sm abstract-btn">{isSubmitting ? 'सुरक्षित हो रहा है...' : 'सुरक्षित'}</button>
-       </div>
+      </div>
      </div>
    </div>
   );
@@ -3721,7 +3779,8 @@ const TripFormModal = ({ khands, mandals, villages, contacts, initialData, ideas
   }, [mandalId, selVillages, selPeople, ideas]);
 
   return (
-   <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full max-w-md mx-auto">
+   <div className="fixed inset-0 z-[200] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl animate-in slide-in-from-bottom duration-300 w-full lg:max-w-4xl mx-auto lg:max-h-[85vh] lg:my-auto lg:rounded-2xl lg:shadow-2xl lg:border lg:border-white/20">
+     <div className="flex-1 flex flex-col w-full h-full lg:overflow-hidden relative">
      <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:border-gray-800/50 p-4 sticky top-0 z-20 flex items-center justify-between">
        <div className="flex items-center gap-3">
           <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-gray-700/50 rounded-full active:scale-95"><ArrowLeft size={20} className="dark:text-white"/></button>
@@ -3817,10 +3876,11 @@ const TripFormModal = ({ khands, mandals, villages, contacts, initialData, ideas
             </>
            )}
        </div>
-       <div className="flex gap-4 pt-4">
+      </div>
+      <div className="bg-white dark:bg-[#070b14] p-4 lg:p-6 border-t border-gray-200 dark:border-gray-800 flex gap-4 relative z-20">
           <button onClick={onClose} className="flex-1 p-4 bg-gray-100 dark:bg-gray-800 text-gray-500 font-medium rounded-xl active:scale-95 transition-all">रद्द</button>
           <button disabled={!mandalId || selVillages.length===0 || isSubmitting} onClick={() => { setIsSubmitting(true); onSubmit({ date, khandId, mandalId, villageIds: selVillages, peopleIds: selPeople, notes, schedule: initialData?.schedule || [], isCompleted: initialData?.isCompleted || false }); }} className="flex-1 p-4 bg-indigo-600 dark:bg-indigo-500 text-white font-medium rounded-xl shadow-lg active:scale-95 transition-all disabled:opacity-50 abstract-btn">{isSubmitting ? 'सुरक्षित हो रहा है...' : 'सुरक्षित करें'}</button>
-       </div>
+      </div>
      </div>
    </div>
   );
@@ -3999,9 +4059,9 @@ const TripDetailModal = ({ trip, khands, mandals, villages, contacts, ideas, onB
       animate={{ x: 0 }}
       exit={{ x: '100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="fixed inset-0 z-[100] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl overflow-hidden w-full max-w-md mx-auto"
+      className="fixed inset-0 z-[100] flex flex-col bg-slate-50/80 dark:bg-[#070b14]/90 backdrop-blur-3xl overflow-hidden w-full lg:max-w-5xl lg:mx-auto lg:my-auto lg:h-[90vh] lg:rounded-2xl lg:shadow-2xl lg:border lg:border-white/20"
     >
-     <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 dark:border-gray-800 p-2 shrink-0 z-20 flex items-center justify-between shadow-sm">
+     <header className="bg-white/10 dark:bg-[#070b14]/10 border-b border-white/20 dark:border-gray-800 p-3 lg:p-4 shrink-0 z-20 flex items-center justify-between shadow-sm">
        <div className="flex items-center gap-2">
           <button onClick={onBack} className="p-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg active:scale-90 transition-transform"><ArrowLeft size={16} className="dark:text-white"/></button>
           <div className="min-w-0">
@@ -4382,7 +4442,7 @@ const CatMgmt = ({ categories, setCategories, onBack, setConfirmation, title = "
 
            <div className="pt-4 border-t dark:border-gray-700 space-y-2">
               <label className="text-[10px] font-medium text-gray-400 uppercase tracking-widest px-1">मौजूदा श्रेणियां</label>
-              <div className="grid grid-cols-1 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                  {categories.map((c: any) => (
                    <div key={c.id} className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-900 rounded-md border dark:border-gray-700">
                       <div className="flex items-center gap-3">
@@ -4469,18 +4529,30 @@ const SettingsTab = ({
            
           <div className="p-3 space-y-3 border-t dark:border-gray-700">
              <div className="flex items-center gap-3 text-pink-600"><Palette size={18}/><span className="font-medium dark:text-gray-200">स्टाइल्स एवं थीम</span></div>
-             <div className="grid grid-cols-3 gap-2">
-                <button onClick={()=>setAppTheme('default')} className={`p-2 rounded-sm border flex flex-col items-center gap-1.5 transition-all ${appTheme === 'default' ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
-                   <div className="flex gap-1"><div className="w-2.5 h-2.5 rounded-full bg-blue-600"/><div className="w-2.5 h-2.5 rounded-full bg-orange-500"/></div>
+             <div className="grid grid-cols-3 gap-3">
+                <button onClick={()=>setAppTheme('default')} className={`p-2 rounded-sm border flex flex-col items-center gap-1.5 transition-all ${appTheme === 'default' ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30 ring-2 ring-blue-500/20' : 'border-gray-200 dark:border-gray-700'}`}>
+                   <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-blue-600"/><div className="w-3 h-3 rounded-full bg-orange-500"/></div>
                    <span className="text-[10px] font-medium dark:text-gray-300">डिफ़ॉल्ट</span>
                 </button>
-                <button onClick={()=>setAppTheme('nature')} className={`p-2 rounded-sm border flex flex-col items-center gap-1.5 transition-all ${appTheme === 'nature' ? 'border-green-600 bg-green-50 dark:bg-green-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
-                   <div className="flex gap-1"><div className="w-2.5 h-2.5 rounded-full bg-emerald-500"/><div className="w-2.5 h-2.5 rounded-full bg-amber-500"/></div>
+                <button onClick={()=>setAppTheme('nature')} className={`p-2 rounded-sm border flex flex-col items-center gap-1.5 transition-all ${appTheme === 'nature' ? 'border-green-600 bg-green-50 dark:bg-green-900/30 ring-2 ring-green-500/20' : 'border-gray-200 dark:border-gray-700'}`}>
+                   <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-emerald-500"/><div className="w-3 h-3 rounded-full bg-amber-500"/></div>
                    <span className="text-[10px] font-medium dark:text-gray-300">प्रकृति</span>
                 </button>
-                <button onClick={()=>setAppTheme('rose')} className={`p-2 rounded-sm border flex flex-col items-center gap-1.5 transition-all ${appTheme === 'rose' ? 'border-rose-600 bg-rose-50 dark:bg-rose-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
-                   <div className="flex gap-1"><div className="w-2.5 h-2.5 rounded-full bg-rose-600"/><div className="w-2.5 h-2.5 rounded-full bg-purple-500"/></div>
+                <button onClick={()=>setAppTheme('rose')} className={`p-2 rounded-sm border flex flex-col items-center gap-1.5 transition-all ${appTheme === 'rose' ? 'border-rose-600 bg-rose-50 dark:bg-rose-900/30 ring-2 ring-rose-500/20' : 'border-gray-200 dark:border-gray-700'}`}>
+                   <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-rose-600"/><div className="w-3 h-3 rounded-full bg-purple-500"/></div>
                    <span className="text-[10px] font-medium dark:text-gray-300">रोज़</span>
+                </button>
+                <button onClick={()=>setAppTheme('ocean')} className={`p-2 rounded-sm border flex flex-col items-center gap-1.5 transition-all ${appTheme === 'ocean' ? 'border-sky-600 bg-sky-50 dark:bg-sky-900/30 ring-2 ring-sky-500/20' : 'border-gray-200 dark:border-gray-700'}`}>
+                   <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-sky-500"/><div className="w-3 h-3 rounded-full bg-cyan-500"/></div>
+                   <span className="text-[10px] font-medium dark:text-gray-300">ओशन</span>
+                </button>
+                <button onClick={()=>setAppTheme('sunset')} className={`p-2 rounded-sm border flex flex-col items-center gap-1.5 transition-all ${appTheme === 'sunset' ? 'border-red-600 bg-red-50 dark:bg-red-900/30 ring-2 ring-red-500/20' : 'border-gray-200 dark:border-gray-700'}`}>
+                   <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-red-500"/><div className="w-3 h-3 rounded-full bg-orange-400"/></div>
+                   <span className="text-[10px] font-medium dark:text-gray-300">सनसेट</span>
+                </button>
+                <button onClick={()=>setAppTheme('monochrome')} className={`p-2 rounded-sm border flex flex-col items-center gap-1.5 transition-all ${appTheme === 'monochrome' ? 'border-gray-600 bg-gray-100 dark:bg-gray-800 ring-2 ring-gray-400/20' : 'border-gray-200 dark:border-gray-700'}`}>
+                   <div className="flex gap-1"><div className="w-3 h-3 rounded-full bg-slate-600"/><div className="w-3 h-3 rounded-full bg-zinc-500"/></div>
+                   <span className="text-[10px] font-medium dark:text-gray-300">ग्रेस्केल</span>
                 </button>
              </div>
           </div>
@@ -6228,7 +6300,7 @@ const BulkUpdateModal = ({ selectedCount, contacts, khands, mandals, villages, c
               </button>
             </div>
             {useLocation && (
-              <div className="grid grid-cols-1 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                   <select value={khandId} onChange={e => { setKhandId(e.target.value); setMandalId(''); setVillageId(''); }} className="w-full bg-gray-50 dark:bg-gray-900 p-3 rounded-xl outline-none border dark:border-gray-700 font-medium text-[10px] dark:text-white appearance-none">
                     <option value="">खंड चुनें...</option>
                     {khands.map((k: any) =><option key={k.id} value={k.id}>{k.name}</option>)}
